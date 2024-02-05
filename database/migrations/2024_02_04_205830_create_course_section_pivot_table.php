@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('course_section', function (Blueprint $table) {
+            $table->id(); //nécessaire quand on a le primary ?
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('section_id');
             $table->date('year');
@@ -19,7 +20,7 @@ return new class extends Migration
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
 
-            $table->primary(['course_id', 'section_id']); 
+            $table->primary(['course_id', 'section_id']); //ça ou id basique ?
             $table->timestamps();
         });
     }
