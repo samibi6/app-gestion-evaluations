@@ -8,13 +8,24 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['name'];
 
-    public function sections()
+    public function courseSection()
     {
-        return $this->belongsToMany(Section::class);
+        return $this->hasMany(CourseSection::class);
     }
-}
+    public function courseStudent()
+    {
+        return $this->hasMany(CourseStudent::class);
+    }
+    public function aptitudes()
+    {
+        return $this->hasMany(Aptitude::class);
 
-    
+
+
+        }
+    }
+
+

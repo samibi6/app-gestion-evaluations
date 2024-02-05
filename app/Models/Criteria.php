@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Criteria extends Model
 {
     use HasFactory;
+
+    public function courseSection()
+    {
+        return $this->hasMany(CriteriaStudent::class);
+    }
+    public function aptitude()
+    {
+        return $this->belongsTo(Aptitude::class);
+    }
 }

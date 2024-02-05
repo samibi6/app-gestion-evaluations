@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Aptitude extends Model
+class CriteriaStudent extends Model
 {
     use HasFactory;
+
     public function criterias()
     {
-        return $this->hasMany(Criteria::class);
+        return $this->belongsTo(Criteria::class);
     }
-    public function course()
+    public function students()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Student::class);
     }
 }
-

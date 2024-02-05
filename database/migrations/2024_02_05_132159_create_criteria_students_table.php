@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('criterias', function (Blueprint $table) {
+        Schema::create('criteria_students', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description');
-            $table->text('indicator');
-            $table->unsignedTinyInteger('score');
+            $table->unsignedBigInteger('criteria_id');
+            $table->unsignedBigInteger('student_id');
+            $table->boolean('acquired');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('criterias');
+        Schema::dropIfExists('criteria_students');
     }
 };

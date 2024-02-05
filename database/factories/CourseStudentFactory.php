@@ -4,12 +4,13 @@ namespace Database\Factories;
 
 use App\Models\Course;
 use App\Models\Section;
+use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CourseStudent>
  */
-class CourseSectionFactory extends Factory
+class CourseStudentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -20,8 +21,8 @@ class CourseSectionFactory extends Factory
     {
         return [
             'course_id' => Course::get()->random()->id,
-            'section_id' => Section::get()->random()->id,
-            'year' => $this->faker->numberBetween(0,5),
+            'student_id' => Student::get()->random()->id,
+
         ];
     }
 }
