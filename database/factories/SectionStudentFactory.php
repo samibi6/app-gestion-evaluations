@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Section;
+use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class SectionStudentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'section_id' => Section::get()->random()->id,
+            'student_id' => Student::get()->random()->id,
+            
         ];
     }
 }

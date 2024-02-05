@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\SectionStudent;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +13,7 @@ class SectionStudentSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        SectionStudent::factory(10)
+        ->create();
     }
 }

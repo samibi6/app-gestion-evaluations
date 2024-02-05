@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('criteria_students', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('criteria_id');
-            $table->unsignedBigInteger('student_id');
+            $table->foreignId('criteria_id')->constrained()->onDelete('cascade');  
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');  
             $table->boolean('acquired');
             $table->timestamps();
         });

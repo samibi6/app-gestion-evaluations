@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Criteria;
+use App\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class CriteriaStudentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'criteria_id' => Criteria::get()->random()->id,
+            'student_id' => Student::get()->random()->id,
+            'acquired' => $this->faker->boolean()
         ];
     }
 }
