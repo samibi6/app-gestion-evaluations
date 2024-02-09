@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StudentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,4 +33,15 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('/students', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/Students', [StudentController::class, 'index'])->name('Students.index');
+    Route::post('/Students', [StudentController::class, 'store'])->name('Students.store');
+    Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
+    Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete');
 });
