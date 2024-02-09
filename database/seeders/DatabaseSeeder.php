@@ -27,11 +27,12 @@ class DatabaseSeeder extends Seeder
             CriteriaSeeder::class,
             SectionSeeder::class,
             StudentSeeder::class,
-            
+
             CourseStudentSeeder::class,
             CriteriaStudentSeeder::class,
             SectionStudentSeeder::class,
             CourseSectionSeeder::class,
+            CourseUserSeeder::class,
         ]);
     }
 }
