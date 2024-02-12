@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -34,6 +36,18 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('/students', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+});
+
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/Students', [StudentController::class, 'index'])->name('Students.index');
+    Route::post('/Students', [StudentController::class, 'store'])->name('Students.store');
+    Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
+    Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
@@ -42,3 +56,4 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     /*Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
     Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete')*/;
 });
+
