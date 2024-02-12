@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -32,4 +34,11 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+});
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/cours', [CourseController::class, 'index'])->name('courses.index');
+    Route::post('/cours', [CourseController::class, 'store'])->name('courses.store');
+    /*Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
+    Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete')*/;
 });
