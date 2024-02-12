@@ -44,16 +44,15 @@ Route::middleware([
 
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
-    Route::get('/Students', [StudentController::class, 'index'])->name('Students.index');
-    Route::post('/Students', [StudentController::class, 'store'])->name('Students.store');
-    Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
-    Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete');
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::put('/students/{Student}', [StudentController::class, 'status'])->name('Students.status');
+    Route::delete('/students/{Student}', [StudentController::class, 'delete'])->name('Students.delete');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
     Route::get('/cours', [CourseController::class, 'index'])->name('courses.index');
     Route::post('/cours', [CourseController::class, 'store'])->name('courses.store');
-    /*Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
+        /*Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
     Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete')*/;
 });
-
