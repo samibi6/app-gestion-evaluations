@@ -9,7 +9,7 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'code'];
 
     public function courseSection()
     {
@@ -18,6 +18,10 @@ class Course extends Model
     public function courseStudent()
     {
         return $this->hasMany(CourseStudent::class);
+    }
+    public function courseUser()
+    {
+        return $this->hasMany(CourseUser::class);
     }
     public function aptitudes()
     {
