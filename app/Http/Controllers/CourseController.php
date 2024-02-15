@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CourseStoreRequest;
+use App\Http\Requests\CourseUpdateRequest;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\CourseUser;
@@ -72,6 +73,79 @@ class CourseController extends Controller
     $request->session()->flash('flash.banner', 'Le cours a bien été créé.');
     return redirect()->back();
 }
+
+public function edit(Course $course){
+    
+    $sections = Section::get();
+    $users = User::get();
+    
+    $sectionsByCurrentCourse = Section::join('course_sections', 'sections.id', '=', 'course_sections.section_id')
+        ->where('course_sections.course_id', $course->id)
+        ->select('sections.*', 'course_sections.year')
+        ->get();
+
+    $usersByCurrentCourse = User::join('course_users', 'users.id', '=', 'course_users.user_id')
+        ->where('course_users.course_id', $course->id)
+        ->select('users.*')
+        ->get();
+
+    // Pass the course and related data to the view
+    return Inertia::render('Courses/Edit', [
+        'course' => $course,
+        'sections' => $sections,
+        'users' => $users,
+        'sectionsByCurrentCourse' => $sectionsByCurrentCourse,
+        'usersByCurrentCourse' => $usersByCurrentCourse,
+    ]);
+}
+
+    
+   
+    public function update(CourseUpdateRequest $request, Course $course)
+    {
+
+        $course->update([
+            'name' => $request->validated()['name'],
+            'code' => $request->validated()['code'],
+            
+        ]);
+    
+        //bon là faudrait ajouter quelque chose qui check dans le cas où un cours n'aurait pas d'année, de section ou de chargé de cours (c'est pas censé arriver mais bon avec les seeders si)
+      // dd($course->id);
+     $courseSection = CourseSection::where('course_id', $course->id)->first();
+     if ($courseSection) {
+         $courseSection->update([
+             'section_id' => $request->validated()['section'],
+             'year' => $request->validated()['year'],
+         ]);
+     } else {
+         
+         $courseSection = CourseSection::make([
+             'course_id' => $course->id,
+             'section_id' => $request->validated()['section'],
+             'year' => $request->validated()['year'],
+         ]);
+         $courseSection->save();
+     }
+        
+        $courseUser = CourseUser::where('course_id', $course->id)->first(); //faudra revoir la façon dont on store les sections et users, faudra ptêtre des champs différents dans la db genre 'user1' 'user2' etc en fonction du nombre de options select, ou travailler avec un array, à voir...
+        if($courseUser) {
+            $courseUser->update([
+                'user_id' => $request->validated()['user'],
+        ]);
+        
+        } else {
+        $courseUser = CourseUser::make([
+            'course_id' => $course->id,
+            'user_id' => $request->validated()['user'],
+        ]);
+        $courseUser->save();
+}
+    
+        $request->session()->flash('flash.banner', 'Le cours a bien été modifié.');
+        return redirect()->route('courses.index');
+
+    }
 
 }
 
