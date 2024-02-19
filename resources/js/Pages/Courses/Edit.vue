@@ -16,23 +16,17 @@ import { useForm } from "@inertiajs/vue3";
 
 import { ref } from "vue";
 
-const props = defineProps(['courses', 'users', 'sections', 'sectionsByCourses', 'usersByCourses']);
-
-
-
-const form = usePrecognitionForm("post", route("courses.store"), {
-    name: '',
-    code: '',
-    year: '',
-    section: '',
-    user: '',
-
+const props = defineProps(['course', 'users', 'sections', 'usersByCurrentCourse', 'sectionsByCurrentCourse']);
+const caca = 'lol';
+const form = usePrecognitionForm("patch", route("courses.update", { course: props.course.id, }), {
+    name: props.course.name,
+    code: props.course.code,
+    year: props.sectionsByCurrentCourse[0]?.year || '', //display ce qu'on veut si pas d'année attribuée, mais bon input type number donc pas de mots :/
+    section: props.sectionsByCurrentCourse.length > 0 ? props.sectionsByCurrentCourse[0].id : null,
+    user: props.usersByCurrentCourse.length > 0 ? props.usersByCurrentCourse[0].id : null,
 });
 
 form.setValidationTimeout(300);
-
-
-
 
 const submit = () => form.submit({
     preserveScroll: true,
@@ -87,50 +81,9 @@ const submit = () => form.submit({
         <br><br>
 
         <button :disabled="form.processing" class="font-bold bg-green-500 p-2">
-            Créer un cours (oui c'est un bouton)
+            Modifier le cours
         </button>
 
         <br><br>
     </form>
-
-    <div>
-        <h2 class="text-xl my-3 font-bold">Liste des cours</h2>
-        <ul v-for="course in courses" :key="course.id">
-            <li>
-                Nom du cours : {{ course.name }}
-                <br>
-            </li>
-
-            <li>
-                Code du cours :{{ course.code }}
-                <br>
-
-            </li>
-            <li>
-                Année du cours : <span v-if="sectionsByCourses[course.id]">{{ sectionsByCourses[course.id][0].year }}</span>
-                <!--vérifie s'il ya bien une année correspondant au cours avant de l'afficher-->
-                <br>
-            </li>
-
-            <li>
-                Sections du cours : <span v-for="section in sectionsByCourses[course.id]" :key="section.id">{{ section.name
-                }},
-                </span>
-                <br>
-            </li>
-            <li>
-                Chargé de cours : <span v-for="user in usersByCourses[course.id]" :key="user.id">{{ user.name }},
-                    <!--demander s'il peut y avoir plusieurs profs comme avec Christophe et Thibault, sinon n'afficher que le premier résultat (merci les factories pas uniques)-->
-                </span>
-                <br><br>
-
-            </li>
-            <li>
-                <a class="font-bold bg-orange-500 p-2" :href="route('courses.edit', { course })">Modifier le cours</a>
-            </li>
-            <br><br>
-            -------------------------------------- <!--j'aime pas les <hr> :)-->
-        </ul>
-
-    </div>
 </template>

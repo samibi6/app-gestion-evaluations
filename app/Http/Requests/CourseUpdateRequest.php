@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CourseStoreRequest extends FormRequest
+class CourseUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,9 +21,10 @@ class CourseStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        $courseId = $this->route('course')->id; 
         return [
             'name' => 'required|max:100',
-            'code' => 'required|unique:courses|max:25',
+            'code' => "required|unique:courses,code,{$courseId}|max:25", //pour exclure le code du cours qu'on modifie actuellement de la règle 'unique'
             'year' => 'required|integer|between:1,5',
             'section' => 'required|max:100',
             'user' => 'required|max:100', //faudra ptetre retirer le required, un cours doit sûrement pouvoir être créé sans prof
