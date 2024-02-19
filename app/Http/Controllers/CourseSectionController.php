@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CourseSectionStoreRequest;
 use App\Models\Course;
+use App\Models\CourseSection;
 use App\Models\Section;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -28,8 +29,13 @@ class CourseSectionController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CourseSectionStoreRequest $request)
     {
-        dd($request->all());
+        foreach ($request->validated()['course'] as $id => $value) {
+            $courseSection = CourseSection::make();
+            $courseSection->course_id = $id;
+            $courseSection->section_id = $request->validated()['section'];
+            $courseSection->save();
+        }
     }
 }

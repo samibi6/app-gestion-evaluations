@@ -34,7 +34,6 @@ class StudentController extends Controller
 
     public function store(StudentStoreRequest $request)
     {
-        dd($request->all());
         $student = Student::make();
         $student->first_name = $request->validated()['first_name'];
         $student->last_name = $request->validated()['last_name'];
