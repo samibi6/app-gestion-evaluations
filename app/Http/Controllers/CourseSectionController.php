@@ -22,7 +22,7 @@ class CourseSectionController extends Controller
             ->get()
             ->groupBy('section-id');
 
-        return Inertia::render('Sections/Index', [
+        return Inertia::render('CoursSections/Index', [
             'sections' => $sections,
             'courses'  => $courses,
             'coursesBySection' => $coursesBySection,

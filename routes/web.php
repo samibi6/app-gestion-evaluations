@@ -53,10 +53,17 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
-    Route::get('/sections', [CourseSectionController::class, 'index'])->name('sections.index');
-    Route::post('/sections', [CourseSectionController::class, 'store'])->name('sections.store');
+    Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
+    Route::post('/sections', [SectionController::class, 'store'])->name('sections.store');
     // Route::put('/sections/{Section}', [SectionController::class, 'status'])->name('sections.status');
     // Route::delete('/sections/{Section}', [SectionController::class, 'delete'])->name('sections.delete');
+});
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/coursSections', [CourseSectionController::class, 'index'])->name('coursSections.index');
+    Route::post('/coursSections', [CourseSectionController::class, 'store'])->name('coursSections.store');
+    // Route::put('/coursSections/{Section}', [SectionController::class, 'status'])->name('coursSections.status');
+    // Route::delete('/coursSections/{Section}', [SectionController::class, 'delete'])->name('coursSections.delete');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
