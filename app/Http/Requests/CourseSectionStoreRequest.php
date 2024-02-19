@@ -32,4 +32,12 @@ class CourseSectionStoreRequest extends FormRequest
             'section' => 'required|integer|max:10',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'course.required' => 'Vous devez sélectionner au moins 1 cours à ajouter à la section.',
+            'section.required' => 'Vous devez sélectionner une section.'
+        ];
+    }
 }

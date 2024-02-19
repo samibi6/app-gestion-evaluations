@@ -14,7 +14,7 @@ const form = useForm({
 });
 
 const submitForm = () => {
-    form.post(route('sections.store'));
+    form.post(route('coursSections.store'));
     form.reset();
     coursList = props.courses;
 };
@@ -33,21 +33,25 @@ function updateCourses() {
         // }
     }
 }
+
+let add = ref(false);
 </script>
 
 <template>
-    <div>
+    <button class="bg-blue-500 text-white font-bold p-3 rounded-full hover:bg-blue-800 m-2" @click="add = !add">
+        {{ add ? 'Annuler' : 'Ajouter des cours à une section' }}</button>
+    <div v-if="add">
         <form @submit.prevent="submitForm" method="POST">
             <div class="bg-gray-300 flex">
                 <select name="section" id="section" v-model="form.section" @change="updateCourses(), form.course = []">
                     <option v-for="section in sections" :value="section.id">{{ section.name }}</option>
                 </select>
-                <div v-if="errors.section">{{ errors.section }}</div>
+                <div v-if="errors.section" class="font-bold text-red-500">{{ errors.section }}</div>
                 <button type="submit" class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full">
                     Ajouter les cours à la section
                 </button>
             </div>
-            <div v-if="errors.course">{{ errors.course }}</div>
+            <div v-if="errors.course" class="font-bold text-red-500">{{ errors.course }}</div>
             <ul class="w-full">
                 <li class="flex justify-start items-center px-[30%] border-2" v-for="course in coursList" :key="course.id">
 
@@ -59,5 +63,9 @@ function updateCourses() {
                 </li>
             </ul>
         </form>
+    </div>
+    <hr class="border-2 border-black mt-2">
+    <div>
+
     </div>
 </template>
