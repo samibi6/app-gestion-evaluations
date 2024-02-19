@@ -53,6 +53,8 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
     Route::get('/cours', [CourseController::class, 'index'])->name('courses.index');
     Route::post('/cours', [CourseController::class, 'store'])->name('courses.store');
+    Route::get('/cours/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
+    Route::patch('/cours/{course}', [CourseController::class, 'update'])->name('courses.update');
     /*Route::put('/Students/{Student}', [StudentController::class, 'status'])->name('Students.status');
     Route::delete('/Students/{Student}', [StudentController::class, 'delete'])->name('Students.delete')*/;
 });
