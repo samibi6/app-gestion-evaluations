@@ -24,7 +24,7 @@ class CourseSectionController extends Controller
 
         return Inertia::render('CoursSections/Index', [
             'sections' => $sections,
-            'courses'  => $courses,
+                'courses'  => $courses,
             'coursesBySection' => $coursesBySection,
         ]);
     }

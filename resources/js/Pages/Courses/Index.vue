@@ -23,7 +23,6 @@ const props = defineProps(['courses', 'users', 'sections', 'sectionsByCourses', 
 const form = usePrecognitionForm("post", route("courses.store"), {
     name: '',
     code: '',
-    year: '',
     section: '',
     user: '',
 
@@ -38,6 +37,28 @@ const submit = () => form.submit({
     preserveScroll: true,
     onSuccess: () => form.reset(),
 });
+
+const confirmingCourseDeletion = ref(false);
+const courseIdToDelete = ref(null);
+const formDeleteCourse = useForm("delete", {});
+
+const confirmCourseDeletion = (id) => {
+    courseIdToDelete.value = id;
+    confirmingCourseDeletion.value = true;
+};
+
+var deleteCourse = () => {
+    formDeleteCourse.delete(route("courses.delete", courseIdToDelete.value), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingCourseDeletion.value = false;
+        },
+    });
+};
+
+var closeModal = () => {
+    confirmingCourseDeletion.value = false;
+};
 </script>
 
 <template>
@@ -53,14 +74,6 @@ const submit = () => form.submit({
         <input id="code" v-model="form.code" @change="form.validate('code')" />
         <div v-if="form.invalid('code')">
             {{ form.errors.code }}
-        </div>
-
-        <br><br>
-
-        <label for="year">Année du cours</label>
-        <input id="year" type="number" v-model="form.year" @change="form.validate('year')" />
-        <div v-if="form.invalid('year')">
-            {{ form.errors.year }}
         </div>
 
         <br><br>
@@ -106,11 +119,6 @@ const submit = () => form.submit({
                 <br>
 
             </li>
-            <li>
-                Année du cours : <span v-if="sectionsByCourses[course.id]">{{ sectionsByCourses[course.id][0].year }}</span>
-                <!--vérifie s'il ya bien une année correspondant au cours avant de l'afficher-->
-                <br>
-            </li>
 
             <li>
                 Sections du cours : <span v-for="section in sectionsByCourses[course.id]" :key="section.id">{{ section.name
@@ -126,11 +134,38 @@ const submit = () => form.submit({
 
             </li>
             <li>
-                <a class="font-bold bg-orange-500 p-2" :href="route('courses.edit', { course })">Modifier le cours</a>
+                <a class="font-bold bg-orange-500 p-2 hover:bg-orange-600"
+                    :href="route('courses.edit', { course })">Modifier le cours</a>
+                <br><br>
+            </li>
+
+            <li>
+                <button class="font-bold bg-red-500 p-2 hover:bg-red-600" @click="confirmCourseDeletion(course.id)">
+                    Supprimer le cours
+                </button>
             </li>
             <br><br>
             -------------------------------------- <!--j'aime pas les <hr> :)-->
         </ul>
 
     </div>
+
+
+    <DialogModal :show="confirmingCourseDeletion" @close="closeModal">
+        <template #title> Supprimer le cours </template>
+
+        <template #content>
+            Êtes-vous sûr de vouloir supprimer ce cours? Cette action est
+            irréversible.
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="closeModal"> Annuler </SecondaryButton>
+
+            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCourseDeletion.processing }"
+                :disabled="confirmingCourseDeletion.processing" @click="deleteCourse">
+                Supprimer
+            </DangerButton>
+        </template>
+    </DialogModal>
 </template>

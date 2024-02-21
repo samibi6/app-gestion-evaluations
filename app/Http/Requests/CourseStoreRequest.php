@@ -24,7 +24,6 @@ class CourseStoreRequest extends FormRequest
         return [
             'name' => 'required|max:100',
             'code' => 'required|unique:courses|max:25',
-            'year' => 'required|integer|between:1,5',
             'section' => 'required|max:100',
             'user' => 'required|max:100', //faudra ptetre retirer le required, un cours doit sûrement pouvoir être créé sans prof
         ];

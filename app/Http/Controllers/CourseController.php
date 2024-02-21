@@ -26,7 +26,7 @@ class CourseController extends Controller
     
     $sectionsByCourses = Course::join('course_sections', 'courses.id', '=', 'course_sections.course_id')
         ->join('sections', 'course_sections.section_id', '=', 'sections.id')
-        ->select('courses.id as course-id', 'sections.*', 'course_sections.year') //le groupBy ne fonctionne pas correctement sans l'alias, même en précisant courses.id
+        ->select('courses.id as course-id', 'sections.*') //le groupBy ne fonctionne pas correctement sans l'alias, même en précisant courses.id
         ->get()
         ->groupBy('course-id');
 
@@ -58,7 +58,6 @@ class CourseController extends Controller
     $courseSection = CourseSection::make();
     $courseSection->course_id = $course->id; //pour lier la section choisie avec le cours qu'on crée
     $courseSection->section_id = $request->validated()['section'];
-    $courseSection->year = $request->validated()['year'];
     
     $courseSection->save();
 
@@ -81,7 +80,7 @@ public function edit(Course $course){
     
     $sectionsByCurrentCourse = Section::join('course_sections', 'sections.id', '=', 'course_sections.section_id')
         ->where('course_sections.course_id', $course->id)
-        ->select('sections.*', 'course_sections.year')
+        ->select('sections.*')
         ->get();
 
     $usersByCurrentCourse = User::join('course_users', 'users.id', '=', 'course_users.user_id')
@@ -116,14 +115,14 @@ public function edit(Course $course){
      if ($courseSection) {
          $courseSection->update([
              'section_id' => $request->validated()['section'],
-             'year' => $request->validated()['year'],
+             
          ]);
      } else {
          
          $courseSection = CourseSection::make([
              'course_id' => $course->id,
              'section_id' => $request->validated()['section'],
-             'year' => $request->validated()['year'],
+            
          ]);
          $courseSection->save();
      }
@@ -145,6 +144,16 @@ public function edit(Course $course){
         $request->session()->flash('flash.banner', 'Le cours a bien été modifié.');
         return redirect()->route('courses.index');
 
+    }
+
+    public function delete(Course $course)
+    {
+ //dd($course);
+          $course->delete();
+  
+          session()->flash('flash.banner', 'Le cours a bien été supprimé.');
+        
+          return redirect()->route('courses.index');
     }
 
 }
