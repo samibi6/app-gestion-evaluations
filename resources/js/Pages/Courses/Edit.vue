@@ -17,11 +17,9 @@ import { useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const props = defineProps(['course', 'users', 'sections', 'usersByCurrentCourse', 'sectionsByCurrentCourse']);
-const caca = 'lol';
 const form = usePrecognitionForm("patch", route("courses.update", { course: props.course.id, }), {
     name: props.course.name,
     code: props.course.code,
-    year: props.sectionsByCurrentCourse[0]?.year || '', //display ce qu'on veut si pas d'année attribuée, mais bon input type number donc pas de mots :/
     section: props.sectionsByCurrentCourse.length > 0 ? props.sectionsByCurrentCourse[0].id : null,
     user: props.usersByCurrentCourse.length > 0 ? props.usersByCurrentCourse[0].id : null,
 });
@@ -32,6 +30,30 @@ const submit = () => form.submit({
     preserveScroll: true,
     onSuccess: () => form.reset(),
 });
+
+const confirmingCourseDeletion = ref(false);
+const courseIdToDelete = ref(null);
+const formDeleteCourse = useForm("delete", {});
+
+const confirmCourseDeletion = (id) => {
+    courseIdToDelete.value = id;
+    confirmingCourseDeletion.value = true;
+};
+
+var deleteCourse = () => {
+    formDeleteCourse.delete(route("courses.delete", courseIdToDelete.value), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingCourseDeletion.value = false;
+        },
+    });
+};
+
+var closeModal = () => {
+    confirmingCourseDeletion.value = false;
+};
+
+
 </script>
 
 <template>
@@ -47,14 +69,6 @@ const submit = () => form.submit({
         <input id="code" v-model="form.code" @change="form.validate('code')" />
         <div v-if="form.invalid('code')">
             {{ form.errors.code }}
-        </div>
-
-        <br><br>
-
-        <label for="year">Année du cours</label>
-        <input id="year" type="number" v-model="form.year" @change="form.validate('year')" />
-        <div v-if="form.invalid('year')">
-            {{ form.errors.year }}
         </div>
 
         <br><br>
@@ -80,10 +94,35 @@ const submit = () => form.submit({
 
         <br><br>
 
-        <button :disabled="form.processing" class="font-bold bg-green-500 p-2">
+        <button :disabled="form.processing" class="font-bold bg-green-500 hover:bg-green-600 p-2">
             Modifier le cours
+        </button>
+        <br><br>
+        <button type="button" class="font-bold bg-red-500 p-2 hover:bg-red-600" @click="confirmCourseDeletion(course.id)">
+            <!--si on met pas le type="button", c'est interprété comme type="submit" par défaut, et il ya conflit avec le bouton pour modifier le cours, et on perd une heure de sa vie :)-->
+            Supprimer le cours
         </button>
 
         <br><br>
+
+        <br><br>
     </form>
+
+    <DialogModal :show="confirmingCourseDeletion" @close="closeModal">
+        <template #title> Supprimer le cours </template>
+
+        <template #content>
+            Êtes-vous sûr de vouloir supprimer ce cours? Cette action est
+            irréversible.
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="closeModal"> Annuler </SecondaryButton>
+
+            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCourseDeletion.processing }"
+                :disabled="confirmingCourseDeletion.processing" @click="deleteCourse">
+                Supprimer
+            </DangerButton>
+        </template>
+    </DialogModal>
 </template>

@@ -18,7 +18,7 @@ class CourseSectionController extends Controller
 
         $coursesBySection = Section::join('course_sections', 'sections.id', '=', 'course_sections.section_id')
             ->join('courses', 'courses.id', '=', 'course_sections.course_id')
-            ->select('sections.id as section-id', 'courses.*', 'course_sections.year')
+            ->select('sections.id as section-id', 'courses.*')
             ->get()
             ->groupBy('section-id');
 
@@ -28,7 +28,7 @@ class CourseSectionController extends Controller
 
         return Inertia::render('CoursSections/Index', [
             'sections' => $sections,
-            'courses'  => $courses,
+                'courses'  => $courses,
             'coursesBySection' => $coursesBySection,
             'courseSectionDB' => $courseSectionDB,
             'message' => $message

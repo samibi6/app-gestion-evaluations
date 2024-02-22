@@ -21,7 +21,6 @@ class CourseSectionFactory extends Factory
         return [
             'course_id' => Course::get()->random()->id,
             'section_id' => Section::get()->random()->id,
-            'year' => $this->faker->numberBetween(1,3),
         ];
     }
 }

@@ -71,4 +71,6 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::post('/cours', [CourseController::class, 'store'])->name('courses.store');
     Route::get('/cours/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
     Route::patch('/cours/{course}', [CourseController::class, 'update'])->name('courses.update');
+    Route::delete('/cours/{course}', [CourseController::class, 'delete'])->name('courses.delete');
+
 });
