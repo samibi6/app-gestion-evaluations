@@ -23,7 +23,6 @@ const props = defineProps(['students', 'sections', 'sectionsByStudents']);
 const form = usePrecognitionForm("post", route("students.store"), {
     last_name: '',
     first_name: '',
-    email: '',
     section: '',
 });
 
@@ -36,18 +35,40 @@ const submit = () => form.submit({
     preserveScroll: true,
     onSuccess: () => form.reset(),
 });
+
+const confirmingStudentDeletion = ref(false);
+const studentIdToDelete = ref(null);
+const formDeleteStudent = useForm("delete", {});
+
+const confirmStudentDeletion = (id) => {
+    studentIdToDelete.value = id;
+    confirmingStudentDeletion.value = true;
+};
+
+var deleteStudent = () => {
+    formDeleteStudent.delete(route("students.delete", studentIdToDelete.value), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingStudentDeletion.value = false;
+        },
+    });
+};
+
+var closeModal = () => {
+    confirmingStudentDeletion.value = false;
+};
 </script>
 
 <template>
     <form @submit.prevent="submit">
-        <label for="last_name">Nom de famille:</label>
+        <label for="last_name">Nom de famille de l'étudiant:</label>
         <input id="last_name" v-model="form.last_name" @change="form.validate('last_name')" />
         <div v-if="form.invalid('last_name')">
             {{ form.errors.last_name }}
         </div>
 
         <br><br>
-        <label for="first_name">Prénom:</label>
+        <label for="first_name">Prénom de l'étudiant:</label>
         <input id="first_name" v-model="form.first_name" @change="form.validate('first_name')" />
         <div v-if="form.invalid('first_name')">
             {{ form.errors.first_name }}
@@ -55,16 +76,7 @@ const submit = () => form.submit({
 
         <br><br>
 
-        <label for="email">Email:</label>
-        <input id="email" type="email" v-model="form.email" @change="form.validate('email')" />
-        <div v-if="form.invalid('email')">
-            {{ form.errors.email }}
-        </div>
-
-        <br><br>
-
-
-        <label for="section">Section:</label><!--faudra faire qu'on puisse ajouter plusieurs sections-->
+        <label for="section">Section de l'étudiant:</label><!--faudra faire qu'on puisse ajouter plusieurs sections-->
         <select id="section" v-model="form.section" @change="form.validate('section')">
             <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.name }}</option>
         </select>
@@ -74,8 +86,8 @@ const submit = () => form.submit({
 
         <br><br>
 
-        <button :disabled="form.processing" class="font-bold bg-gray-300 p-3 hover:bg-red-500 shadow-lg rounded-full">
-            Créer un étudiant (oui c'est un bouton)
+        <button :disabled="form.processing" class="font-bold bg-green-500 p-2">
+            Créer un étudiant
         </button>
 
         <br><br>
@@ -95,19 +107,44 @@ const submit = () => form.submit({
             </li>
 
             <li>
-                Email : {{ student.email }}
-                <br>
-
-            </li>
-
-            <li>
                 Section : <span v-for="section in sectionsByStudents[student.id]" :key="section.id">{{ section.name
                 }},
                 </span>
                 <br>
             </li>
+
+            <li>
+                <a class="font-bold bg-orange-500 p-2 hover:bg-orange-600"
+                    :href="route('students.edit', { student })">Modifier les données de l'étudiant</a>
+                <br><br>
+            </li>
+
+            <li>
+                <button class="font-bold bg-red-500 p-2 hover:bg-red-600" @click="confirmStudentDeletion(student.id)">
+                    Supprimer l'étudiant
+                </button>
+            </li>
             <br><br>
+            -------------------------------------- <!--j'aime pas les <hr> :)-->
         </ul>
 
     </div>
+
+    <DialogModal :show="confirmingStudentDeletion" @close="closeModal">
+        <template #title> Supprimer l'étudiant </template>
+
+        <template #content>
+            Êtes-vous sûr de vouloir supprimer cet étudiant? Cette action est
+            irréversible.
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="closeModal"> Annuler </SecondaryButton>
+
+            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingStudentDeletion.processing }"
+                :disabled="confirmingStudentDeletion.processing" @click="deleteStudent">
+                Supprimer
+            </DangerButton>
+        </template>
+    </DialogModal>
 </template>

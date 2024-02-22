@@ -48,8 +48,9 @@ Route::middleware([
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
-    // Route::put('/students/{Student}', [StudentController::class, 'status'])->name('Students.status');
-    // Route::delete('/students/{Student}', [StudentController::class, 'delete'])->name('Students.delete');
+    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::patch('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::delete('/students/{student}', [StudentController::class, 'delete'])->name('students.delete');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {

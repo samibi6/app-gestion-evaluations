@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Student;
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudentStoreRequest extends FormRequest
+class StudentUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +21,7 @@ class StudentStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        
         return [
             'last_name' => 'required|max:100',
             'first_name' => 'required|max:100',
