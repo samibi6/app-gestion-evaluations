@@ -22,10 +22,16 @@ class CourseSectionController extends Controller
             ->get()
             ->groupBy('section-id');
 
+        $courseSectionDB = CourseSection::get();
+
+        $message = $request->session()->get('success');
+
         return Inertia::render('CoursSections/Index', [
             'sections' => $sections,
             'courses'  => $courses,
             'coursesBySection' => $coursesBySection,
+            'courseSectionDB' => $courseSectionDB,
+            'message' => $message
         ]);
     }
 
@@ -37,5 +43,16 @@ class CourseSectionController extends Controller
             $courseSection->section_id = $request->validated()['section'];
             $courseSection->save();
         }
+    }
+
+    public function delete(Request $request)
+    {
+        $validatedData = $request->validate([
+            'idC' => 'required|integer', // Validation rules for idC
+            'idS' => 'required|integer', // Validation rules for idS
+        ]);
+        $entry = CourseSection::where('course_id', $request['idC'])->where('section_id', $request['idS'])->firstOrFail();
+        $entry->delete();
+        return redirect()->route('coursSections.index')->with('success', 'Entry deleted successfully');
     }
 }
