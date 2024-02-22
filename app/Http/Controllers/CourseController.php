@@ -88,7 +88,6 @@ public function edit(Course $course){
         ->select('users.*')
         ->get();
 
-    // Pass the course and related data to the view
     return Inertia::render('Courses/Edit', [
         'course' => $course,
         'sections' => $sections,
