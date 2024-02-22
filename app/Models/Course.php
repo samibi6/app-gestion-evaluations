@@ -26,10 +26,11 @@ class Course extends Model
     public function aptitudes()
     {
         return $this->hasMany(Aptitude::class);
-
-
-
-        }
+ }
+    public function proficiencies()
+    {
+        return $this->hasMany(Proficiency::class);
+ }
     }
 
 
