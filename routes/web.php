@@ -55,8 +55,10 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
     Route::get('/sections', [SectionController::class, 'index'])->name('sections.index');
     Route::post('/sections', [SectionController::class, 'store'])->name('sections.store');
+    Route::get('/sections/edit/{section}', [SectionController::class, 'edit'])->name('sections.edit');
+    Route::patch('/sections/{section}', [SectionController::class, 'update'])->name('sections.update');
     // Route::put('/sections/{Section}', [SectionController::class, 'status'])->name('sections.status');
-    // Route::delete('/sections/{Section}', [SectionController::class, 'delete'])->name('sections.delete');
+    Route::delete('/sections/{section}', [SectionController::class, 'delete'])->name('sections.delete');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
@@ -72,5 +74,4 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::get('/cours/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
     Route::patch('/cours/{course}', [CourseController::class, 'update'])->name('courses.update');
     Route::delete('/cours/{course}', [CourseController::class, 'delete'])->name('courses.delete');
-
 });

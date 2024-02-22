@@ -27,9 +27,9 @@ class CourseSectionStoreRequest extends FormRequest
         $data = array_filter($data);
         $this['course'] = $data;
         return [
-            'course' => 'required|array|max:10',
+            'course' => 'required|array',
             'course.*' => 'boolean',
-            'section' => 'required|integer|max:10',
+            'section' => 'required|integer',
         ];
     }
 
