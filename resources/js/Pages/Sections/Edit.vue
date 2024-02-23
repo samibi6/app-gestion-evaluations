@@ -24,7 +24,7 @@ const submit = () => form.submit({
 <template>
     <div>
         <form @submit.prevent="submit">
-            <label for="name">Nom du cours</label>
+            <label for="name">Nom de la section: </label>
             <input id="name" v-model="form.name" @change="form.validate('name')" />
             <div v-if="form.invalid('name')">
                 {{ form.errors.name }}
@@ -33,7 +33,7 @@ const submit = () => form.submit({
                 class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full">
                 Enregistrer modifications
             </button>
-            <a class="font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
+            <a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
                 :href="route('sections.index')">Annuler</a>
         </form>
     </div>

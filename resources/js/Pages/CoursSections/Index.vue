@@ -13,12 +13,15 @@ const props = defineProps(['sections', 'courses', 'coursesBySection', 'courseSec
 let coursList = props.courses;
 let coursArray = [];
 let confirmEntryDelete = ref(false);
+let courseDelete = ref(null);
+let sectionDelete = ref(null);
 
 function confirmingEntryDeletion(entryC, entryS) {
-    deleteForm.idS = entryS;
-    deleteForm.idC = entryC;
+    courseDelete.value = entryC.name;
+    sectionDelete.value = entryS.name;
+    deleteForm.idS = entryS.id;
+    deleteForm.idC = entryC.id;
     confirmEntryDelete.value = true;
-    console.log(deleteForm.idC);
 };
 
 const closeModal = () => {
@@ -92,10 +95,10 @@ let add = ref(false);
                         <li class="flex justify-start items-center px-[30%] border-2" v-for="course in coursList"
                             :key="course.id">
 
-                            <input class="mr-4" type="checkbox" name="course" id="course" :value="course.id"
-                                v-model="form.course[course.id]" />
+                            <input class="mr-4 cursor-pointer" type="checkbox" name="course" :id="course.id"
+                                :value="course.id" v-model="form.course[course.id]" />
 
-                            {{ course.name }}
+                            <label class="cursor-pointer" :for="course.id">{{ course.name }}</label>
 
                         </li>
                     </ul>
@@ -112,29 +115,30 @@ let add = ref(false);
                             <li class="flex justify-between items-center w-[200px] text-sm font-normal ml-4 pl-1 bg-white my-4"
                                 v-for="courseSection in coursesBySection[sectionCourse.id]">{{
                                     courseSection.id + ". " + courseSection.name
-                                }}<a class="font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
-                                    @click="confirmingEntryDeletion(courseSection.id, sectionCourse.id)">Delete</a>
+                                }}<a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
+                                    @click="confirmingEntryDeletion(courseSection, sectionCourse)">Delete</a>
                             </li>
                         </ul>
                     </li>
                 </ul>
                 <DialogModal :show="confirmEntryDelete" @close="closeModal">
                     <template #title>
-                        Delete Entry
+                        Retirer le cours de la section
                     </template>
 
                     <template #content>
-                        Are you sure you want to delete this entry ?{{ deleteForm.idS + " - " + deleteForm.idC }}
+                        Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
+                            sectionDelete }} ?
                     </template>
 
                     <template #footer>
                         <SecondaryButton @click="closeModal">
-                            Cancel
+                            Annuler
                         </SecondaryButton>
 
                         <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
                             :disabled="deleteForm.processing" @click="deleteEntry">
-                            Delete Entry
+                            Supprimer cours de section
                         </DangerButton>
                     </template>
                 </DialogModal>
