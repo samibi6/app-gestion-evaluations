@@ -17,8 +17,4 @@ class Criteria extends Model
     {
         return $this->belongsTo(Aptitude::class);
     }
-     public function indicators()
-    {
-        return $this->hasMany(CriteriaStudent::class);
-    }
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('proficiencies', function (Blueprint $table) {
             $table->id();
             $table->text('criteria_skill');
-            $table->text('indicator_skill');
+            $table->text('indicator');
             $table->timestamps();
         });
     }

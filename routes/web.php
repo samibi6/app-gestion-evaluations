@@ -4,6 +4,7 @@
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSectionController;
+use App\Http\Controllers\CourseStudentController;
 use App\Http\Controllers\SectionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -75,4 +76,11 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::get('/cours/{course}/edit', [CourseController::class, 'edit'])->name('courses.edit');
     Route::patch('/cours/{course}', [CourseController::class, 'update'])->name('courses.update');
     Route::delete('/cours/{course}', [CourseController::class, 'delete'])->name('courses.delete');
+});
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/coursStudents', [CourseStudentController::class, 'index'])->name('courseStudents.index');
+    Route::post('/coursStudents', [CourseStudentController::class, 'store'])->name('courseStudents.store');
+    // Route::put('/coursSections/{Section}', [CourseSectionController::class, 'status'])->name('coursSections.status');
+    Route::delete('/coursStudents', [CourseStudentController::class, 'delete'])->name('courseStudents.delete');
 });
