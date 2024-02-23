@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('criterias', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->text('description');
-            //$table->text('indicator');
-            //$table->unsignedTinyInteger('score');
             $table->timestamps();
         });
     }

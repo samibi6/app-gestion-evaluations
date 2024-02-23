@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proficiencies', function (Blueprint $table) {
+        Schema::create('indicators', function (Blueprint $table) {
             $table->id();
-            $table->text('criteria_skill');
-            $table->text('indicator_skill');
+            $table->text('description');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proficiencies');
+        Schema::dropIfExists('indicators');
     }
 };

@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class CourseStudent extends Model
 {
     use HasFactory;
-    public function courses()
+    public function course()
     {
         return $this->belongsTo(Course::class);
     }
-    public function students()
+    public function student()
     {
         return $this->belongsTo(Student::class);
     }

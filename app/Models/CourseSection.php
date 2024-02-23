@@ -10,11 +10,11 @@ class CourseSection extends Model
     use HasFactory;
     protected $fillable = ['course_id', 'section_id'];
 
-    public function courses()
+    public function course()
     {
         return $this->belongsTo(Course::class);
     }
-    public function sections()
+    public function section()
     {
         return $this->belongsTo(Section::class);
     }

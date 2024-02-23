@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Proficiency;
+use App\Models\Indicator;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ProficiencySeeder extends Seeder
+class IndicatorSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Proficiency::factory(15)
+        Indicator::factory(25)
         ->create();
     }
 }

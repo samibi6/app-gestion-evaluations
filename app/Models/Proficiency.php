@@ -15,4 +15,8 @@ class Proficiency extends Model
     {
         return $this->belongsTo(Course::class);
     }
+    public function proficiencyStudents()
+    {
+        return $this->hasMany(ProficiencyStudent::class);
+    }
 }

@@ -11,11 +11,11 @@ class Section extends Model
 
     protected $fillable = ['name'];
 
-    public function courseSection()
+    public function courseSections()
     {
         return $this->hasMany(CourseSection::class);
     }
-    public function sectionStudent()
+    public function sectionStudents()
     {
         return $this->hasMany(SectionStudent::class);
     }

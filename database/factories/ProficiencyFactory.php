@@ -17,7 +17,8 @@ class ProficiencyFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'criteria_skill' => $this->faker->realTextBetween($minNbChars = 100, $maxNbChars = 400),
+            'indicator_skill' => $this->faker->realTextBetween($minNbChars = 100, $maxNbChars = 400),
         ];
     }
 }
