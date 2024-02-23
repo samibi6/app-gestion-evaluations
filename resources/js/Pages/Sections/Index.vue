@@ -52,43 +52,44 @@ const deleteSection = () => {
 </script>
 <template>
     <AppLayout>
-        <div>
+        <div class="bg-white w-fit mx-auto p-5">
             <form @submit.prevent="submit">
-                <label for="name">Nom de la section</label>
+                <label class="mr-2" for="name">Nom de la section: </label>
                 <input id="name" v-model="form.name" @change="form.validate('name')" />
                 <div v-if="form.invalid('name')">
                     {{ form.errors.name }}
                 </div>
                 <button :disabled="form.processing" type="submit"
-                    class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full">
+                    class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full ml-3">
                     Ajouter la section
                 </button>
             </form>
             <div v-if="message">{{ message }}</div>
             <ul>
-                <li v-for="section in    sections   ">{{ section.name }}<a
-                        class="font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
+                <li class="bg-zinc-200 my-3 flex justify-center items-center pl-4" v-for="section in sections">{{
+                    section.id + ". " + section.name
+                }}<a class="ml-auto cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
                         @click="confirmingSectionDeletion(section)">Delete</a><a
-                        class="font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition h-full inline-block px-4 py-2"
+                        class="cursor-pointer font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition h-full inline-block px-4 py-2"
                         :href="route('sections.edit', section)">Modifier</a></li>
             </ul>
             <DialogModal :show="confirmSectionDelete" @close="closeModal">
                 <template #title>
-                    Delete Section
+                    Suppression de la Section
                 </template>
 
                 <template #content>
-                    Are you sure you want to delete this section ?{{ sectionToDelete.name }}
+                    Êtes-vous sûr de vouloir supprimer la section {{ sectionToDelete.name }} ?
                 </template>
 
                 <template #footer>
                     <SecondaryButton @click="closeModal">
-                        Cancel
+                        Annuler
                     </SecondaryButton>
 
                     <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }" :disabled="deleteForm.processing"
                         @click="deleteSection">
-                        Delete Section
+                        Supprimer la section
                     </DangerButton>
                 </template>
             </DialogModal>
