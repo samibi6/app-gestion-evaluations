@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CourseSection extends Model
+class Proficiency extends Model
 {
     use HasFactory;
-    protected $fillable = ['course_id', 'section_id'];
+
+    protected $fillable = ['criteria', 'indicator', 'score'];
 
     public function course()
     {
         return $this->belongsTo(Course::class);
     }
-    public function section()
+    public function proficiencyStudents()
     {
-        return $this->belongsTo(Section::class);
+        return $this->hasMany(ProficiencyStudent::class);
     }
 }

@@ -11,25 +11,26 @@ class Course extends Model
 
     protected $fillable = ['name', 'code'];
 
-    public function courseSection()
+    public function courseSections()
     {
         return $this->hasMany(CourseSection::class);
     }
-    public function courseStudent()
+    public function courseStudents()
     {
         return $this->hasMany(CourseStudent::class);
     }
-    public function courseUser()
+    public function courseUsers()
     {
         return $this->hasMany(CourseUser::class);
     }
     public function aptitudes()
     {
         return $this->hasMany(Aptitude::class);
-
-
-
-        }
+ }
+    public function proficiencies()
+    {
+        return $this->hasMany(Proficiency::class);
+ }
     }
 
 

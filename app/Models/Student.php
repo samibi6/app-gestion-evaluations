@@ -11,16 +11,20 @@ class Student extends Model
 
     protected $fillable = ['last_name', 'first_name'];
 
-    public function courseSection()
+    public function courseSections()
     {
         return $this->hasMany(CriteriaStudent::class);
     }
-    public function courseStudent()
+    public function courseStudents()
     {
         return $this->hasMany(CourseStudent::class);
     }
-    public function sectionStudent()
+    public function sectionStudents()
     {
         return $this->hasMany(SectionStudent::class);
+    }
+    public function proficiencyStudents()
+    {
+        return $this->hasMany(ProficiencyStudent::class);
     }
 }
