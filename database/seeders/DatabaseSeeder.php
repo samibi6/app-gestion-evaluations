@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\CourseSection;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -27,7 +26,6 @@ class DatabaseSeeder extends Seeder
             CriteriaSeeder::class,
             SectionSeeder::class,
             StudentSeeder::class,
-            IndicatorSeeder::class,
             ProficiencySeeder::class,
 
             CourseStudentSeeder::class,
