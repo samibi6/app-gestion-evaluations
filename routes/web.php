@@ -5,6 +5,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\CourseStudentController;
+use App\Http\Controllers\InviteController;
 use App\Http\Controllers\SectionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -52,6 +53,11 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::patch('/students/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/students/{student}', [StudentController::class, 'delete'])->name('students.delete');
+});
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/invites', [InviteController::class, 'index'])->name('invites.index');
+    Route::post('/invites', [InviteController::class, 'store'])->name('invites.store');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
