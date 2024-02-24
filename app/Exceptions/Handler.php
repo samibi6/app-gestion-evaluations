@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Inertia\Inertia;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,6 +26,17 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (Throwable $e, $request) {
+            if ($e instanceof InviteException) {
+                return Inertia::render('Auth/Register', ['error' => $e->getMessage()]);
+            }
+
+            // You can add more custom exception handling logic here...
+
+            // Fallback to the default error handling
+            return parent::render($request, $e);
         });
     }
 }
