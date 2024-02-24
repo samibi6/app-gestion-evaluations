@@ -17,6 +17,7 @@ class CourseStudentController extends Controller
 {
     public function index(Request $request)
     {
+        
         $sections = Section::get();
         $courses = Course::get();
         $students = Student::get();
@@ -59,6 +60,7 @@ class CourseStudentController extends Controller
 
     public function store(CourseStudentStoreRequest $request)
     {
+        dd($request->validated());
         foreach ($request->validated()['student'] as $id => $value) {
             
             $courseStudent = CourseStudent::make();
@@ -82,14 +84,14 @@ class CourseStudentController extends Controller
     }
 
 
-   /* public function delete(Request $request)
+    public function delete(Request $request)
     {
         $validatedData = $request->validate([
-            'idC' => 'required|integer', // Validation rules for idC
-            'idS' => 'required|integer', // Validation rules for idS
+            'idStudent' => 'required|integer', 
+            'idCourse' => 'required|integer', 
         ]);
-        $entry = CourseSection::where('course_id', $request['idC'])->where('section_id', $request['idS'])->firstOrFail();
+        $entry = CourseStudent::where('student_id', $request['idStudent'])->where('course_id', $request['idCourse'])->firstOrFail();
         $entry->delete();
-        return redirect()->route('coursSections.index')->with('success', 'Entry deleted successfully');
-    }*/
+        return redirect()->route('courseStudents.index')->with('success', 'Entry deleted successfully');
+    }
 }
