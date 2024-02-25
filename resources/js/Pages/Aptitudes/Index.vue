@@ -16,44 +16,73 @@ import { ref, watch } from "vue";
 
 const props = defineProps(['sections', 'courses', 'coursesBySections', 'aptitudesByCourses', 'criteriasByAptitudes']);
 
-const form = usePrecognitionForm("post", route("aptitudes.store"), {
-    aptitude: [],
-    course: [],
-    criteria: [],
+const aptitudeForm = usePrecognitionForm("post", route("aptitudes.storeAptitude"), {
+    aptitude_description: '',
+    course: '',
+
+});
+const criteriaForm = usePrecognitionForm("post", route("aptitudes.storeCriteria"), {
+    criteria_description: '',
+    aptitude: '',
 });
 
-form.setValidationTimeout(300);
-
-
-
-
-const submit = () => form.submit({
-    preserveScroll: true,
-    onSuccess: () => form.reset(),
-});
-
+/*const form = usePrecognitionForm("post", route("aptitudes.store"), {
+    aptitude: '',
+    aptitude_description: '',
+    course: '',
+    criteria_description: ''
+});*/
 
 const selectedSection = ref(null);
 
 const handleSectionChange = (event) => {
     const newSectionId = event.target.value;
-    form.course = [];
-
+    aptitudeForm.course = '';
 };
 
-/*watch(() => form.course, (newValue) => {
-    if (!newValue || !props.coursesBySections[newValue] || props.coursesBySections[newValue].length === 0) {
-        form.course = '';
+const submitAptitude = () => {
+    if (aptitudeForm.aptitude_description && aptitudeForm.aptitude_description !== '') {
+        const selectedCourse = aptitudeForm.course;
+        aptitudeForm.submit({
+            preserveScroll: true,
+            onSuccess: () => {
+                aptitudeForm.reset();
+                aptitudeForm.course = selectedCourse;
+            },
+            onError: (errors) => {
+                console.error(errors);
+            }
+        });
+    } else {
+        console.error("Aptitude description cannot be empty.");
     }
-});*/
-/*console.log(props.aptitudesByCourses[10]);
-console.log(props.criteriasByAptitudes[2]);*/
+};
+
+const newCriteria = ref({});
+
+const submitCriteria = (aptitudeId) => {
+    const criteriaDescription = newCriteria.value[aptitudeId];
+    if (criteriaDescription && criteriaDescription.trim() !== '') {
+        criteriaForm.criteria_description = criteriaDescription;
+        criteriaForm.aptitude = aptitudeId;
+        criteriaForm.submit({
+            preserveScroll: true,
+            onSuccess: () => {
+                newCriteria.value[aptitudeId] = '';
+            },
+            onError: (errors) => {
+                console.error(errors);
+            }
+        });
+    } else {
+        console.error("Criteria description cannot be empty.");
+    }
+};
+
 </script>
+
 <template>
     <div>
-
-
-
         <label for="section">Section du cours</label>
         <select id="section" v-model="selectedSection" @change="handleSectionChange">
             <option :value="null">Toutes les sections</option>
@@ -61,9 +90,8 @@ console.log(props.criteriasByAptitudes[2]);*/
         </select>
         <br><br>
 
-
         <label for="course">Cours</label>
-        <select name="course" id="course" v-model="form.course">
+        <select name="course" id="course" v-model="aptitudeForm.course">
             <option v-if="!selectedSection" v-for="course in courses" :key="course.id" :value="course.id">
                 {{ course.name }}
             </option>
@@ -77,37 +105,43 @@ console.log(props.criteriasByAptitudes[2]);*/
         </select>
         <br><br><br>
 
-        <div v-if="form.course && aptitudesByCourses[form.course] && aptitudesByCourses[form.course].length">
-            <h2 class="font-bold">Liste des AA du cours</h2>
-            <ul v-for="(aptitude, index) in aptitudesByCourses[form.course]" :key="aptitude.id">
+        <div v-if="aptitudeForm.course !== ''">
+            <form @submit.prevent="submitAptitude">
+                <label for="aptitude">Nouvel AA:</label><br>
+                <textarea id="aptitude" v-model="aptitudeForm.aptitude_description"></textarea><br>
+                <button type="submit" class="bg-green-500 hover:bg-green-600 p-2">Ajouter l'AA</button>
+            </form>
+        </div>
 
+        <div
+            v-if="aptitudeForm.course && aptitudesByCourses[aptitudeForm.course] && aptitudesByCourses[aptitudeForm.course].length">
+            <h2 class="font-bold">Liste des AA du cours</h2>
+            <ul v-for="(aptitude, index) in aptitudesByCourses[aptitudeForm.course]" :key="aptitude.id">
                 <br><br>
                 <li>
-                    AA {{
-                        index + 1 }}: <br> {{ aptitude.description }}
+                    AA {{ index + 1 }}: <br> {{ aptitude.description }}
                     <br><br>
-
                 </li>
+                <form @submit.prevent="submitCriteria(aptitude.id)">
+                    <label for="criteria">Nouveau critère:</label><br>
+                    <textarea id="criteria" v-model="newCriteria[aptitude.id]"></textarea><br>
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 p-2">Ajouter le critère</button>
+                </form>
                 <li>
                     Critères de l'AA : <br><br>
-                    <span v-for="(criteria, index) in criteriasByAptitudes[aptitude.id]" :key="criteria.id"> Critère {{
-                        index + 1 }}: {{ criteria.description }}<br>
-                        <br></span>
+                    <span v-for="(criteria, index) in criteriasByAptitudes[aptitude.id]" :key="criteria.id"> Critère
+                        {{
+                            index + 1 }}: {{ criteria.description }}<br><br></span>
                     --------------------<br>
                 </li>
             </ul>
         </div>
-        <div v-else-if="form.course && !aptitudesByCourses[form.course]">
-
+        <div v-else-if="aptitudeForm.course == '' && !aptitudesByCourses[aptitudeForm.course]">
             <p>Veuillez choisir un cours</p>
-
         </div>
-
-        <div v-else>
-
+        <div v-else-if="aptitudeForm.course !== ''">
             <p>Pas encore d'AA pour ce cours</p>
-
-
         </div>
     </div>
+    <!--{{ criteriaForm }} -->
 </template>

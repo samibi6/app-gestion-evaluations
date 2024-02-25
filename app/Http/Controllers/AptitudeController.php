@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AptitudeStoreRequest;
 use App\Http\Requests\CourseStoreRequest;
 use App\Http\Requests\CourseUpdateRequest;
+use App\Http\Requests\CriteriaStoreRequest;
 use App\Models\Aptitude;
 use App\Models\Course;
 use App\Models\CourseSection;
@@ -12,13 +14,14 @@ use App\Models\Criteria;
 use App\Models\Section;
 use App\Models\User;
 use Database\Factories\AptitudeFactory;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class AptitudeController extends Controller
 {
     public function index()
-{
+    {
 
     //faudrait combiner ces queries de manière efficace, et peut-être même combiner les props ?
     $courses = Course::get();
@@ -53,6 +56,43 @@ class AptitudeController extends Controller
         'criteriasByAptitudes' => $criteriasByAptitudes,
     ]);
 }
+
+
+    public function storeAptitude(AptitudeStoreRequest $request)
+    {    
+        
+        $aptitude = Aptitude::make([
+            'description' => $request->validated()['aptitude_description'],
+            'course_id' => $request->validated()['course']
+        ]);
+       
+        $aptitude->save();
+        return redirect()->back();
+    }
+
+    public function storeCriteria(CriteriaStoreRequest $request)
+     {
+        $criteria = Criteria::make([
+            'description' => $request->validated()['criteria_description'],
+            'aptitude_id' => $request->validated()['aptitude'],
+        ]);
+        $criteria->save();
+        return redirect()->back();
+     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /*   public function store(CourseStoreRequest $request)
 {

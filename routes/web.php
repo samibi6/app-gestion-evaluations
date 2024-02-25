@@ -94,7 +94,7 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
     Route::get('/acquis', [AptitudeController::class, 'index'])->name('aptitudes.index');
-    Route::post('/acquis', [AptitudeController::class, 'store'])->name('aptitudes.store');
-    // Route::put('/coursSections/{Section}', [CourseSectionController::class, 'status'])->name('coursSections.status');
-    Route::delete('/coursStudents', [CourseStudentController::class, 'delete'])->name('courseStudents.delete');
+    Route::post('/acquis/storeAptitude', [AptitudeController::class, 'storeAptitude'])->name('aptitudes.storeAptitude');
+    
+    Route::post('/acquis/storeCriteria', [AptitudeController::class, 'storeCriteria'])->name('aptitudes.storeCriteria');
 });
