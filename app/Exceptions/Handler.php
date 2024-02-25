@@ -25,18 +25,20 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
         });
 
-        $this->renderable(function (Throwable $e, $request) {
-            if ($e instanceof InviteException) {
-                return Inertia::render('Auth/Register', ['error' => $e->getMessage()]);
-            }
+        // $this->renderable(function (Throwable $e, $request) {
+        //     if ($e instanceof InviteException) {
+        //         return Inertia::render('Auth/Register', ['error' => $e->getMessage()]);
+        //     } else {
+        //         return Inertia::render('Auth/Register', ['error' => $e->getMessage()]);
+        //         return parent::render($request, $e);
+        //     }
 
-            // You can add more custom exception handling logic here...
+        //     // You can add more custom exception handling logic here...
 
-            // Fallback to the default error handling
-            return parent::render($request, $e);
-        });
+        //     // Fallback to the default error handling
+        //     return parent::render($request, $e);
+        // });
     }
 }
