@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('criteria_skill');
             $table->text('indicator');
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

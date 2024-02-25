@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('criterias', function (Blueprint $table) {
             $table->id();
             $table->text('description');
+            $table->foreignId('aptitude_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

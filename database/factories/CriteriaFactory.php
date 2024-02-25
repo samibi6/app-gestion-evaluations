@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Aptitude;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class CriteriaFactory extends Factory
     public function definition(): array
     {
         return [
-            'description' => $this->faker->realTextBetween($minNbChars = 100, $maxNbChars = 400),
+            'description' => $this->faker->realTextBetween($minNbChars = 80, $maxNbChars = 200),
+            'aptitude_id' => Aptitude::get()->random()->id,
         ];
     }
 }
