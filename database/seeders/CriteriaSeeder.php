@@ -13,7 +13,7 @@ class CriteriaSeeder extends Seeder
      */
     public function run(): void
     {
-        Criteria::factory(15)
+        Criteria::factory(30)
         ->create();
     }
 }

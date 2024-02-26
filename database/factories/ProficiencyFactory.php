@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +18,9 @@ class ProficiencyFactory extends Factory
     public function definition(): array
     {
         return [
-            'criteria_skill' => $this->faker->realTextBetween($minNbChars = 100, $maxNbChars = 400),
-            'indicator' => $this->faker->realTextBetween($minNbChars = 100, $maxNbChars = 400),
+            'criteria_skill' => $this->faker->realTextBetween($minNbChars = 80, $maxNbChars = 200),
+            'indicator' => $this->faker->realTextBetween($minNbChars = 80, $maxNbChars = 200),
+            'course_id' => Course::get()->random()->id,
         ];
     }
 }

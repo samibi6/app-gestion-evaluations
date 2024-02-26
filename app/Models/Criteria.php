@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Criteria extends Model
 {
     use HasFactory;
+    protected $fillable = ['description', 'aptitude_id'];
 
     public function courseSections()
     {

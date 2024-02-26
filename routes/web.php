@@ -1,12 +1,13 @@
 <?php
 
-
+use App\Http\Controllers\AptitudeController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\CourseStudentController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\SectionController;
+use App\Models\Aptitude;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -89,4 +90,11 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::post('/coursStudents', [CourseStudentController::class, 'store'])->name('courseStudents.store');
     // Route::put('/coursSections/{Section}', [CourseSectionController::class, 'status'])->name('coursSections.status');
     Route::delete('/coursStudents', [CourseStudentController::class, 'delete'])->name('courseStudents.delete');
+});
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/acquis', [AptitudeController::class, 'index'])->name('aptitudes.index');
+    Route::post('/acquis/storeAptitude', [AptitudeController::class, 'storeAptitude'])->name('aptitudes.storeAptitude');
+    
+    Route::post('/acquis/storeCriteria', [AptitudeController::class, 'storeCriteria'])->name('aptitudes.storeCriteria');
 });

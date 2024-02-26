@@ -12,8 +12,6 @@ import TextInput from "@/Components/TextInput.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
 import { useForm } from "@inertiajs/vue3";
-
-
 import { ref } from "vue";
 
 const props = defineProps(['courses', 'users', 'sections', 'sectionsByCourses', 'usersByCourses']);

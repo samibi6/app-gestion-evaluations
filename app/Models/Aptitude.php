@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Aptitude extends Model
 {
     use HasFactory;
+    protected $fillable = ['description', 'course_id'];
     public function criterias()
     {
         return $this->hasMany(Criteria::class);
