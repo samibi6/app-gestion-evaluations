@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('proficiencies', function (Blueprint $table) {
             $table->id();
             $table->text('criteria_skill');
-            $table->text('indicator');
+            $table->text('indicator')->nullable();
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

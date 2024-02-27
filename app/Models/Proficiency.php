@@ -9,7 +9,7 @@ class Proficiency extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['criteria', 'indicator', 'score'];
+    protected $fillable = ['criteria_skill', 'indicator', 'course_id'];
 
     public function course()
     {

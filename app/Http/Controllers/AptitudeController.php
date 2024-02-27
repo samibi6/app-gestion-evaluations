@@ -6,11 +6,14 @@ use App\Http\Requests\AptitudeStoreRequest;
 use App\Http\Requests\AptitudeUpdateRequest;
 use App\Http\Requests\CriteriaStoreRequest;
 use App\Http\Requests\CriteriaUpdateRequest;
+use App\Http\Requests\ProficiencyStoreRequest;
+use App\Http\Requests\ProficiencyUpdateRequest;
 use App\Models\Aptitude;
 use App\Models\Course;
 use App\Models\CourseSection;
 use App\Models\CourseUser;
 use App\Models\Criteria;
+use App\Models\Proficiency;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Auth\Events\Validated;
@@ -26,13 +29,14 @@ class AptitudeController extends Controller
     $courses = Course::get();
     $sections = Section::get();
     $aptitudes = Aptitude::get();
+    $proficiencies = Proficiency::get();
+    
     $coursesBySections = Section::join('course_sections', 'sections.id', '=', 'course_sections.section_id')
         ->join('courses', 'courses.id', '=', 'course_sections.course_id')
         ->select('sections.id as section-id', 'courses.*')
         ->get()
         ->groupBy('section-id');
         
-        $courses = Course::get();
         $aptitudesByCourses = [];
         
         foreach ($courses as $course) {
@@ -40,10 +44,12 @@ class AptitudeController extends Controller
         }
 
         foreach ($aptitudes as $aptitude) {
-            $criteriasByAptitudes[$aptitude->id] = $aptitude->criterias()->get();
-            
+            $criteriasByAptitudes[$aptitude->id] = $aptitude->criterias()->get();    
         }
         
+        foreach ($courses as $course) {
+            $proficienciesByCourses[$course->id] = $course->proficiencies()->get();
+        }
         
    
 
@@ -53,6 +59,7 @@ class AptitudeController extends Controller
         'coursesBySections' => $coursesBySections,
         'aptitudesByCourses' =>  $aptitudesByCourses,
         'criteriasByAptitudes' => $criteriasByAptitudes,
+        'proficienciesByCourses' => $proficienciesByCourses,
     ]);
 }
 
@@ -113,6 +120,38 @@ class AptitudeController extends Controller
           $criteria->delete();
   
           session()->flash('flash.banner', 'Le critère a bien été supprimé.');
+        
+          return redirect()->back();
+     }
+
+     public function storeProficiency(ProficiencyStoreRequest $request)
+     {
+       // dd($request->validated());
+        $proficiency = Proficiency::make([
+            'criteria_skill' => $request->validated()['criteria_skill'],
+            'indicator' => $request->validated()['indicator'],
+            'course_id' => $request->validated()['course']
+        ]);
+        $proficiency->save();
+        return redirect()->back();
+     }
+
+     public function updateProficiency(ProficiencyUpdateRequest $request, Proficiency $proficiency){
+
+        $proficiency->update([
+            'criteria_skill' => $request->validated()['criteria_skill'],        
+            'indicator' => $request->validated()['indicator'],        
+        ]);
+
+        $request->session()->flash('flash.banner', 'Le critère de maitrise et son indicateur ont bien été modifiés.');
+        return redirect()->back();
+        
+     }
+     public function deleteProficiency(Proficiency $proficiency){
+    
+          $proficiency->delete();
+  
+          session()->flash('flash.banner', 'Le critère de maitrise et son indicateur ont bien été supprimés.');
         
           return redirect()->back();
      }

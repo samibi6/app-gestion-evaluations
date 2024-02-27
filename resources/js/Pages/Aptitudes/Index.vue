@@ -14,7 +14,7 @@ import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia
 import { useForm } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
 
-const props = defineProps(['sections', 'courses', 'coursesBySections', 'aptitudesByCourses', 'criteriasByAptitudes']);
+const props = defineProps(['sections', 'courses', 'coursesBySections', 'aptitudesByCourses', 'criteriasByAptitudes', 'proficienciesByCourses']);
 
 const aptitudeForm = usePrecognitionForm("post", route("aptitudes.storeAptitude"), {
     aptitude_description: '',
@@ -138,9 +138,9 @@ const cancelCriteriaEditMode = (criteria) => {
 };
 
 const updateCriteria = (criteria) => {
-    const CritUpdform = updateCriteriaForm(criteria); // Use criteria.id instead of criteria
+    const CritUpdform = updateCriteriaForm(criteria);
     CritUpdform.criteria_description = criteria.updatedDescription;
-    CritUpdform.criteria = criteria.id; // Use CritUpdform.criteria instead of CritUpd.criteria
+    CritUpdform.criteria = criteria.id;
 
     CritUpdform.submit({
         preserveScroll: true,
@@ -153,7 +153,7 @@ const updateCriteria = (criteria) => {
         }
     });
 };
-/*placeholder delete logic*/
+
 const confirmingAptitudeDeletion = ref(false);
 const aptitudeIdToDelete = ref(null);
 const formDeleteAptitude = useForm("delete", {});
@@ -197,6 +197,101 @@ const deleteCriteria = () => {
         preserveScroll: true,
         onSuccess: () => {
             confirmingCriteriaDeletion.value = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+const proficiencyForm = usePrecognitionForm("post", route("aptitudes.storeProficiency"), {
+    criteria_skill: '',
+    indicator: '',
+    course: '',
+});
+
+const proficiencyFormSubmitted = ref(false);
+
+const submitProficiency = () => {
+
+    if (proficiencyForm.criteria_skill && proficiencyForm.criteria_skill.trim() !== '') {
+
+
+        const selectedCourse = aptitudeForm.course;
+
+        proficiencyForm.course = selectedCourse;
+
+
+        proficiencyForm.submit({
+            preserveScroll: true,
+            onSuccess: () => {
+
+                proficiencyForm.criteria_skill = '';
+                proficiencyForm.indicator = '';
+
+
+                proficiencyFormSubmitted.value = false;
+            },
+            onError: (errors) => {
+                console.error(errors);
+            }
+        });
+    } else {
+
+        proficiencyFormSubmitted.value = true;
+    }
+};
+
+const updateProficiencyForm = (proficiency) => usePrecognitionForm("patch", route("aptitudes.updateProficiency", { proficiency }), {
+    criteria_skill: proficiency.criteria_skill,
+    indicator: proficiency.indicator,
+});
+
+const toggleProficiencyEditMode = (proficiency) => {
+    proficiency.editMode = true;
+    proficiency.updatedCriteriaSkill = proficiency.criteria_skill;
+    proficiency.updatedIndicator = proficiency.indicator;
+};
+
+
+const cancelProficiencyEditMode = (proficiency) => {
+    proficiency.editMode = false;
+};
+
+const updateProficiency = (proficiency) => {
+    const proficiencyUpdateForm = updateProficiencyForm(proficiency);
+    proficiencyUpdateForm.criteria_skill = proficiency.updatedCriteriaSkill;
+    proficiencyUpdateForm.indicator = proficiency.updatedIndicator;
+
+    proficiencyUpdateForm.submit({
+        preserveScroll: true,
+        onSuccess: () => {
+            proficiency.editMode = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+const confirmingProficiencyDeletion = ref(false);
+const proficiencyIdToDelete = ref(null);
+const formDeleteProficiency = useForm("delete", {});
+
+const confirmProficiencyDeletion = (proficiencyId) => {
+    proficiencyIdToDelete.value = proficiencyId;
+    confirmingProficiencyDeletion.value = true;
+};
+
+const closeProficiencyModal = () => {
+    confirmingProficiencyDeletion.value = false;
+};
+
+const deleteProficiency = () => {
+    formDeleteProficiency.delete(route("aptitudes.deleteProficiency", proficiencyIdToDelete.value), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingProficiencyDeletion.value = false;
         },
         onError: (errors) => {
             console.error(errors);
@@ -303,6 +398,79 @@ const deleteCriteria = () => {
             <p>Pas encore d'AA pour ce cours</p>
         </div>
     </div>
+
+    <div v-if="aptitudeForm.course && proficienciesByCourses[aptitudeForm.course]">
+        <h2 class="font-bold">Liste des critères de degré de maitrise du cours</h2>
+
+        <form @submit.prevent="submitProficiency" v-if="aptitudeForm.course !== ''">
+            <label for="criteria_skill">Proficiency Criteria:</label><br>
+            <textarea id="criteria_skill" v-model="proficiencyForm.criteria_skill"></textarea>
+            <div v-if="proficiencyFormSubmitted && !proficiencyForm.criteria_skill.trim()">
+                Proficiency Criteria is required.
+            </div>
+            <br>
+
+            <label for="indicator">Indicator:</label><br>
+            <textarea id="indicator" v-model="proficiencyForm.indicator"></textarea>
+            <br>
+
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 p-2">Add Proficiency</button>
+        </form>
+
+
+        <ul v-for="(proficiency, index) in proficienciesByCourses[aptitudeForm.course]" :key="proficiency.id">
+            <br><br>
+            <li>
+                <template v-if="!proficiency.editMode">
+                    Critère de maîtrise {{ index + 1 }}: <br> {{ proficiency.criteria_skill }}
+                </template>
+                <template v-else>
+                    <input type="text" v-model="proficiency.updatedCriteriaSkill">
+                </template>
+
+                <button @click="toggleProficiencyEditMode(proficiency)"
+                    class="bg-orange-500 hover:bg-orange-600">Edit</button>
+                <button @click="confirmProficiencyDeletion(proficiency.id)"
+                    class="bg-red-500 hover:bg-red-600">Delete</button>
+                <br><br>
+            </li>
+            <li>
+                <template v-if="!proficiency.editMode">
+                    Indicateur de maîtrise {{ index + 1 }}: <br> {{ proficiency.indicator }}
+                </template>
+                <template v-else>
+                    <input type="text" v-model="proficiency.updatedIndicator">
+                </template>
+            </li>
+            <div v-if="proficiency.editMode">
+                <form @submit.prevent="updateProficiency(proficiency)">
+                    <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
+                    <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
+                        @click="cancelProficiencyEditMode(proficiency)">Cancel</button>
+                </form>
+            </div>
+        </ul>
+
+
+    </div>
+
+    <DialogModal :show="confirmingProficiencyDeletion" @close="closeProficiencyModal">
+        <template #title> Supprimer le critère de maitrise et son indicateur </template>
+        <template #content>
+            Êtes-vous sûr de vouloir supprimer ce critère de maitrise ainsi que son indicateur? Cette action est
+            irréversible.
+        </template>
+        <template #footer>
+            <SecondaryButton @click="closeProficiencyModal"> Annuler </SecondaryButton>
+            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingProficiencyDeletion.processing }"
+                :disabled="confirmingProficiencyDeletion.processing" @click="deleteProficiency">
+                Supprimer
+            </DangerButton>
+        </template>
+    </DialogModal>
+
+
+
     <DialogModal :show="confirmingAptitudeDeletion" @close="closeAptitudeModal">
         <template #title> Supprimer l'AA </template>
 
