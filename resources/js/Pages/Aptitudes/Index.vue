@@ -25,6 +25,12 @@ const criteriaForm = usePrecognitionForm("post", route("aptitudes.storeCriteria"
     criteria_description: '',
     aptitude: '',
 });
+
+const updateAptitudeForm = (aptitude) => usePrecognitionForm("put", route("aptitudes.updateAptitude", { aptitude }), {
+    aptitude_description: '',
+    aptitude: '',
+});
+
 /*aptitudeForm.setValidationTimeout(300);
 criteriaForm.setValidationTimeout(300);*/
 /*const form = usePrecognitionForm("post", route("aptitudes.store"), {
@@ -89,7 +95,35 @@ const submitCriteria = (aptitudeId) => {
         criteriaFormSubmitted.value[aptitudeId] = true;
         //console.log("criteriaFormSubmitted", criteriaFormSubmitted.value);
     }
+
 };
+const toggleEditMode = (aptitude) => {
+    aptitude.editMode = true;
+    aptitude.updatedDescription = aptitude.description;
+};
+
+const cancelEditMode = (aptitude) => {
+    aptitude.editMode = false;
+};
+
+const updateAptitude = (aptitude) => {
+    const form = updateAptitudeForm(aptitude); // Dynamically create form with aptitude
+    form.aptitude_description = aptitude.updatedDescription;
+    form.aptitude = aptitude.id;
+
+    form.submit({
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset();
+            aptitude.editMode = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+
 
 </script>
 
@@ -133,9 +167,17 @@ const submitCriteria = (aptitudeId) => {
             <h2 class="font-bold">Liste des AA du cours</h2>
             <ul v-for="(aptitude, index) in aptitudesByCourses[aptitudeForm.course]" :key="aptitude.id">
                 <br><br>
-                <li>
+                <li v-if="!aptitude.editMode">
                     AA {{ index + 1 }}: <br> {{ aptitude.description }}
                     <br><br>
+                    <button @click="toggleEditMode(aptitude)">Edit</button>
+                </li>
+                <li v-else>
+                    <form @submit.prevent="updateAptitude(aptitude)">
+                        <input type="text" v-model="aptitude.updatedDescription">
+                        <button type="submit">Save</button>
+                        <button @click="cancelEditMode(aptitude)">Cancel</button>
+                    </form>
                 </li>
                 <form @submit.prevent="submitCriteria(aptitude.id)">
                     <label for="criteria">Nouveau critère:</label><br>

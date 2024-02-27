@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AptitudeStoreRequest;
-use App\Http\Requests\CourseStoreRequest;
-use App\Http\Requests\CourseUpdateRequest;
+use App\Http\Requests\AptitudeUpdateRequest;
 use App\Http\Requests\CriteriaStoreRequest;
 use App\Models\Aptitude;
 use App\Models\Course;
@@ -13,7 +12,6 @@ use App\Models\CourseUser;
 use App\Models\Criteria;
 use App\Models\Section;
 use App\Models\User;
-use Database\Factories\AptitudeFactory;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -80,7 +78,16 @@ class AptitudeController extends Controller
         return redirect()->back();
      }
 
+     public function updateAptitude(AptitudeUpdateRequest $request, Aptitude $aptitude){
 
+        $aptitude->update([
+            'description' => $request->validated()['aptitude_description'],        
+        ]);
+
+        $request->session()->flash('flash.banner', 'L\'AA a bien été modifié.');
+        return redirect()->back();
+        
+     }
 
 
 
