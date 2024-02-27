@@ -31,6 +31,11 @@ const updateAptitudeForm = (aptitude) => usePrecognitionForm("put", route("aptit
     aptitude: '',
 });
 
+const updateCriteriaForm = (criteria) => usePrecognitionForm("put", route("aptitudes.updateCriteria", { criteria }), {
+    criteria_description: '',
+    criteria: '',
+});
+
 /*aptitudeForm.setValidationTimeout(300);
 criteriaForm.setValidationTimeout(300);*/
 /*const form = usePrecognitionForm("post", route("aptitudes.store"), {
@@ -107,14 +112,14 @@ const cancelEditMode = (aptitude) => {
 };
 
 const updateAptitude = (aptitude) => {
-    const form = updateAptitudeForm(aptitude); // Dynamically create form with aptitude
-    form.aptitude_description = aptitude.updatedDescription;
-    form.aptitude = aptitude.id;
+    const AptUpdform = updateAptitudeForm(aptitude);
+    AptUpdform.aptitude_description = aptitude.updatedDescription;
+    AptUpdform.aptitude = aptitude.id;
 
-    form.submit({
+    AptUpdform.submit({
         preserveScroll: true,
         onSuccess: () => {
-            form.reset();
+            AptUpdform.reset();
             aptitude.editMode = false;
         },
         onError: (errors) => {
@@ -122,6 +127,33 @@ const updateAptitude = (aptitude) => {
         }
     });
 };
+
+const toggleCriteriaEditMode = (criteria) => {
+    criteria.editMode = true;
+    criteria.updatedDescription = criteria.description;
+};
+
+const cancelCriteriaEditMode = (criteria) => {
+    criteria.editMode = false;
+};
+
+const updateCriteria = (criteria) => {
+    const CritUpdform = updateCriteriaForm(criteria); // Use criteria.id instead of criteria
+    CritUpdform.criteria_description = criteria.updatedDescription;
+    CritUpdform.criteria = criteria.id; // Use CritUpdform.criteria instead of CritUpd.criteria
+
+    CritUpdform.submit({
+        preserveScroll: true,
+        onSuccess: () => {
+            CritUpdform.reset();
+            criteria.editMode = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
 
 
 
@@ -169,14 +201,15 @@ const updateAptitude = (aptitude) => {
                 <br><br>
                 <li v-if="!aptitude.editMode">
                     AA {{ index + 1 }}: <br> {{ aptitude.description }}
+
+                    <button @click="toggleEditMode(aptitude)" class="bg-orange-500 hover:bg-orange-600">Edit</button>
                     <br><br>
-                    <button @click="toggleEditMode(aptitude)">Edit</button>
                 </li>
                 <li v-else>
                     <form @submit.prevent="updateAptitude(aptitude)">
                         <input type="text" v-model="aptitude.updatedDescription">
-                        <button type="submit">Save</button>
-                        <button @click="cancelEditMode(aptitude)">Cancel</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
+                        <button @click="cancelEditMode(aptitude)" class="bg-yellow-500 hover:bg-yellow-600">Cancel</button>
                     </form>
                 </li>
                 <form @submit.prevent="submitCriteria(aptitude.id)">
@@ -189,13 +222,25 @@ const updateAptitude = (aptitude) => {
 
                     <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 p-2">Ajouter le critère</button>
                 </form>
-                <li>
-                    Critères de l'AA : <br><br>
-                    <span v-for="(criteria, index) in criteriasByAptitudes[aptitude.id]" :key="criteria.id"> Critère
-                        {{
-                            index + 1 }}: {{ criteria.description }}<br><br></span>
-                    --------------------<br>
-                </li>
+                Critères de l'AA : <br><br>
+                <ul v-if="criteriasByAptitudes[aptitude.id] && criteriasByAptitudes[aptitude.id].length">
+                    <li v-for="(criteria, index) in criteriasByAptitudes[aptitude.id]" :key="criteria.id">
+                        <div v-if="!criteria.editMode">
+                            Critère {{ index + 1 }}: {{ criteria.description }}
+                            <button @click="toggleCriteriaEditMode(criteria)"
+                                class="bg-orange-500 hover:bg-orange-600">Edit</button>
+                            <br><br>
+                        </div>
+                        <div v-else>
+                            <form @submit.prevent="updateCriteria(criteria)">
+                                <input type="text" v-model="criteria.updatedDescription">
+                                <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
+                                <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
+                                    @click="cancelCriteriaEditMode(criteria)">Cancel</button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
             </ul>
         </div>
         <div v-else-if="aptitudeForm.course == '' && !aptitudesByCourses[aptitudeForm.course]">

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AptitudeStoreRequest;
 use App\Http\Requests\AptitudeUpdateRequest;
 use App\Http\Requests\CriteriaStoreRequest;
+use App\Http\Requests\CriteriaUpdateRequest;
 use App\Models\Aptitude;
 use App\Models\Course;
 use App\Models\CourseSection;
@@ -85,6 +86,16 @@ class AptitudeController extends Controller
         ]);
 
         $request->session()->flash('flash.banner', 'L\'AA a bien été modifié.');
+        return redirect()->back();
+        
+     }
+     public function updateCriteria(CriteriaUpdateRequest $request, Criteria $criteria){
+
+        $criteria->update([
+            'description' => $request->validated()['criteria_description'],        
+        ]);
+
+        $request->session()->flash('flash.banner', 'Le critère a bien été modifié.');
         return redirect()->back();
         
      }
