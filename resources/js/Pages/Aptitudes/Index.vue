@@ -25,7 +25,8 @@ const criteriaForm = usePrecognitionForm("post", route("aptitudes.storeCriteria"
     criteria_description: '',
     aptitude: '',
 });
-
+/*aptitudeForm.setValidationTimeout(300);
+criteriaForm.setValidationTimeout(300);*/
 /*const form = usePrecognitionForm("post", route("aptitudes.store"), {
     aptitude: '',
     aptitude_description: '',
@@ -40,25 +41,32 @@ const handleSectionChange = (event) => {
     aptitudeForm.course = '';
 };
 
+const aptitudeFormSubmitted = ref(false);
+
 const submitAptitude = () => {
     if (aptitudeForm.aptitude_description && aptitudeForm.aptitude_description !== '') {
         const selectedCourse = aptitudeForm.course;
+
         aptitudeForm.submit({
             preserveScroll: true,
             onSuccess: () => {
                 aptitudeForm.reset();
                 aptitudeForm.course = selectedCourse;
+                aptitudeFormSubmitted.value = false;
+
             },
             onError: (errors) => {
                 console.error(errors);
             }
         });
     } else {
-        console.error("Aptitude description cannot be empty.");
+        //console.error("Aptitude description cannot be empty.");
+        aptitudeFormSubmitted.value = true;
     }
 };
 
 const newCriteria = ref({});
+const criteriaFormSubmitted = ref({});
 
 const submitCriteria = (aptitudeId) => {
     const criteriaDescription = newCriteria.value[aptitudeId];
@@ -69,13 +77,17 @@ const submitCriteria = (aptitudeId) => {
             preserveScroll: true,
             onSuccess: () => {
                 newCriteria.value[aptitudeId] = '';
+                criteriaFormSubmitted.value[aptitudeId] = false;
+
             },
             onError: (errors) => {
                 console.error(errors);
             }
         });
     } else {
-        console.error("Criteria description cannot be empty.");
+        //console.error("Criteria description cannot be empty.");
+        criteriaFormSubmitted.value[aptitudeId] = true;
+        //console.log("criteriaFormSubmitted", criteriaFormSubmitted.value);
     }
 };
 
@@ -108,7 +120,10 @@ const submitCriteria = (aptitudeId) => {
         <div v-if="aptitudeForm.course !== ''">
             <form @submit.prevent="submitAptitude">
                 <label for="aptitude">Nouvel AA:</label><br>
-                <textarea id="aptitude" v-model="aptitudeForm.aptitude_description"></textarea><br>
+                <textarea id="aptitude" v-model="aptitudeForm.aptitude_description"></textarea>
+                <div v-if="aptitudeFormSubmitted && aptitudeForm.aptitude_description.trim() === ''">
+                    L'AA ne peut pas être vide.
+                </div><br>
                 <button type="submit" class="bg-green-500 hover:bg-green-600 p-2">Ajouter l'AA</button>
             </form>
         </div>
@@ -125,6 +140,11 @@ const submitCriteria = (aptitudeId) => {
                 <form @submit.prevent="submitCriteria(aptitude.id)">
                     <label for="criteria">Nouveau critère:</label><br>
                     <textarea id="criteria" v-model="newCriteria[aptitude.id]"></textarea><br>
+                    <div
+                        v-if="criteriaFormSubmitted[aptitude.id] && (!newCriteria[aptitude.id] || !newCriteria[aptitude.id].trim())">
+                        Le critère ne peut pas être vide.
+                    </div><br>
+
                     <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 p-2">Ajouter le critère</button>
                 </form>
                 <li>
@@ -143,5 +163,6 @@ const submitCriteria = (aptitudeId) => {
             <p>Pas encore d'AA pour ce cours</p>
         </div>
     </div>
+    <!-- {{ aptitudeForm.errors }}-->
     <!--{{ criteriaForm }} -->
 </template>
