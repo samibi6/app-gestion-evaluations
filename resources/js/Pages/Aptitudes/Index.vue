@@ -153,8 +153,56 @@ const updateCriteria = (criteria) => {
         }
     });
 };
+/*placeholder delete logic*/
+const confirmingAptitudeDeletion = ref(false);
+const aptitudeIdToDelete = ref(null);
+const formDeleteAptitude = useForm("delete", {});
 
+const confirmAptitudeDeletion = (aptitudeId) => {
+    aptitudeIdToDelete.value = aptitudeId;
+    confirmingAptitudeDeletion.value = true;
+};
 
+const closeAptitudeModal = () => {
+    confirmingAptitudeDeletion.value = false;
+};
+
+const deleteAptitude = () => {
+    formDeleteAptitude.delete(route("aptitudes.deleteAptitude", aptitudeIdToDelete.value), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingAptitudeDeletion.value = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+const confirmingCriteriaDeletion = ref(false);
+const criteriaIdToDelete = ref(null);
+const formDeleteCriteria = useForm("delete", {});
+
+const confirmCriteriaDeletion = (criteriaId) => {
+    criteriaIdToDelete.value = criteriaId;
+    confirmingCriteriaDeletion.value = true;
+};
+
+const closeCriteriaModal = () => {
+    confirmingCriteriaDeletion.value = false;
+};
+
+const deleteCriteria = () => {
+    formDeleteCriteria.delete(route("aptitudes.deleteCriteria", criteriaIdToDelete.value), {
+        preserveScroll: true,
+        onSuccess: () => {
+            confirmingCriteriaDeletion.value = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
 
 
 </script>
@@ -203,6 +251,8 @@ const updateCriteria = (criteria) => {
                     AA {{ index + 1 }}: <br> {{ aptitude.description }}
 
                     <button @click="toggleEditMode(aptitude)" class="bg-orange-500 hover:bg-orange-600">Edit</button>
+                    <button @click="confirmAptitudeDeletion(aptitude.id)"
+                        class="bg-red-500 hover:bg-red-600">Delete</button>
                     <br><br>
                 </li>
                 <li v-else>
@@ -229,6 +279,9 @@ const updateCriteria = (criteria) => {
                             Critère {{ index + 1 }}: {{ criteria.description }}
                             <button @click="toggleCriteriaEditMode(criteria)"
                                 class="bg-orange-500 hover:bg-orange-600">Edit</button>
+                            <button @click="confirmCriteriaDeletion(criteria.id)"
+                                class="bg-red-500 hover:bg-red-600">Delete</button>
+
                             <br><br>
                         </div>
                         <div v-else>
@@ -250,6 +303,42 @@ const updateCriteria = (criteria) => {
             <p>Pas encore d'AA pour ce cours</p>
         </div>
     </div>
+    <DialogModal :show="confirmingAptitudeDeletion" @close="closeAptitudeModal">
+        <template #title> Supprimer l'AA </template>
+
+        <template #content>
+            Êtes-vous sûr de vouloir supprimer cet AA? Cette action est irréversible.
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="closeAptitudeModal"> Annuler </SecondaryButton>
+
+            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingAptitudeDeletion.processing }"
+                :disabled="confirmingAptitudeDeletion.processing" @click="deleteAptitude">
+                Supprimer
+            </DangerButton>
+        </template>
+    </DialogModal>
+
+    <DialogModal :show="confirmingCriteriaDeletion" @close="closeCriteriaModal">
+        <template #title> Supprimer le critère </template>
+
+        <template #content>
+            Êtes-vous sûr de vouloir supprimer ce critère? Cette action est irréversible.
+        </template>
+
+        <template #footer>
+            <SecondaryButton @click="closeCriteriaModal"> Annuler </SecondaryButton>
+
+            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCriteriaDeletion.processing }"
+                :disabled="confirmingCriteriaDeletion.processing" @click="deleteCriteria">
+                Supprimer
+            </DangerButton>
+        </template>
+    </DialogModal>
+
+
+
     <!-- {{ aptitudeForm.errors }}-->
     <!--{{ criteriaForm }} -->
 </template>

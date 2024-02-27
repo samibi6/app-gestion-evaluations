@@ -100,6 +100,23 @@ class AptitudeController extends Controller
         
      }
 
+     public function deleteAptitude(Aptitude $aptitude){
+    
+          $aptitude->delete();
+  
+           session()->flash('flash.banner', 'L\'AA a bien été supprimé.');
+        
+          return redirect()->back();
+     }
+     public function deleteCriteria(Criteria $criteria){
+    
+          $criteria->delete();
+  
+          session()->flash('flash.banner', 'Le critère a bien été supprimé.');
+        
+          return redirect()->back();
+     }
+
 
 
 

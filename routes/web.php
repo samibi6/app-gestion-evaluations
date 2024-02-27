@@ -98,5 +98,7 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::post('/acquis/storeCriteria', [AptitudeController::class, 'storeCriteria'])->name('aptitudes.storeCriteria');
     Route::put('/acquis/{aptitude}/updateAptitude', [AptitudeController::class, 'updateAptitude'])->name('aptitudes.updateAptitude');
     Route::put('/acquis/{criteria}/updateCriteria', [AptitudeController::class, 'updateCriteria'])->name('aptitudes.updateCriteria');
+    Route::delete('/acquis/{aptitude}/deleteAptitude', [AptitudeController::class, 'deleteAptitude'])->name('aptitudes.deleteAptitude');
+    Route::delete('/acquis/{criteria}/deleteCriteria', [AptitudeController::class, 'deleteCriteria'])->name('aptitudes.deleteCriteria');
     
 });
