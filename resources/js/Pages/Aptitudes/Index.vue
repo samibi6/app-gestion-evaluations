@@ -352,7 +352,8 @@ const deleteProficiency = () => {
                 </li>
                 <li v-else>
                     <form @submit.prevent="updateAptitude(aptitude)">
-                        <input type="text" v-model="aptitude.updatedDescription">
+                        <label for="aptitude_description-edit">Modifier l'AA:</label><br>
+                        <textarea id="aptitude_description-edit" v-model="aptitude.updatedDescription"></textarea>
                         <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
                         <button @click="cancelEditMode(aptitude)" class="bg-yellow-500 hover:bg-yellow-600">Cancel</button>
                     </form>
@@ -363,11 +364,13 @@ const deleteProficiency = () => {
                     <div
                         v-if="criteriaFormSubmitted[aptitude.id] && (!newCriteria[aptitude.id] || !newCriteria[aptitude.id].trim())">
                         Le critère ne peut pas être vide.
-                    </div><br>
+                    </div>
 
-                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 p-2">Ajouter le critère</button>
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 p-2">Ajouter
+                    </button>
+                    <br><br>
                 </form>
-                Critères de l'AA : <br><br>
+                Critères de réussite de l'AA : <br><br>
                 <ul v-if="criteriasByAptitudes[aptitude.id] && criteriasByAptitudes[aptitude.id].length">
                     <li v-for="(criteria, index) in criteriasByAptitudes[aptitude.id]" :key="criteria.id">
                         <div v-if="!criteria.editMode">
@@ -381,7 +384,8 @@ const deleteProficiency = () => {
                         </div>
                         <div v-else>
                             <form @submit.prevent="updateCriteria(criteria)">
-                                <input type="text" v-model="criteria.updatedDescription">
+                                <label for="criteria_description-edit">Modifier le critère de réussite:</label><br>
+                                <textarea id="criteria_description-edit" v-model="criteria.updatedDescription"></textarea>
                                 <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
                                 <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
                                     @click="cancelCriteriaEditMode(criteria)">Cancel</button>
@@ -400,48 +404,54 @@ const deleteProficiency = () => {
     </div>
 
     <div v-if="aptitudeForm.course && proficienciesByCourses[aptitudeForm.course]">
-        <h2 class="font-bold">Liste des critères de degré de maitrise du cours</h2>
+
 
         <form @submit.prevent="submitProficiency" v-if="aptitudeForm.course !== ''">
-            <label for="criteria_skill">Proficiency Criteria:</label><br>
+            <label for="criteria_skill">Nouveau critère de maitrise:</label><br>
             <textarea id="criteria_skill" v-model="proficiencyForm.criteria_skill"></textarea>
             <div v-if="proficiencyFormSubmitted && !proficiencyForm.criteria_skill.trim()">
-                Proficiency Criteria is required.
+                Le critère de maitrise est obligatoire
             </div>
             <br>
 
-            <label for="indicator">Indicator:</label><br>
+            <label for="indicator">Nouvel indicateur:</label><br>
             <textarea id="indicator" v-model="proficiencyForm.indicator"></textarea>
             <br>
 
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 p-2">Add Proficiency</button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 p-2">Ajouter
+            </button>
         </form>
-
+        <br><br>
+        <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="font-bold">Liste des critères de degré de
+            maitrise du cours</h2>
+        <h2 v-else class="font-bold">Ce cours ne comporte pas encore de critères de degré de maitrise</h2>
+        <br>
 
         <ul v-for="(proficiency, index) in proficienciesByCourses[aptitudeForm.course]" :key="proficiency.id">
-            <br><br>
             <li>
-                <template v-if="!proficiency.editMode">
+                <div v-if="!proficiency.editMode">
                     Critère de maîtrise {{ index + 1 }}: <br> {{ proficiency.criteria_skill }}
-                </template>
-                <template v-else>
-                    <input type="text" v-model="proficiency.updatedCriteriaSkill">
-                </template>
-
-                <button @click="toggleProficiencyEditMode(proficiency)"
-                    class="bg-orange-500 hover:bg-orange-600">Edit</button>
-                <button @click="confirmProficiencyDeletion(proficiency.id)"
-                    class="bg-red-500 hover:bg-red-600">Delete</button>
-                <br><br>
+                </div>
+                <div v-else>
+                    <label for="criteria_skill-edit">Modifier le critère de maitrise</label><br>
+                    <textarea id="criteria_skill-edit" v-model="proficiency.updatedCriteriaSkill"></textarea>
+                </div>
             </li>
             <li>
-                <template v-if="!proficiency.editMode">
-                    Indicateur de maîtrise {{ index + 1 }}: <br> {{ proficiency.indicator }}
-                </template>
-                <template v-else>
-                    <input type="text" v-model="proficiency.updatedIndicator">
-                </template>
+                <div v-if="!proficiency.editMode">
+                    <div> Indicateur de maîtrise {{ index + 1 }}: <br> {{ proficiency.indicator }}</div>
+                    <button @click="toggleProficiencyEditMode(proficiency)"
+                        class="bg-orange-500 hover:bg-orange-600">Edit</button>
+                    <button @click="confirmProficiencyDeletion(proficiency.id)"
+                        class="bg-red-500 hover:bg-red-600">Delete</button>
+                </div>
+                <div v-else>
+                    <label for="indicator-edit">Modifier l'indicateur de maitrise</label><br>
+                    <textarea id="indicator-edit" v-model="proficiency.updatedIndicator"></textarea>
+                </div>
             </li>
+
+
             <div v-if="proficiency.editMode">
                 <form @submit.prevent="updateProficiency(proficiency)">
                     <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
@@ -449,8 +459,8 @@ const deleteProficiency = () => {
                         @click="cancelProficiencyEditMode(proficiency)">Cancel</button>
                 </form>
             </div>
+            <br><br>
         </ul>
-
 
     </div>
 
