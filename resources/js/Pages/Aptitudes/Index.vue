@@ -36,6 +36,7 @@ const updateCriteriaForm = (criteria) => usePrecognitionForm("put", route("aptit
     criteria: '',
 });
 
+
 /*aptitudeForm.setValidationTimeout(300);
 criteriaForm.setValidationTimeout(300);*/
 /*const form = usePrecognitionForm("post", route("aptitudes.store"), {
@@ -105,6 +106,7 @@ const submitCriteria = (aptitudeId) => {
 const toggleEditMode = (aptitude) => {
     aptitude.editMode = true;
     aptitude.updatedDescription = aptitude.description;
+    console.log("Selected course ID:", aptitudeForm.course);
 };
 
 const cancelEditMode = (aptitude) => {
@@ -301,25 +303,25 @@ const deleteProficiency = () => {
 
 const editCourseLead = ref();
 const updatedCourseLead = ref();
+
 const toggleEditCourseLeadMode = (courses) => {
-    const courseId = aptitudeForm.course - 1; // -1 magique encore pour chopper le bon id
-    if (!courses.hasOwnProperty(courseId)) {
+    const courseId = aptitudeForm.course;
+    const course = courses.find(course => course.id === courseId); // Find the course by ID
+    if (!course) {
         console.error("Course not found or courseId is invalid:", courseId);
         return;
     }
     editCourseLead.value = true;
-    updatedCourseLead.value = courses[courseId].lead;
+    updatedCourseLead.value = course.lead;
 };
-
 
 const cancelEditCourseLeadMode = () => {
     editCourseLead.value = false;
 };
 
 const updateCourseLead = (courses) => {
-    const courseId = aptitudeForm.course - 1; // -1 magique encore pour chopper le bon id
-    const course = courses[courseId];
-
+    const courseId = aptitudeForm.course;
+    const course = courses.find(course => course.id === courseId); // Find the course by ID
     if (!course) {
         console.error("Course not found or courseId is invalid:", courseId);
         return;
@@ -328,9 +330,8 @@ const updateCourseLead = (courses) => {
     const courseUpdateForm = usePrecognitionForm("patch", route("aptitudes.updateLead", { course }), {
         lead: updatedCourseLead.value,
         course: course.id,
-
     });
-    console.log(updatedCourseLead.value);
+
     courseUpdateForm.submit({
         preserveScroll: true,
         onSuccess: () => {
@@ -343,6 +344,10 @@ const updateCourseLead = (courses) => {
     });
 };
 
+const findCourseLead = (courses, courseId) => {
+    const course = courses.find(course => course.id === courseId);
+    return course ? course.lead : 'Chapeau non trouvé';
+};
 
 
 </script>
@@ -371,11 +376,13 @@ const updateCourseLead = (courses) => {
         </select>
         <br><br><br>
 
-        <!-- flemme de comprendre pq faut un -1 pour récupérer le bon id -->
+
         <div v-if="aptitudeForm.course !== ''">
             <div v-if="!editCourseLead">
-                <p>Chapeau du cours : {{ courses[aptitudeForm.course - 1]?.lead }}
+                <p v-if="aptitudeForm.course !== ''">
+                    Chapeau du cours : {{ findCourseLead(courses, aptitudeForm.course) }}
                 </p>
+
                 <button @click="toggleEditCourseLeadMode(courses)" class="bg-orange-500 hover:bg-orange-600">Edit
                 </button>
             </div>

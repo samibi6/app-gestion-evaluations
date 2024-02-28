@@ -27,6 +27,7 @@ class CourseUpdateRequest extends FormRequest
             'code' => "required|unique:courses,code,{$courseId}|max:25", //pour exclure le code du cours qu'on modifie actuellement de la règle 'unique'
             'section' => 'required|max:100',
             'user' => 'required|max:100', //faudra ptetre retirer le required, un cours doit sûrement pouvoir être créé sans prof
+            'lead' => 'required|max:1000',
         ];
     }
 }

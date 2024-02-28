@@ -51,6 +51,7 @@ class CourseController extends Controller
     $course = Course::make();
     $course->name = $request->validated()['name'];
     $course->code = $request->validated()['code'];
+    $course->lead = $request->validated()['lead'];
 
     $course->save();
 
@@ -105,6 +106,7 @@ public function edit(Course $course){
         $course->update([
             'name' => $request->validated()['name'],
             'code' => $request->validated()['code'],
+            'lead' => $request->validated()['lead'],
             
         ]);
     
