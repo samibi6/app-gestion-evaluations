@@ -58,7 +58,9 @@ const submit = () => form.submit({
 
 
         <form @submit.prevent="submit">
-
+            <div class="text-red-500 font-bold" v-if="form.invalid('criteria')">
+                {{ form.errors.criteria }}
+            </div>
             <table class="border m-auto">
                 <tr class="border">
                     <th class="border">AA</th>
@@ -70,16 +72,17 @@ const submit = () => form.submit({
                     <td class="border" colspan="2">
                         <table>
                             <tr class="border" v-for="criteria in criteriaByApt[aptitude.id]">
-                                <td class="bg-red-500 p-5 w-[500px]">{{ criteria.description }}</td>
+                                <td class="p-5 w-[500px]">{{ criteria.description }}</td>
                                 <td class="border p-5"><input type="checkbox" :name="'criteria_' + criteria.id"
-                                        :id="criteria.id" v-model="form.criteria[criteria.id]"
-                                        @change="console.log(form.criteria)"></td>
+                                        :id="criteria.id" v-model="form.criteria[criteria.id]"></td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             </table>
-
+            <div class="text-red-500 font-bold" v-if="form.invalid('proficiency')">
+                {{ form.errors.proficiency }}
+            </div>
             <table class="border m-auto w-[1000px]">
                 <tr class="border">
                     <th class="border">Critère</th>
@@ -90,7 +93,7 @@ const submit = () => form.submit({
                     <td class="border p-5">{{ proficiency.criteria_skill }}</td>
                     <td class="border p-5">{{ proficiency.indicator }}</td>
                     <td><input type="number" max="10" min="0" :name="'proficiency_' + proficiency.id" :id="proficiency.id"
-                            v-model="form.proficiency[proficiency.id]" @change="console.log(form.proficiency)"></td>
+                            v-model="form.proficiency[proficiency.id]"></td>
                 </tr>
             </table>
 
