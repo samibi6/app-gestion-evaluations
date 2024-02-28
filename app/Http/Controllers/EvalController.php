@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EvalStoreRequest;
 use App\Models\Aptitude;
 use App\Models\Course;
 use App\Models\CourseStudent;
@@ -112,7 +113,7 @@ class EvalController extends Controller
         ]);
     }
 
-    public function store(Request $request, Student $studentId, $sectionId, $courseId)
+    public function store(EvalStoreRequest $request, Student $studentId, $sectionId, $courseId)
     {
         // dd($studentId->id);
         // $request->criteria;
