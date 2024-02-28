@@ -73,7 +73,7 @@ var closeModal = () => {
                     <form @submit.prevent="submit" class="max-w-7xl mx-auto p-2 lg:p-4">
                         <h3 class='text-lg text-center mb-2'>Créer un étudiant</h3>
                         <div class="mb-5">
-                            <label for="last_name" class="mb-2 mr-2 font-medium">Nom de famille de l'étudiant:</label>
+                            <label for="last_name" class="mb-2 mr-2 font-medium">Nom de famille de l'étudiant</label>
                             <input id="last_name" v-model="form.last_name" @change="form.validate('last_name')"
                                 class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" />
                             <div v-if="form.invalid('last_name')" class="text-sm text-red-600">
@@ -82,7 +82,7 @@ var closeModal = () => {
                         </div>
 
                         <div class="mb-5">
-                            <label for="first_name" class="mb-2 mr-2 font-medium">Prénom de l'étudiant:</label>
+                            <label for="first_name" class="mb-2 mr-2 font-medium">Prénom de l'étudiant</label>
                             <input id="first_name" v-model="form.first_name" @change="form.validate('first_name')"
                                 class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" />
                             <div v-if="form.invalid('first_name')" class="text-sm text-red-600">
@@ -92,7 +92,7 @@ var closeModal = () => {
 
                         <div class="mb-5">
                             <label for="section" class="mb-2 mr-2 font-medium">Section de
-                                l'étudiant:</label><!--faudra faire qu'on puisse ajouter plusieurs sections-->
+                                l'étudiant</label><!--faudra faire qu'on puisse ajouter plusieurs sections-->
                             <select id="section" v-model="form.section" @change="form.validate('section')"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
                                 <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.name }}
@@ -114,41 +114,44 @@ var closeModal = () => {
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-2 lg:p-4 w-fit mx-auto mt-4">
+            <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-fit mx-auto mt-4">
                 <h3 class="text-lg text-center mb-2">Liste des étudiants</h3>
-                <ul v-for="student in students" :key="student.id">
-                    <li>
-                        Nom de famille : {{ student.last_name }}
-                        <br>
-                    </li>
+                <div class="flex gap-1 flex-wrap  justify-center">
+                    <ul v-for="student in students" :key="student.id" class="bg-gray-200 rounded-lg p-2">
+                        <li>
+                            Nom : {{ student.last_name }}
+                            <br>
+                        </li>
 
-                    <li>
-                        Prénom : {{ student.first_name }}
-                        <br>
+                        <li>
+                            Prénom : {{ student.first_name }}
+                            <br>
 
-                    </li>
+                        </li>
 
-                    <li>
-                        Section : <span v-for="section in sectionsByStudents[student.id]" :key="section.id">{{ section.name
-                        }},
-                        </span>
-                        <br>
-                    </li>
+                        <li>
+                            Sections : <span v-for="section in sectionsByStudents[student.id]" :key="section.id">{{
+                                section.name
+                            }},
+                            </span>
+                            <br>
+                        </li>
 
-                    <li>
-                        <a class="rounded-lg p-2 font-bold text-orange-500 hover:bg-orange-200"
-                            :href="route('students.edit', { student })">Éditer</a>
-                        <br>
-                    </li>
+                        <li>
+                            <a class="rounded-lg p-2 font-bold text-orange-500 hover:bg-orange-200"
+                                :href="route('students.edit', { student })">Modifier</a>
+                            <br>
+                        </li>
 
-                    <li>
-                        <button class="rounded-lg p-2 font-bold text-red-500 hover:bg-red-200"
-                            @click="confirmStudentDeletion(student.id)">
-                            Supprimer
-                        </button>
-                    </li>
-                    <hr>
-                </ul>
+                        <li>
+                            <button class="rounded-lg p-2 font-bold text-red-500 hover:bg-red-200"
+                                @click="confirmStudentDeletion(student.id)">
+                                Supprimer
+                            </button>
+                        </li>
+                        <hr>
+                    </ul>
+                </div>
             </div>
         </div>
 
