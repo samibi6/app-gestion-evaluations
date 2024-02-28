@@ -21,8 +21,7 @@ class ProficiencyStudentFactory extends Factory
         return [
             'proficiency_id' => Proficiency::get()->random()->id,
             'student_id' => Student::get()->random()->id,
-            'acquired_skill' => $this->faker->boolean(),
-            'score' => $this->faker->numberBetween(0,10),
+            'score' => $this->faker->numberBetween(0, 10),
         ];
     }
 }

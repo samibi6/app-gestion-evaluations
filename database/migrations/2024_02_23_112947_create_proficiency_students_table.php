@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('proficiency_id')->constrained()->onDelete('cascade');
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->boolean('acquired_skill');
             $table->unsignedTinyInteger('score');
             $table->timestamps();
         });

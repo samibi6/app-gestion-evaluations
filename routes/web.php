@@ -5,6 +5,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\CourseStudentController;
+use App\Http\Controllers\EvalController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\SectionController;
 use App\Models\Aptitude;
@@ -103,4 +104,13 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::post('/acquis/storeProficiency', [AptitudeController::class, 'storeProficiency'])->name('aptitudes.storeProficiency');
     Route::patch('/acquis/{proficiency}/updateProficiency', [AptitudeController::class, 'updateProficiency'])->name('aptitudes.updateProficiency');
     Route::delete('/acquis/{proficiency}/deleteProficiency', [AptitudeController::class, 'deleteProficiency'])->name('aptitudes.deleteProficiency');  
+});
+
+Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/evals', [EvalController::class, 'index'])->name('evals.index');
+    Route::get('/evals/show/{courseId}/{sectionId}', [EvalController::class, 'show'])->name('evals.show');
+    Route::get('/evals/edit/{courseId}/{studentId}/{sectionId}', [EvalController::class, 'edit'])->name('evals.edit');
+    Route::post('/evals/{studentId}/{sectionId}/{courseId}', [EvalController::class, 'store'])->name('evals.store');
+    // Route::put('/evals/{course}', [EvalController::class, 'status'])->name('coursSections.status');
+    Route::delete('/evals', [EvalController::class, 'delete'])->name('evals.delete');
 });
