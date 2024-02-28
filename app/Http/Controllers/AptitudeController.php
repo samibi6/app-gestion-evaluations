@@ -6,6 +6,7 @@ use App\Http\Requests\AptitudeStoreRequest;
 use App\Http\Requests\AptitudeUpdateRequest;
 use App\Http\Requests\CriteriaStoreRequest;
 use App\Http\Requests\CriteriaUpdateRequest;
+use App\Http\Requests\LeadUpdateRequest;
 use App\Http\Requests\ProficiencyStoreRequest;
 use App\Http\Requests\ProficiencyUpdateRequest;
 use App\Models\Aptitude;
@@ -156,127 +157,16 @@ class AptitudeController extends Controller
           return redirect()->back();
      }
 
-
-
-
-
-
-
-
-
-
-
-
-
- /*   public function store(CourseStoreRequest $request)
-{
-  
-    $course = Course::make();
-    $course->name = $request->validated()['name'];
-    $course->code = $request->validated()['code'];
-
-    $course->save();
-
-
-    $courseSection = CourseSection::make();
-    $courseSection->course_id = $course->id; //pour lier la section choisie avec le cours qu'on crée
-    $courseSection->section_id = $request->validated()['section'];
-    
-    $courseSection->save();
-
-
-    $courseUser = CourseUser::make();
-    $courseUser->course_id = $course->id; //pour lier le prof choisi avec le cours qu'on crée
-    $courseUser->user_id = $request->validated()['user']; 
-    
-    $courseUser->save();
-
-
-    $request->session()->flash('flash.banner', 'Le cours a bien été créé.');
-    return redirect()->back();
-}
-
-public function edit(Course $course){
-    
-    $sections = Section::get();
-    $users = User::get();
-    
-    $sectionsByCurrentCourse = Section::join('course_sections', 'sections.id', '=', 'course_sections.section_id')
-        ->where('course_sections.course_id', $course->id)
-        ->select('sections.*')
-        ->get();
-
-    $usersByCurrentCourse = User::join('course_users', 'users.id', '=', 'course_users.user_id')
-        ->where('course_users.course_id', $course->id)
-        ->select('users.*')
-        ->get();
-
-    return Inertia::render('Courses/Edit', [
-        'course' => $course,
-        'sections' => $sections,
-        'users' => $users,
-        'sectionsByCurrentCourse' => $sectionsByCurrentCourse,
-        'usersByCurrentCourse' => $usersByCurrentCourse,
-    ]);
-}
-
-    
-   
-    public function update(CourseUpdateRequest $request, Course $course)
-    {
-
+     public function updateLead(LeadUpdateRequest $request,  Course $course)
+     {
+       //dd($request->validated());
         $course->update([
-            'name' => $request->validated()['name'],
-            'code' => $request->validated()['code'],
-            
+            'lead' => $request->validated()['lead'],        
         ]);
-    
-        //bon là faudrait ajouter quelque chose qui check dans le cas où un cours n'aurait pas d'année, de section ou de chargé de cours (c'est pas censé arriver mais bon avec les seeders si)
-      // dd($course->id);
-     $courseSection = CourseSection::where('course_id', $course->id)->first();
-     if ($courseSection) {
-         $courseSection->update([
-             'section_id' => $request->validated()['section'],
-             
-         ]);
-     } else {
-         
-         $courseSection = CourseSection::make([
-             'course_id' => $course->id,
-             'section_id' => $request->validated()['section'],
-            
-         ]);
-         $courseSection->save();
+
+        $request->session()->flash('flash.banner', 'Le chapeau du cours a bien été modifié');
+        return redirect()->back();
      }
-        
-        $courseUser = CourseUser::where('course_id', $course->id)->first(); //faudra revoir la façon dont on store les sections et users, faudra ptêtre des champs différents dans la db genre 'user1' 'user2' etc en fonction du nombre de options select, ou travailler avec un array, à voir...
-        if($courseUser) {
-            $courseUser->update([
-                'user_id' => $request->validated()['user'],
-        ]);
-        
-        } else {
-        $courseUser = CourseUser::make([
-            'course_id' => $course->id,
-            'user_id' => $request->validated()['user'],
-        ]);
-        $courseUser->save();
-}
-    
-        $request->session()->flash('flash.banner', 'Le cours a bien été modifié.');
-        return redirect()->route('courses.index');
-
-    }
-
-    public function delete(Course $course)
-    {
- //dd($course);
-          $course->delete();
-  
-          session()->flash('flash.banner', 'Le cours a bien été supprimé.');
-        
-          return redirect()->route('courses.index');
-    }*/
 
 }
 

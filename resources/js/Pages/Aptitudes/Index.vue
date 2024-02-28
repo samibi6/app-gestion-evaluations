@@ -299,6 +299,51 @@ const deleteProficiency = () => {
     });
 };
 
+const editCourseLead = ref();
+const updatedCourseLead = ref();
+const toggleEditCourseLeadMode = (courses) => {
+    const courseId = aptitudeForm.course - 1; // -1 magique encore pour chopper le bon id
+    if (!courses.hasOwnProperty(courseId)) {
+        console.error("Course not found or courseId is invalid:", courseId);
+        return;
+    }
+    editCourseLead.value = true;
+    updatedCourseLead.value = courses[courseId].lead;
+};
+
+
+const cancelEditCourseLeadMode = () => {
+    editCourseLead.value = false;
+};
+
+const updateCourseLead = (courses) => {
+    const courseId = aptitudeForm.course - 1; // -1 magique encore pour chopper le bon id
+    const course = courses[courseId];
+
+    if (!course) {
+        console.error("Course not found or courseId is invalid:", courseId);
+        return;
+    }
+
+    const courseUpdateForm = usePrecognitionForm("patch", route("aptitudes.updateLead", { course }), {
+        lead: updatedCourseLead.value,
+        course: course.id,
+
+    });
+    console.log(updatedCourseLead.value);
+    courseUpdateForm.submit({
+        preserveScroll: true,
+        onSuccess: () => {
+            course.lead = updatedCourseLead.value;
+            editCourseLead.value = false;
+        },
+        onError: (errors) => {
+            console.error(errors);
+        }
+    });
+};
+
+
 
 </script>
 
@@ -326,6 +371,25 @@ const deleteProficiency = () => {
         </select>
         <br><br><br>
 
+        <!-- flemme de comprendre pq faut un -1 pour récupérer le bon id -->
+        <div v-if="aptitudeForm.course !== ''">
+            <div v-if="!editCourseLead">
+                <p>Chapeau du cours : {{ courses[aptitudeForm.course - 1]?.lead }}
+                </p>
+                <button @click="toggleEditCourseLeadMode(courses)" class="bg-orange-500 hover:bg-orange-600">Edit
+                </button>
+            </div>
+            <div v-else>
+                <form @submit.prevent="updateCourseLead(courses)">
+                    <label for="course_lead">Modifier le chapeau du cours:</label><br>
+                    <textarea id="course_lead" v-model="updatedCourseLead"></textarea>
+                    <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
+                    <button @click="cancelEditCourseLeadMode" class="bg-yellow-500 hover:bg-yellow-600">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <br><br>
         <div v-if="aptitudeForm.course !== ''">
             <form @submit.prevent="submitAptitude">
                 <label for="aptitude">Nouvel AA:</label><br>
@@ -340,7 +404,7 @@ const deleteProficiency = () => {
         <div
             v-if="aptitudeForm.course && aptitudesByCourses[aptitudeForm.course] && aptitudesByCourses[aptitudeForm.course].length">
             <h2 class="font-bold">Liste des AA du cours</h2>
-            <ul v-for="(aptitude, index) in aptitudesByCourses[aptitudeForm.course]" :key="aptitude.id">
+            <ul v-for="( aptitude, index ) in  aptitudesByCourses[aptitudeForm.course] " :key="aptitude.id">
                 <br><br>
                 <li v-if="!aptitude.editMode">
                     AA {{ index + 1 }}: <br> {{ aptitude.description }}
@@ -372,7 +436,7 @@ const deleteProficiency = () => {
                 </form>
                 Critères de réussite de l'AA : <br><br>
                 <ul v-if="criteriasByAptitudes[aptitude.id] && criteriasByAptitudes[aptitude.id].length">
-                    <li v-for="(criteria, index) in criteriasByAptitudes[aptitude.id]" :key="criteria.id">
+                    <li v-for="( criteria, index ) in  criteriasByAptitudes[aptitude.id] " :key="criteria.id">
                         <div v-if="!criteria.editMode">
                             Critère {{ index + 1 }}: {{ criteria.description }}
                             <button @click="toggleCriteriaEditMode(criteria)"
@@ -427,7 +491,7 @@ const deleteProficiency = () => {
         <h2 v-else class="font-bold">Ce cours ne comporte pas encore de critères de degré de maitrise</h2>
         <br>
 
-        <ul v-for="(proficiency, index) in proficienciesByCourses[aptitudeForm.course]" :key="proficiency.id">
+        <ul v-for="( proficiency, index ) in  proficienciesByCourses[aptitudeForm.course] " :key="proficiency.id">
             <li>
                 <div v-if="!proficiency.editMode">
                     Critère de maîtrise {{ index + 1 }}: <br> {{ proficiency.criteria_skill }}
