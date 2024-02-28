@@ -106,7 +106,7 @@ var closeModal = () => {
                                 Sauvegarder
                             </button>
                             <button type="button"
-                                class="rounded-lg px-5 py-2.5 me-2 mb-2 block font-medium text-red-500 hover:bg-red-200"
+                                class="rounded-lg px-5 py-2.5 me-2 mb-2 block font-medium text-red-500 hover:bg-red-200 text-sm"
                                 @click="confirmStudentDeletion(student.id)">
                                 Supprimer l'étudiant
                             </button>
