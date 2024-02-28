@@ -96,8 +96,14 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
     Route::get('/acquis', [AptitudeController::class, 'index'])->name('aptitudes.index');
     Route::post('/acquis/storeAptitude', [AptitudeController::class, 'storeAptitude'])->name('aptitudes.storeAptitude');
-
     Route::post('/acquis/storeCriteria', [AptitudeController::class, 'storeCriteria'])->name('aptitudes.storeCriteria');
+    Route::put('/acquis/{aptitude}/updateAptitude', [AptitudeController::class, 'updateAptitude'])->name('aptitudes.updateAptitude');
+    Route::put('/acquis/{criteria}/updateCriteria', [AptitudeController::class, 'updateCriteria'])->name('aptitudes.updateCriteria');
+    Route::delete('/acquis/{aptitude}/deleteAptitude', [AptitudeController::class, 'deleteAptitude'])->name('aptitudes.deleteAptitude');
+    Route::delete('/acquis/{criteria}/deleteCriteria', [AptitudeController::class, 'deleteCriteria'])->name('aptitudes.deleteCriteria');
+    Route::post('/acquis/storeProficiency', [AptitudeController::class, 'storeProficiency'])->name('aptitudes.storeProficiency');
+    Route::patch('/acquis/{proficiency}/updateProficiency', [AptitudeController::class, 'updateProficiency'])->name('aptitudes.updateProficiency');
+    Route::delete('/acquis/{proficiency}/deleteProficiency', [AptitudeController::class, 'deleteProficiency'])->name('aptitudes.deleteProficiency');  
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
