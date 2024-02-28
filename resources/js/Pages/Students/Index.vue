@@ -71,8 +71,8 @@ var closeModal = () => {
         <div class="py-4">
             <div class="max-w-7xl w-fit mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <form @submit.prevent="submit" class="max-w-7xl mx-auto p-2 lg:p-4">
-                        <h3 class='text-lg text-center mb-2'>Créer un étudiant</h3>
+                    <form @submit.prevent="submit" class="max-w-7xl mx-auto p-4 lg:p-6">
+                        <h3 class='text-lg text-center mb-4'>Créer un étudiant</h3>
                         <div class="mb-5">
                             <label for="last_name" class="mb-2 mr-2 font-medium">Nom de famille de l'étudiant</label>
                             <input id="last_name" v-model="form.last_name" @change="form.validate('last_name')"
@@ -108,7 +108,7 @@ var closeModal = () => {
                         <div class="flex justify-center">
                             <button :disabled="form.processing"
                                 class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 block">
-                                Créer un étudiant
+                                Créer l'étudiant
                             </button>
                         </div>
                     </form>
@@ -116,7 +116,7 @@ var closeModal = () => {
             </div>
 
             <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-full mx-auto mt-4">
-                <h3 class="text-lg text-center mb-2">Liste des étudiants</h3>
+                <h3 class="text-lg text-center mb-4">Liste des étudiants</h3>
                 <div
                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1">
                     <!-- le code pour remplacer grid par flex <div class="flex gap-1 flex-wrap justify-center"> -->
