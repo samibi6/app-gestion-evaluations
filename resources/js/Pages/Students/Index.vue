@@ -74,7 +74,8 @@ var closeModal = () => {
                     <form @submit.prevent="submit" class="max-w-7xl mx-auto p-4 lg:p-6">
                         <h3 class='text-lg text-center mb-4'>Créer un étudiant</h3>
                         <div class="mb-5">
-                            <label for="last_name" class="mb-2 mr-2 font-medium">Nom de famille de l'étudiant</label>
+                            <label for="last_name" class="text-gray-700 mb-2 mr-2 font-medium">Nom de famille de
+                                l'étudiant</label>
                             <input id="last_name" v-model="form.last_name" @change="form.validate('last_name')"
                                 class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" />
                             <div v-if="form.invalid('last_name')" class="text-sm text-red-600">
@@ -83,7 +84,7 @@ var closeModal = () => {
                         </div>
 
                         <div class="mb-5">
-                            <label for="first_name" class="mb-2 mr-2 font-medium">Prénom de l'étudiant</label>
+                            <label for="first_name" class="text-gray-700 mb-2 mr-2 font-medium">Prénom de l'étudiant</label>
                             <input id="first_name" v-model="form.first_name" @change="form.validate('first_name')"
                                 class="bg-gray-50 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  p-2.5" />
                             <div v-if="form.invalid('first_name')" class="text-sm text-red-600">
@@ -92,7 +93,7 @@ var closeModal = () => {
                         </div>
 
                         <div class="mb-5">
-                            <label for="section" class="mb-2 mr-2 font-medium">Section de
+                            <label for="section" class="text-gray-700 mb-2 mr-2 font-medium">Section de
                                 l'étudiant</label><!--faudra faire qu'on puisse ajouter plusieurs sections-->
                             <select id="section" v-model="form.section" @change="form.validate('section')"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5">
