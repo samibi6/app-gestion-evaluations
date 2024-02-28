@@ -10,6 +10,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SectionTitle from "@/Components/SectionTitle.vue";
 import TextInput from "@/Components/TextInput.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import { Head } from '@inertiajs/vue3';
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
 import { useForm } from "@inertiajs/vue3";
 
@@ -60,7 +61,7 @@ var closeModal = () => {
 </script>
 
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Étudiants">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Étudiants
@@ -114,9 +115,11 @@ var closeModal = () => {
                 </div>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-fit mx-auto mt-4">
+            <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-full mx-auto mt-4">
                 <h3 class="text-lg text-center mb-2">Liste des étudiants</h3>
-                <div class="flex gap-1 flex-wrap  justify-center">
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1">
+                    <!-- le code pour remplacer grid par flex <div class="flex gap-1 flex-wrap justify-center"> -->
                     <ul v-for="student in students" :key="student.id" class="bg-gray-200 rounded-lg p-2">
                         <li>
                             Nom : {{ student.last_name }}
