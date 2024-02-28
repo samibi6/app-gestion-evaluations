@@ -118,7 +118,7 @@ var closeModal = () => {
             <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-full mx-auto mt-4">
                 <h3 class="text-lg text-center mb-2">Liste des étudiants</h3>
                 <div
-                    class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1">
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1">
                     <!-- le code pour remplacer grid par flex <div class="flex gap-1 flex-wrap justify-center"> -->
                     <ul v-for="student in students" :key="student.id" class="bg-gray-200 rounded-lg p-2">
                         <li>
