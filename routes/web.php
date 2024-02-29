@@ -103,7 +103,8 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::delete('/acquis/{criteria}/deleteCriteria', [AptitudeController::class, 'deleteCriteria'])->name('aptitudes.deleteCriteria');
     Route::post('/acquis/storeProficiency', [AptitudeController::class, 'storeProficiency'])->name('aptitudes.storeProficiency');
     Route::patch('/acquis/{proficiency}/updateProficiency', [AptitudeController::class, 'updateProficiency'])->name('aptitudes.updateProficiency');
-    Route::delete('/acquis/{proficiency}/deleteProficiency', [AptitudeController::class, 'deleteProficiency'])->name('aptitudes.deleteProficiency');  
+    Route::delete('/acquis/{proficiency}/deleteProficiency', [AptitudeController::class, 'deleteProficiency'])->name('aptitudes.deleteProficiency');
+    Route::patch('/acquis/{course}/updateLead', [AptitudeController::class, 'updateLead'])->name('aptitudes.updateLead');
 });
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {

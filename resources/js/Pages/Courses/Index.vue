@@ -23,6 +23,7 @@ const form = usePrecognitionForm("post", route("courses.store"), {
     code: '',
     section: '',
     user: '',
+    lead: '',
 
 });
 
@@ -72,6 +73,14 @@ var closeModal = () => {
         <input id="code" v-model="form.code" @change="form.validate('code')" />
         <div v-if="form.invalid('code')">
             {{ form.errors.code }}
+        </div>
+
+        <br><br>
+        <label for="lead">Chapeau du cours</label>
+        <br>
+        <textarea id="lead" v-model="form.lead" @change="form.validate('lead')"></textarea>
+        <div v-if="form.invalid('lead')">
+            {{ form.errors.lead }}
         </div>
 
         <br><br>

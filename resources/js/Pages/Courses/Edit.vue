@@ -22,6 +22,7 @@ const form = usePrecognitionForm("patch", route("courses.update", { course: prop
     code: props.course.code,
     section: props.sectionsByCurrentCourse.length > 0 ? props.sectionsByCurrentCourse[0].id : null,
     user: props.usersByCurrentCourse.length > 0 ? props.usersByCurrentCourse[0].id : null,
+    lead: props.course.lead,
 });
 
 form.setValidationTimeout(300);
@@ -69,6 +70,15 @@ var closeModal = () => {
         <input id="code" v-model="form.code" @change="form.validate('code')" />
         <div v-if="form.invalid('code')">
             {{ form.errors.code }}
+        </div>
+
+        <br><br>
+
+        <label for="lead">Chapeau du cours</label>
+        <br>
+        <textarea id="lead" v-model="form.lead" @change="form.validate('lead')"></textarea>
+        <div v-if="form.invalid('lead')">
+            {{ form.errors.lead }}
         </div>
 
         <br><br>
