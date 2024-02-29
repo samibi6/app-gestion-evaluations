@@ -19,7 +19,7 @@ class CourseFactory extends Factory
         return [
             'name' => $this->faker->word(10),
             'code' => $this->faker->numerify('#### ## U## D#'),
-           
+            'lead' => $this->faker->realTextBetween($minNbChars = 150, $maxNbChars = 500),
         ];
     }
 }
