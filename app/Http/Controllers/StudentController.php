@@ -12,9 +12,12 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::paginate(8)->withQueryString();
+        $students = Student::where('first_name', 'LIKE', '%' . $request->query('search') . '%')
+            ->paginate(8)
+            ->withQueryString();
+
         $sections = Section::get();
 
         $sectionsByStudents =

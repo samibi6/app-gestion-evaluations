@@ -15,8 +15,7 @@ import { Head } from '@inertiajs/vue3';
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
 import { useForm } from "@inertiajs/vue3";
 
-
-import { ref } from "vue";
+import { ref, computed } from 'vue';
 
 const props = defineProps(['students', 'sections', 'sectionsByStudents']);
 
@@ -59,6 +58,15 @@ var deleteStudent = () => {
 var closeModal = () => {
     confirmingStudentDeletion.value = false;
 };
+
+
+
+const search = defineModel()
+function setup(props) {
+
+};
+setup();
+
 </script>
 
 <template>
@@ -119,11 +127,50 @@ var closeModal = () => {
 
             <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-full mx-auto mt-4">
                 <h3 class="text-lg text-center mb-4">Liste des étudiants</h3>
-                <pagination class="mx-auto w-fit mb-2" :links="props.students.links" />
+                <div class="flex flex-col sm:flex-row justify-center items-center w-fit mx-auto gap-4 mb-2">
+
+                    <form :action="route('students.index', { search })" method="GET" class="w-96 mx-auto">
+                        <label for="default-search"
+                            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input v-model="search" type="search" id="default-search"
+                                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Rechercher nom, prénom ou section" required />
+                            <button type="submit"
+                                class="text-white absolute end-2.5 bottom-2.5 bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
+                        </div>
+                    </form>
+
+                    <!-- <form class="flex items-center max-w-sm mx-auto">
+                        <label for="simple-search" class="sr-only">Rechercher</label>
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input v-model="searchTerm" type="text" id="simple-search"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5"
+                                placeholder="Nom, prénom ou section" required />
+                        </div>
+                    </form> -->
+
+                    <pagination class="mx-auto w-fit" :links="props.students.links" />
+                </div>
+
                 <div
                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1">
                     <!-- le code pour remplacer grid par flex <div class="flex gap-1 flex-wrap justify-center"> -->
-                    <ul v-for="student in students.data" :key="student.id" class="bg-gray-200 rounded-lg p-2">
+                    <ul v-for="  student   in   students.data  " :key="student.id" class="bg-gray-200 rounded-lg p-2">
                         <li>
                             Nom : {{ student.last_name }}
                             <br>
@@ -136,7 +183,7 @@ var closeModal = () => {
                         </li>
 
                         <li>
-                            Sections : <span v-for="section in sectionsByStudents[student.id]" :key="section.id">{{
+                            Sections : <span v-for="  section   in   sectionsByStudents[student.id]  " :key="section.id">{{
                                 section.name
                             }},
                             </span>
