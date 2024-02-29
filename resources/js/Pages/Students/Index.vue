@@ -10,6 +10,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SectionTitle from "@/Components/SectionTitle.vue";
 import TextInput from "@/Components/TextInput.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import Pagination from "@/Components/Pagination.vue";
 import { Head } from '@inertiajs/vue3';
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
 import { useForm } from "@inertiajs/vue3";
@@ -108,7 +109,7 @@ var closeModal = () => {
 
                         <div class="flex justify-center">
                             <button :disabled="form.processing"
-                                class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 block">
+                                class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 block">
                                 Créer l'étudiant
                             </button>
                         </div>
@@ -118,10 +119,11 @@ var closeModal = () => {
 
             <div class="bg-white overflow-hidden shadow-xl p-2 lg:p-4 w-full mx-auto mt-4">
                 <h3 class="text-lg text-center mb-4">Liste des étudiants</h3>
+                <pagination class="mx-auto w-fit mb-2" :links="props.students.links" />
                 <div
                     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-1">
                     <!-- le code pour remplacer grid par flex <div class="flex gap-1 flex-wrap justify-center"> -->
-                    <ul v-for="student in students" :key="student.id" class="bg-gray-200 rounded-lg p-2">
+                    <ul v-for="student in students.data" :key="student.id" class="bg-gray-200 rounded-lg p-2">
                         <li>
                             Nom : {{ student.last_name }}
                             <br>
