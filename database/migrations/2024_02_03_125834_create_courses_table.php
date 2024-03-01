@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('code');
             $table->text('lead');
+            $table->boolean('is_tfe');
             $table->timestamps();
         });
     }

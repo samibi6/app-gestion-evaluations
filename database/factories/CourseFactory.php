@@ -20,6 +20,7 @@ class CourseFactory extends Factory
             'name' => $this->faker->word(10),
             'code' => $this->faker->numerify('#### ## U## D#'),
             'lead' => $this->faker->realTextBetween($minNbChars = 150, $maxNbChars = 500),
+            'is_tfe' => $this->faker->boolean()
         ];
     }
 }

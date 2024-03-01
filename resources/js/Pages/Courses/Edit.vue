@@ -23,6 +23,7 @@ const form = usePrecognitionForm("patch", route("courses.update", { course: prop
     section: props.sectionsByCurrentCourse.length > 0 ? props.sectionsByCurrentCourse[0].id : null,
     user: props.usersByCurrentCourse.length > 0 ? props.usersByCurrentCourse[0].id : null,
     lead: props.course.lead,
+    is_tfe: props.course.is_tfe === 0 ? false : true,
 });
 
 form.setValidationTimeout(300);
@@ -81,6 +82,10 @@ var closeModal = () => {
             {{ form.errors.lead }}
         </div>
 
+        <br><br>
+
+        <label class="cursor-pointer" for="is_tfe">Épreuve intégrée</label>
+        <input class="mr-4 cursor-pointer" type="checkbox" name="is_tfe" id="is_tfe" v-model="form.is_tfe" />
         <br><br>
 
         <label for="section">Section du cours</label><!--faudra faire qu'on puisse ajouter plusieurs sections-->
