@@ -61,11 +61,20 @@ var closeModal = () => {
 
 
 
-const search = defineModel()
-function setup(props) {
+// function setup(props) {
+// };
+// setup();
 
+const search = ref(null);
+const formSearchStudent = useForm("index", {});
+
+const searchStudent = () => {
+    formSearchStudent.index(route("students.index", search.value), {
+        preserveScroll: true,
+    });
 };
-setup();
+
+
 
 </script>
 
@@ -129,7 +138,7 @@ setup();
                 <h3 class="text-lg text-center mb-4">Liste des étudiants</h3>
                 <div class="flex flex-col sm:flex-row justify-center items-center w-fit mx-auto gap-4 mb-2">
 
-                    <form :action="route('students.index', { search })" method="GET" class="w-96 mx-auto">
+                    <form @submit="searchStudent" method="GET" class="w-96 mx-auto">
                         <label for="default-search"
                             class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                         <div class="relative">
