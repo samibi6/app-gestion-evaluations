@@ -17,14 +17,12 @@ use Illuminate\Http\Request;
 
 class PdfController extends Controller
 {
-    public function generateSuccessPdf(Course $course, Section $section)
+    public function generateSuccessPdf(Course $course, Section $section, Student $student = null)
     {
         $students = CourseStudent::join('students', 'students.id', "=", "course_students.student_id")
             ->join('section_students', 'section_students.student_id', '=', 'students.id')
             ->where('course_students.course_id', $course->id)->where('section_students.section_id', $section->id)->select('students.*')->orderBy('students.id')
             ->get();
-
-        $student = Student::where('id', 1)->first();
 
         $criteriaData = Criteria::pluck('description', 'id')->toArray();
 
@@ -59,40 +57,46 @@ class PdfController extends Controller
             $schoolYear = ($currentYear - 1) . '-' . $currentYear;
         }
 
-        $data = [
-            'student' => $student,
-            'section' => $section,
-            'courseUser' => $courseUser,
-            'schoolYear' => $schoolYear,
-            'course' => $course,
-            'criteriaData' => $criteriaData,
-            'criteriaByApt' => $criteriaByApt,
-            'aptitudes' => $aptitudes,
-            'acquired' => $acquired[1],
-            'proficiencies' => $proficiencies,
-            'acquiredProf' => $acquiredProf[1],
-        ];
+        if ($student === null) {
+            foreach ($students as $studnt) {
+                $data = [
+                    'student' => $studnt,
+                    'section' => $section,
+                    'courseUser' => $courseUser,
+                    'schoolYear' => $schoolYear,
+                    'course' => $course,
+                    'criteriaData' => $criteriaData,
+                    'criteriaByApt' => $criteriaByApt,
+                    'aptitudes' => $aptitudes,
+                    'acquired' => $acquired[$studnt->id],
+                    'proficiencies' => $proficiencies,
+                    'acquiredProf' => $acquiredProf[$studnt->id],
+                ];
+                $pdf = PDF::loadView('pdf.success.view', $data);
+                $pdf->stream('document.pdf');
+            }
+        } else {
+            $data = [
+                'student' => $student,
+                'section' => $section,
+                'courseUser' => $courseUser,
+                'schoolYear' => $schoolYear,
+                'course' => $course,
+                'criteriaData' => $criteriaData,
+                'criteriaByApt' => $criteriaByApt,
+                'aptitudes' => $aptitudes,
+                'acquired' => $acquired[$student->id],
+                'proficiencies' => $proficiencies,
+                'acquiredProf' => $acquiredProf[$student->id],
+            ];
 
-        $pdf = PDF::loadView('pdf.success.view', $data);
-        return $pdf->stream('document.pdf');
+            $pdf = PDF::loadView('pdf.success.view', $data);
+            return $pdf->stream('document.pdf');
+        }
 
-        // foreach ($students as $student) {
-        //     $data = [
-        //         'student' => $student,
-        //         'section' => $section,
-        //         'courseUser' => $courseUser,
-        //         'schoolYear' => $schoolYear,
-        //         'course' => $course,
-        //         'criteriaData' => $criteriaData,
-        //         'criteriaByApt' => $criteriaByApt,
-        //         'aptitudes' => $aptitudes,
-        //         'acquired' => $acquired[$student->id],
-        //         'proficiencies' => $proficiencies,
-        //         'acquiredProf' => $acquiredProf[$student->id],
-        //     ];
-        //     $pdf = PDF::loadView('pdf.success.view', $data);
-        //     $pdf->stream('document.pdf');
-        // }
+
+
+
 
         // $pdf = PDF::loadView('pdf.success.view', $data);
         // return $pdf->download('document.pdf');
