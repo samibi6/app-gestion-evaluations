@@ -11,6 +11,27 @@ const props = defineProps(['course', 'students', 'section', 'dateEval']);
 
 const end = ref(new Date()); // initialiser avec la date actuelle
 
+let i = 0;
+let n = 0;
+
+function is_PdfRenderable(studentId) {
+    i++;
+    formatDate(props.dateEval[studentId], end.value) === 'Pas évalué' ? '' : n++;
+}
+console.log(props.students);
+// Calculate values of i and n
+for (const student of props.students) {
+    is_PdfRenderable(student.id);
+}
+
+function renderPdf() {
+    if (i !== n) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 function formatDate(dateEval, end) {
     if (dateEval === null) {
         return "Pas évalué";
@@ -57,28 +78,44 @@ const formattedDate = computed(() => {
 setInterval(() => {
     end.value = new Date();
 }, 1000);
-
-console.log(props.course.proficiencies);
 </script>
 <template>
     <AppLayout>
         <div class="bg-white flex flex-wrap m-5 w-fit mx-auto">
+
             <a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2 m-5 border border-zinc-300"
                 :href="route('evals.index')">Retour</a>
+
             <ul class="block w-fit border border-slate-500 p-5 m-5 h-fit">
-                <li v-for="student in students">{{ student.first_name + " " + student.last_name + " " }}
-                    <span :class="textColorClass(student.id)">
+
+                <li v-for="student in  students ">{{ student.first_name + " " + student.last_name + " " }}
+
+                    <span :class="formattedDate(student.id) === 'Pas évalué' ? 'text-red-500' : textColorClass(student.id)">
                         {{ formattedDate(student.id) }}
                     </span>
+
                     <a class="cursor-pointer font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition h-full inline-block px-4 py-2"
                         :href="route('evals.edit', { courseId: course.id, studentId: student.id, sectionId: section })">Evaluer</a>
+
+                    <a :class="formattedDate(student.id) === 'Pas évalué' ? 'text-zinc-500 cursor-default p-2' : 'text-blue-500 hover:text-white hover:bg-blue-500 transition p-2'"
+                        :href="formattedDate(student.id) === 'Pas évalué' ? '' : route('pdf.success', {
+                            course: course.id, section: section,
+                            student: student.id
+                        })">Générer PDF</a>
                 </li>
+
+                <a :class="renderPdf() ? 'text-blue-500 hover:text-white hover:bg-blue-500 transition w-fit mx-auto p-2 mt-4 block' : 'text-zinc-500 cursor-default p-2 w-fit mx-auto mt-4 block'"
+                    :href="renderPdf() ? route('pdf.success', {
+                        course: course.id, section: section
+                    }) : ''">Générer les pdf pour toute la classe</a>
+
             </ul>
+
             <ul class="w-[800px] flex flex-wrap border border-red-300">
-                <li class="w-fit font-bold border border-slate-950 p-5 m-5" v-for="aptitude in course.aptitudes">{{
+                <li class="w-fit font-bold border border-slate-950 p-5 m-5" v-for=" aptitude  in  course.aptitudes ">{{
                     aptitude.id + ". " + aptitude.description }}
                     <ul class="mb-2">
-                        <li class="font-normal ml-11 mt-5" v-for="criteria in aptitude.criterias">{{
+                        <li class="font-normal ml-11 mt-5" v-for=" criteria  in  aptitude.criterias ">{{
                             criteria.id + ". " + criteria.description
                         }}
                         </li>
@@ -87,7 +124,7 @@ console.log(props.course.proficiencies);
 
             </ul>
             <ul class="border border-slate-950 p-5 m-5 w-fit h-fit">
-                <li v-for="proficiency in course.proficiencies">{{ proficiency.criteria_skill }}</li>
+                <li v-for=" proficiency  in  course.proficiencies ">{{ proficiency.criteria_skill }}</li>
             </ul>
         </div>
     </AppLayout>

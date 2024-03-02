@@ -38,21 +38,6 @@ const submit = () => form.submit({
 </script>
 <template>
     <div class="p-10">
-        <ul>
-            <li v-for="aptitude in aptitudes">{{ aptitude.description }}
-                <ul>
-                    <li v-for="criteria in criteriaByApt[aptitude.id]">
-                        {{ criteria.description + " acquired ? -> " }}
-                        {{ acquired[studentId][criteria.id] === 'undefined' ?
-                            "c'est def" : "c'est pas def" }}</li>
-                </ul>
-            </li>
-        </ul>
-        <ul>
-            <li v-for="proficiency in proficiencies">{{ proficiency.criteria_skill + " - " + proficiency.indicator }}
-                {{ acquiredProf[studentId][proficiency.id] === 'undefined' ?
-                    "c'est def" : "c'est pas def" }}</li>
-        </ul>
 
         <h1>{{ student.first_name + " " + student.last_name }}</h1>
 
