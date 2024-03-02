@@ -17,7 +17,7 @@ import { useForm } from "@inertiajs/vue3";
 
 import { ref, computed } from 'vue';
 
-const props = defineProps(['students', 'sections', 'sectionsByStudents']);
+const props = defineProps(['students', 'sections', 'sectionsByStudents', 'search']);
 
 
 
@@ -138,7 +138,7 @@ const searchStudent = () => {
                 <h3 class="text-lg text-center mb-4">Liste des étudiants</h3>
                 <div class="flex flex-col sm:flex-row justify-center items-center w-fit mx-auto gap-4 mb-2">
 
-                    <form @submit="searchStudent" method="GET" class="w-96 mx-auto">
+                    <form @submit.prevent="searchStudent" method="GET" class="w-96 mx-auto">
                         <label for="default-search"
                             class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                         <div class="relative">

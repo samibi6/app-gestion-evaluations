@@ -12,18 +12,27 @@ use Inertia\Inertia;
 
 class StudentController extends Controller
 {
-    public function index(Request $request)
+    public function index($student = null /* Request $request */)
     {
         // $students = Student::where('first_name', 'LIKE', '%' . $request->query('search') . '%')
         //     ->paginate(8)
         //     ->withQueryString();
 
-        $searchQuery = strtolower($request->query('search'));
 
-        $students = Student::whereRaw('LOWER(first_name) LIKE ?', ["%{$searchQuery}%"])
-            ->orWhereRaw('LOWER(last_name) LIKE ?', ["%{$searchQuery}%"])
-            ->paginate(8)
-            ->withQueryString();
+
+        if ($student === null) {
+            $students = Student::paginate(8)
+                ->withQueryString();
+        } else {
+            // $searchQuery = strtolower($request->query('search'));
+            $searchQuery = strtolower($student);
+            $students = Student::whereRaw('LOWER(first_name) LIKE ?', ["%{$searchQuery}%"])
+                ->orWhereRaw('LOWER(last_name) LIKE ?', ["%{$searchQuery}%"])
+                ->paginate(8)
+                ->withQueryString();
+        }
+
+
 
         $sections = Section::get();
 
