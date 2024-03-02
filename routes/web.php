@@ -115,6 +115,13 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::post('/evals/{studentId}/{sectionId}/{courseId}', [EvalController::class, 'store'])->name('evals.store');
     // Route::put('/evals/{course}', [EvalController::class, 'status'])->name('coursSections.status');
     Route::delete('/evals', [EvalController::class, 'delete'])->name('evals.delete');
+
+    Route::get('/evals/echec/{courseId}/{sectionId}/{studentId}', [EvalController::class, 'fail'])->name('evals.fail');
+    Route::get('/evals/ajournement/{courseId}/{sectionId}/{studentId}', [EvalController::class, 'adjournment'])->name('evals.adjournment');
+    Route::post('/evals/ajournement/{courseId}/{sectionId}/{studentId}', [EvalController::class, 'storeAdjournment'])->name('evals.storeAdjournment');
+    Route::get('/evals/refus/{courseId}/{sectionId}/{studentId}', [EvalController::class, 'denied'])->name('evals.denied');
+    Route::post('/evals/refus/{courseId}/{sectionId}/{studentId}', [EvalController::class, 'storeDenied'])->name('evals.storeDenied');
+  
 });
 
 Route::middleware(['auth'])->group(function () {

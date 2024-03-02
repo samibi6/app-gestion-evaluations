@@ -28,6 +28,7 @@ class CourseUpdateRequest extends FormRequest
             'section' => 'required|max:100',
             'user' => 'required|max:100', //faudra ptetre retirer le required, un cours doit sûrement pouvoir être créé sans prof
             'lead' => 'required|max:1000',
+            'is_tfe' => 'boolean',
         ];
     }
 }

@@ -47,11 +47,12 @@ class CourseController extends Controller
 
     public function store(CourseStoreRequest $request)
 {
-  
+
     $course = Course::make();
     $course->name = $request->validated()['name'];
     $course->code = $request->validated()['code'];
     $course->lead = $request->validated()['lead'];
+    $course->is_tfe = $request->validated()['is_tfe'];
 
     $course->save();
 
@@ -107,6 +108,7 @@ public function edit(Course $course){
             'name' => $request->validated()['name'],
             'code' => $request->validated()['code'],
             'lead' => $request->validated()['lead'],
+            'is_tfe' => $request->validated()['is_tfe'],
             
         ]);
     

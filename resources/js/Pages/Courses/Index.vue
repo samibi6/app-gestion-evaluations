@@ -24,6 +24,7 @@ const form = usePrecognitionForm("post", route("courses.store"), {
     section: '',
     user: '',
     lead: '',
+    is_tfe: false,
 
 });
 
@@ -82,6 +83,10 @@ var closeModal = () => {
         <div v-if="form.invalid('lead')">
             {{ form.errors.lead }}
         </div>
+        <br><br>
+
+        <label class="cursor-pointer" for="is_tfe">Épreuve intégrée</label>
+        <input class="mr-4 cursor-pointer" type="checkbox" name="is_tfe" id="is_tfe" v-model="form.is_tfe" />
 
         <br><br>
 
@@ -115,7 +120,7 @@ var closeModal = () => {
 
     <div>
         <h2 class="text-xl my-3 font-bold">Liste des cours</h2>
-        <ul v-for="course in courses" :key="course.id">
+        <ul v-for="course in  courses " :key="course.id">
             <li>
                 Nom du cours : {{ course.name }}
                 <br>
@@ -126,15 +131,21 @@ var closeModal = () => {
                 <br>
 
             </li>
+            <li v-if="course.is_tfe" class="text-red-500 font-bold">
+                Épreuve intégrée
+                <br>
+
+            </li>
 
             <li>
-                Sections du cours : <span v-for="section in sectionsByCourses[course.id]" :key="section.id">{{ section.name
+                Sections du cours: <span v-for="section in sectionsByCourses[course.id]" :key="section.id">{{
+                    section.name
                 }},
                 </span>
                 <br>
             </li>
             <li>
-                Chargé de cours : <span v-for="user in usersByCourses[course.id]" :key="user.id">{{ user.name }},
+                Chargé de cours : <span v-for=" user  in  usersByCourses[course.id] " :key="user.id">{{ user.name }},
                     <!--demander s'il peut y avoir plusieurs profs comme avec Christophe et Thibault, sinon n'afficher que le premier résultat (merci les factories pas uniques)-->
                 </span>
                 <br><br>
