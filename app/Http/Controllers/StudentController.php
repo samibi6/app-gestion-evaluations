@@ -18,7 +18,7 @@ class StudentController extends Controller
         //     ->paginate(8)
         //     ->withQueryString();
 
-
+        // dd();
 
         if ($student === null) {
             $students = Student::paginate(8)

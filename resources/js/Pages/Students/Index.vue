@@ -61,9 +61,6 @@ var closeModal = () => {
 
 
 
-// function setup(props) {
-// };
-// setup();
 
 const search = ref(null);
 const formSearchStudent = useForm("index", {});

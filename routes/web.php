@@ -50,6 +50,7 @@ Route::middleware([
 
 
 Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () {
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/{student?}', [StudentController::class, 'index'])->name('students.index');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
     Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
