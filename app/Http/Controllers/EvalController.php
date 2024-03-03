@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdjournmentStoreRequest;
+use App\Http\Requests\DeniedStoreRequest;
 use App\Http\Requests\EvalStoreRequest;
 use App\Models\Aptitude;
 use App\Models\Course;
@@ -144,4 +146,160 @@ class EvalController extends Controller
         // $proficiencyStudent
         return redirect()->route('evals.show', ['courseId' => $courseId, 'sectionId' => $sectionId])->with('success', 'évalué avec succès');
     }
+
+    public function fail($courseId, $sectionId, $studentId)
+    {
+        
+        $section = Section::where('id', $sectionId)->first();
+        $student = Student::where('id', $studentId)->first();
+        $course = Course::where('id', $courseId)->first();
+    
+        return Inertia::render('Evals/Fail', [
+            'student' => $student,
+            'section' => $section,
+            'course' => $course,
+        ]);
+    }
+    public function adjournment($courseId, $sectionId, $studentId)
+    {
+        
+        $section = Section::where('id', $sectionId)->first();
+        $student = Student::where('id', $studentId)->first();
+        $course = Course::where('id', $courseId)->first();
+        $courseStudent = CourseStudent::where('course_id', $courseId)->where('student_id', $studentId)->firstOrFail();
+    
+        return Inertia::render('Evals/Adjournment', [
+            'student' => $student,
+            'section' => $section,
+            'course' => $course,
+            'courseStudent' => $courseStudent,
+        ]);
+    }
+    public function storeAdjournment(AdjournmentStoreRequest $request, $courseId, $sectionId, $studentId)
+    {
+   
+       $courseStudent = CourseStudent::where('student_id', $studentId)->where('course_id', $courseId)->firstOrFail();
+
+       $dateTime = new DateTime();
+       $currentDate = $dateTime->format('Y-m-d H:i:s');
+      
+       $courseStudent->update([
+            'date_adjourned' => $currentDate,
+            'is_determining' => $request->validated()['is_determining'],
+            'is_other' => $request->validated()['is_other'],
+            
+            'adjournment_exam_date' => $request->validated()['adjournment_exam_date'],
+            
+            'adjournment_blunder_1' => $request->validated()['adjournment_blunder_1'],
+            'adjournment_blunder_1_justification' => $request->validated()['adjournment_blunder_1_justification'],
+            
+            'adjournment_blunder_2' => $request->validated()['adjournment_blunder_2'],
+        ]);
+      
+        
+        
+        // return Inertia::render('Evals/Show -> page show du bon cours (pas moyen de mettre la méthode show du controller ici? sinon redéclarer variables nécessaires)', [
+        //     'student' => $student,
+        //     'section' => $section,
+        //     'course' => $course,
+        // ]);
+
+        // Récupérer le cours donné avec ses aptitudes, critères et proficiencies
+        $course = Course::with('aptitudes.criterias', 'proficiencies')
+            ->findOrFail($courseId);
+
+        // Récupérer les étudiants inscrits à ce cours
+        $students = CourseStudent::join('students', 'students.id', "=", "course_students.student_id")
+            ->join('section_students', 'section_students.student_id', '=', 'students.id')
+            ->where('course_students.course_id', $courseId)->where('section_students.section_id', $sectionId)->select('students.*')->orderBy('students.id')
+            ->get();
+
+        $dateEval = CourseStudent::where('course_id', $courseId)->pluck('date_eval', 'student_id')->toArray();
+        
+        return Inertia::render('Evals/show', [
+            'course' => $course,
+            'students' => $students,
+            'section' => $sectionId,
+            'dateEval' => $dateEval,
+            
+        ]);
+    
+    }
+
+    public function denied($courseId, $sectionId, $studentId)
+    {
+        $section = Section::where('id', $sectionId)->first();
+        $student = Student::where('id', $studentId)->first();
+        $course = Course::where('id', $courseId)->first();
+        $courseStudent = CourseStudent::where('course_id', $courseId)->where('student_id', $studentId)->firstOrFail();
+    
+        return Inertia::render('Evals/Denied', [
+            'student' => $student,
+            'section' => $section,
+            'course' => $course,
+            'courseStudent' => $courseStudent,
+        ]);
+    }
+
+    public function storeDenied(DeniedStoreRequest $request, $courseId, $sectionId, $studentId)
+    {
+
+       $courseStudent = CourseStudent::where('student_id', $studentId)->where('course_id', $courseId)->firstOrFail();
+
+       $dateTime = new DateTime();
+       $currentDate = $dateTime->format('Y-m-d H:i:s');
+     
+       $courseStudent->update([
+            'date_denied' => $currentDate,
+            
+            'is_determining' => $request->validated()['is_determining'],
+            'is_other' => $request->validated()['is_other'],
+            
+            'denied_exam_date' => $request->validated()['denied_exam_date'],
+            
+            'denied_blunder_1' => $request->validated()['denied_blunder_1'],
+            'denied_blunder_1_justification' => $request->validated()['denied_blunder_1_justification'],
+            
+            'denied_blunder_2' => $request->validated()['denied_blunder_2'],
+            'denied_blunder_2_justification' => $request->validated()['denied_blunder_2_justification'],
+
+            'denied_blunder_3' => $request->validated()['denied_blunder_3'],
+
+            'denied_blunder_4' => $request->validated()['denied_blunder_4'],
+            
+            'denied_blunder_5' => $request->validated()['denied_blunder_4'],
+
+            'denied_justification_global' => $request->validated()['denied_justification_global'],
+        ]);
+      
+        
+        
+        // return Inertia::render('Evals/Show -> page show du bon cours (pas moyen de mettre la méthode show du controller ici? sinon redéclarer variables nécessaires)', [
+        //     'student' => $student,
+        //     'section' => $section,
+        //     'course' => $course,
+        // ]);
+
+        // Récupérer le cours donné avec ses aptitudes, critères et proficiencies
+        $course = Course::with('aptitudes.criterias', 'proficiencies')
+            ->findOrFail($courseId);
+
+        // Récupérer les étudiants inscrits à ce cours
+        $students = CourseStudent::join('students', 'students.id', "=", "course_students.student_id")
+            ->join('section_students', 'section_students.student_id', '=', 'students.id')
+            ->where('course_students.course_id', $courseId)->where('section_students.section_id', $sectionId)->select('students.*')->orderBy('students.id')
+            ->get();
+
+        $dateEval = CourseStudent::where('course_id', $courseId)->pluck('date_eval', 'student_id')->toArray();
+        
+        return Inertia::render('Evals/show', [
+            'course' => $course,
+            'students' => $students,
+            'section' => $sectionId,
+            'dateEval' => $dateEval,
+            
+        ]);
+    
+    }
+    
 }
