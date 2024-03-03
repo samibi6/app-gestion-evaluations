@@ -112,7 +112,7 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
     Route::get('/evals', [EvalController::class, 'index'])->name('evals.index');
     Route::get('/evals/show/{courseId}/{sectionId}', [EvalController::class, 'show'])->name('evals.show');
     Route::get('/evals/edit/{courseId}/{studentId}/{sectionId}', [EvalController::class, 'edit'])->name('evals.edit');
-    Route::post('/evals/{studentId}/{sectionId}/{courseId}', [EvalController::class, 'store'])->name('evals.store');
+    Route::post('/evals/{studentId}/{courseId}/{sectionId}', [EvalController::class, 'store'])->name('evals.store');
     // Route::put('/evals/{course}', [EvalController::class, 'status'])->name('coursSections.status');
     Route::delete('/evals', [EvalController::class, 'delete'])->name('evals.delete');
 });

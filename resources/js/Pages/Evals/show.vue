@@ -79,6 +79,7 @@ setInterval(() => {
     end.value = new Date();
 }, 1000);
 </script>
+
 <template>
     <AppLayout>
         <div class="bg-white flex flex-wrap m-5 w-fit mx-auto">
@@ -90,7 +91,8 @@ setInterval(() => {
 
                 <li v-for="student in  students ">{{ student.first_name + " " + student.last_name + " " }}
 
-                    <span :class="formattedDate(student.id) === 'Pas évalué' ? 'text-red-500' : textColorClass(student.id)">
+                    <span
+                        :class="formattedDate(student.id) === 'Pas évalué' ? 'text-red-500' : textColorClass(student.id)">
                         {{ formattedDate(student.id) }}
                     </span>
 
@@ -99,15 +101,15 @@ setInterval(() => {
 
                     <a :class="formattedDate(student.id) === 'Pas évalué' ? 'text-zinc-500 cursor-default p-2' : 'text-blue-500 hover:text-white hover:bg-blue-500 transition p-2'"
                         :href="formattedDate(student.id) === 'Pas évalué' ? '' : route('pdf.success', {
-                            course: course.id, section: section,
-                            student: student.id
-                        })">Générer PDF</a>
+                    course: course.id, section: section,
+                    student: student.id
+                })">Générer PDF</a>
                 </li>
 
                 <a :class="renderPdf() ? 'text-blue-500 hover:text-white hover:bg-blue-500 transition w-fit mx-auto p-2 mt-4 block' : 'text-zinc-500 cursor-default p-2 w-fit mx-auto mt-4 block'"
                     :href="renderPdf() ? route('pdf.success', {
-                        course: course.id, section: section
-                    }) : ''">Générer les pdf pour toute la classe</a>
+                    course: course.id, section: section
+                }) : ''">Générer les pdf pour toute la classe</a>
 
             </ul>
 
@@ -116,8 +118,8 @@ setInterval(() => {
                     aptitude.id + ". " + aptitude.description }}
                     <ul class="mb-2">
                         <li class="font-normal ml-11 mt-5" v-for=" criteria  in  aptitude.criterias ">{{
-                            criteria.id + ". " + criteria.description
-                        }}
+                    criteria.id + ". " + criteria.description
+                }}
                         </li>
                     </ul>
                 </li>
