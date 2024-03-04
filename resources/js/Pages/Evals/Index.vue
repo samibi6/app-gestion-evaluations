@@ -7,8 +7,9 @@ import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-const props = defineProps(['courses', 'sections']);
+const props = defineProps(['courses', 'sections', 'AllCourses']);
 </script>
+
 <template>
     <AppLayout>
         <div>

@@ -29,9 +29,12 @@ class EvalController extends Controller
             ->select('sections.id as section-id', 'courses.*')
             ->get()
             ->groupBy('section-id');
+
+        $AllCourses = Course::all();
         return Inertia::render('Evals/Index', [
             'courses' => $courses,
             'sections' => $sections,
+            'AllCourses' => $AllCourses,
         ]);
     }
 
@@ -78,7 +81,6 @@ class EvalController extends Controller
         $criteriaStudents = CriteriaStudent::all();
         // where('student_id', $studentId);
 
-        $section = Section::where('id', $sectionId)->first();
         $student = Student::where('id', $studentId)->first();
         $course = Course::where('id', $courseId)->first();
 
@@ -107,7 +109,6 @@ class EvalController extends Controller
             'criteriaByApt' => $criteriaByApt,
             'aptitudes' => $aptitudes,
             'acquired' => $acquired,
-            'section' => $section,
             'proficiencies' => $proficiencies,
             'acquiredProf' => $acquiredProf,
             'student' => $student,
@@ -115,7 +116,7 @@ class EvalController extends Controller
         ]);
     }
 
-    public function store(EvalStoreRequest $request, Student $studentId, $sectionId, $courseId)
+    public function store(EvalStoreRequest $request, Student $studentId, $courseId, $sectionId)
     {
         // dd($studentId->id);
         // $request->criteria;
