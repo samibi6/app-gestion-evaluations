@@ -35,7 +35,7 @@ class AdjournmentStoreRequest extends FormRequest
                 }),
                 'nullable',
                 'string',
-                'max:1000',
+                'max:400',
                 function ($attribute, $value, $fail) {
                     if (!$this->input('adjournment_blunder_1') && $value) {
                         $fail('The checkbox for "Adjournment Blunder 1" must be checked if the justification is filled.');
