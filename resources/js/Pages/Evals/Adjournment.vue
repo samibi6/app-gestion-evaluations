@@ -10,15 +10,15 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 const props = defineProps(['course', 'section', 'student', 'courseStudent']);
 
 const form = usePrecognitionForm("post", route("evals.storeAdjournment", { studentId: props.student, sectionId: props.section, courseId: props.course }), {
-    is_determining: props.courseStudent.is_determining ? props.courseStudent.is_determining : false,
-    is_other: props.courseStudent.is_other ? props.courseStudent.is_other : false,
+    is_determining: props.courseStudent.is_determining === 1 ? true : false,
+    is_other: props.courseStudent.is_other === 1 ? true : false,
 
-    adjournment_exam_date: '',
+    adjournment_exam_date: props.courseStudent.adjournment_exam_date ? props.courseStudent.adjournment_exam_date : '',
 
-    adjournment_blunder_1: false,
-    adjournment_blunder_1_justification: '',
+    adjournment_blunder_1: props.courseStudent.adjournment_blunder_1 === 1 ? true : false,
+    adjournment_blunder_1_justification: props.courseStudent.adjournment_blunder_1_justification ? props.courseStudent.adjournment_blunder_1_justification : '',
 
-    adjournment_blunder_2: false,
+    adjournment_blunder_2: props.courseStudent.adjournment_blunder_2 === 1 ? true : false,
 
 
 });
@@ -51,10 +51,6 @@ const submit = () => {
     });
 };
 
-
-
-
-
 const calculateAcademicYear = () => {
     const today = new Date();
     const currentYear = today.getFullYear();
@@ -85,6 +81,33 @@ const getCurrentDate = () => {
     }
     return `${year}-${month}-${day}`;
 };
+
+const checkAndSetDate = (date_eval, academicYear) => {
+    const currentDate = getCurrentDate();
+
+    // Parse the academic year to compare it with date_eval
+    const [startYear, endYear] = academicYear.split('-');
+    const startDate = new Date(`${startYear}-09-01`);
+    const endDate = new Date(`${endYear}-08-31`);
+
+    // Parse the date_eval
+    const evalDate = new Date(date_eval);
+
+    // Check if date_eval falls outside the academic year
+    if (evalDate < startDate || evalDate > endDate) {
+        return currentDate; // Set formattedDate to today's date
+    } else {
+        // Format the date_eval to YYYY-MM-DD
+        return `${evalDate.getFullYear()}-${(evalDate.getMonth() + 1).toString().padStart(2, '0')}-${evalDate.getDate().toString().padStart(2, '0')}`;
+    }
+};
+
+// Example usage
+const formattedDate = checkAndSetDate(props.courseStudent.date_eval, academicYear);
+
+
+//const date_eval = new Date(props.courseStudent.date_eval);
+//const formattedDate = `${date_eval.getFullYear()}-${(date_eval.getMonth() + 1).toString().padStart(2, '0')}-${date_eval.getDate().toString().padStart(2, '0')}`;
 </script>
 
 <template>
@@ -121,7 +144,7 @@ const getCurrentDate = () => {
                     <li>
                         <label>
                             Date de l'épreuve :
-                            <input type="date" v-model="form.adjournment_exam_date" :max="getCurrentDate()">
+                            <input type="date" v-model="form.adjournment_exam_date" :max="formattedDate">
                             <div v-if="form.invalid('adjournment_exam_date')">
                                 {{ form.errors.adjournment_exam_date }}
                             </div>

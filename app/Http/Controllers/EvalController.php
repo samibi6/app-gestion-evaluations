@@ -249,7 +249,6 @@ class EvalController extends Controller
 
        $dateTime = new DateTime();
        $currentDate = $dateTime->format('Y-m-d H:i:s');
-     
        $courseStudent->update([
             'date_denied' => $currentDate,
             
@@ -268,39 +267,13 @@ class EvalController extends Controller
 
             'denied_blunder_4' => $request->validated()['denied_blunder_4'],
             
-            'denied_blunder_5' => $request->validated()['denied_blunder_4'],
+            'denied_blunder_5' => $request->validated()['denied_blunder_5'],
 
             'denied_justification_global' => $request->validated()['denied_justification_global'],
         ]);
       
-        
-        
-        // return Inertia::render('Evals/Show -> page show du bon cours (pas moyen de mettre la méthode show du controller ici? sinon redéclarer variables nécessaires)', [
-        //     'student' => $student,
-        //     'section' => $section,
-        //     'course' => $course,
-        // ]);
-
-        // Récupérer le cours donné avec ses aptitudes, critères et proficiencies
-        $course = Course::with('aptitudes.criterias', 'proficiencies')
-            ->findOrFail($courseId);
-
-        // Récupérer les étudiants inscrits à ce cours
-        $students = CourseStudent::join('students', 'students.id', "=", "course_students.student_id")
-            ->join('section_students', 'section_students.student_id', '=', 'students.id')
-            ->where('course_students.course_id', $courseId)->where('section_students.section_id', $sectionId)->select('students.*')->orderBy('students.id')
-            ->get();
-
-        $dateEval = CourseStudent::where('course_id', $courseId)->pluck('date_eval', 'student_id')->toArray();
-        
-        return Inertia::render('Evals/show', [
-            'course' => $course,
-            'students' => $students,
-            'section' => $sectionId,
-            'dateEval' => $dateEval,
+        return redirect()->route('evals.show', ['courseId' => $courseId, 'sectionId' => $sectionId]);
             
-        ]);
-    
     }
     
 }
