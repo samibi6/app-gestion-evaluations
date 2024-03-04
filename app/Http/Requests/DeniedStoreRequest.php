@@ -35,7 +35,7 @@ class DeniedStoreRequest extends FormRequest
                 }),
                 'nullable',
                 'string',
-                'max:1000',
+                'max:390',
                 function ($attribute, $value, $fail) {
                     if (!$this->input('denied_blunder_1') && $value) {
                         $fail('The checkbox for "Denied Blunder 1" must be checked if the justification is filled.');
@@ -50,7 +50,7 @@ class DeniedStoreRequest extends FormRequest
                 }),
                 'nullable',
                 'string',
-                'max:1000',
+                'max:390',
                 function ($attribute, $value, $fail) {
                     if (!$this->input('denied_blunder_2') && $value) {
                         $fail('The checkbox for "Denied Blunder 2" must be checked if the justification is filled.');
@@ -63,7 +63,7 @@ class DeniedStoreRequest extends FormRequest
             
             'denied_blunder_5' => 'boolean',
             
-            'denied_justification_global' => 'required','string','max:1000',
+            'denied_justification_global' => ['required', 'string', 'max:1000'],
         ];
     }
 }

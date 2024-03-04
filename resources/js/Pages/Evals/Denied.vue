@@ -10,27 +10,29 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 const props = defineProps(['course', 'section', 'student', 'courseStudent']);
 
 const form = usePrecognitionForm("post", route("evals.storeDenied", { studentId: props.student, sectionId: props.section, courseId: props.course }), {
-    is_determining: props.courseStudent.is_determining ? props.courseStudent.is_determining : false,
-    is_other: props.courseStudent.is_other ? props.courseStudent.is_other : false,
+    is_determining: props.courseStudent.is_determining === 1 ? true : false,
+    is_other: props.courseStudent.is_other === 1 ? true : false,
 
-    denied_exam_date: '',
+    denied_exam_date: props.courseStudent.denied_exam_date ? props.courseStudent.denied_exam_date : '',
 
-    denied_blunder_1: false,
-    denied_blunder_1_justification: '',
+    denied_blunder_1: props.courseStudent.denied_blunder_1 === 1 ? true : false,
+    denied_blunder_1_justification: props.courseStudent.denied_blunder_1_justification ? props.courseStudent.denied_blunder_1_justification : '',
 
-    denied_blunder_2: false,
-    denied_blunder_2_justification: '',
+    denied_blunder_2: props.courseStudent.denied_blunder_2 === 1 ? true : false,
+    denied_blunder_2_justification: props.courseStudent.denied_blunder_2_justification ? props.courseStudent.denied_blunder_2_justification : '',
 
-    denied_blunder_3: false,
 
-    denied_blunder_4: false,
+    denied_blunder_3: props.courseStudent.denied_blunder_3 === 1 ? true : false,
 
-    denied_blunder_5: false,
+    denied_blunder_4: props.courseStudent.denied_blunder_4 === 1 ? true : false,
 
-    denied_justification_global: '',
+    denied_blunder_5: props.courseStudent.denied_blunder_5 === 1 ? true : false,
+
+    denied_justification_global: props.courseStudent.denied_justification_global ? props.courseStudent.denied_justification_global : '',
 
 
 });
+
 
 form.setValidationTimeout(300);
 
@@ -90,21 +92,46 @@ const getCurrentDate = () => {
     }
     return `${year}-${month}-${day}`;
 };
+
+const checkAndSetDate = (date_eval, academicYear) => {
+    const currentDate = getCurrentDate();
+
+    // Parse the academic year to compare it with date_eval
+    const [startYear, endYear] = academicYear.split('-');
+    const startDate = new Date(`${startYear}-09-01`);
+    const endDate = new Date(`${endYear}-08-31`);
+
+    // Parse the date_eval
+    const evalDate = new Date(date_eval);
+
+    // Check if date_eval falls outside the academic year
+    if (evalDate < startDate || evalDate > endDate) {
+        return currentDate; // Set formattedDate to today's date
+    } else {
+        // Format the date_eval to YYYY-MM-DD
+        return `${evalDate.getFullYear()}-${(evalDate.getMonth() + 1).toString().padStart(2, '0')}-${evalDate.getDate().toString().padStart(2, '0')}`;
+    }
+};
+
+// Example usage
+const formattedDate = checkAndSetDate(props.courseStudent.date_eval, academicYear);
+
 </script>
 
 <template>
     <AppLayout>
         <h1>Refus de </h1>
-        <ul class="flex flex-wrap bg-zinc-300 w-fit p-5 m-2">
-            <!-- <li class="bg-zinc-300 w-fit p-5 m-2">{{ section.id + ". " + section.name }}</li> -->
-            <li>{{ student.last_name + ' ' + student.first_name }}
+        <ul class="flex flex-col flex-wrap bg-zinc-300 w-fit p-5 m-2">
+
+            <li>{{ student.last_name + ' ' + student.first_name }}</li>
             <li>UE : {{ course.name }}</li>
             <li>Code de l'UE : {{ course.code }} </li>
+            <li>Section : {{ section.id + ". " + section.name }} </li>
             <li v-if="course.is_tfe" class="text-red-500 font-bold">
                 Épreuve intégrée
             </li>
 
-            </li>
+
             <div>
                 <p>Année académique : {{ academicYear }}</p>
             </div>
@@ -125,7 +152,7 @@ const getCurrentDate = () => {
                     <li>
                         <label>
                             Date de l'épreuve :
-                            <input type="date" v-model="form.denied_exam_date" :max="getCurrentDate()" />
+                            <input type="date" v-model="form.denied_exam_date" :max="formattedDate" />
                             <div v-if="form.invalid('denied_exam_date')">
                                 {{ form.errors.denied_exam_date }}
                             </div>
@@ -143,9 +170,10 @@ const getCurrentDate = () => {
                             <br />
                             <textarea placeholder="Justification" id="justification_blunder_1"
                                 v-model="form.denied_blunder_1_justification" rows="4" cols="50"></textarea>
-                            <div v-if="form.invalid('denied_blunder_1_justification')">
-                                {{ form.errors.denied_blunder_1_justification }}
-                            </div>
+
+                        </div>
+                        <div v-if="form.invalid('denied_blunder_1_justification')">
+                            {{ form.errors.denied_blunder_1_justification }}
                         </div>
                     </li>
                     <br>
@@ -160,10 +188,12 @@ const getCurrentDate = () => {
                             <br />
                             <textarea placeholder="Justification" id="justification_blunder_2"
                                 v-model="form.denied_blunder_2_justification" rows="4" cols="50"></textarea>
-                            <div v-if="form.invalid('denied_blunder_2_justification')">
-                                {{ form.errors.denied_blunder_2_justification }}
-                            </div>
+
                         </div>
+                        <div v-if="form.invalid('denied_blunder_2_justification')">
+                            {{ form.errors.denied_blunder_2_justification }}
+                        </div>
+
                     </li>
                     <br>
                     <li>
@@ -198,7 +228,7 @@ const getCurrentDate = () => {
             </div>
             <button :disabled="form.processing" type="submit" class="bg-red-500 hover:bg-red-600 p-2">Refuser</button>
         </form>
-
+        {{ form }}
     </AppLayout>
 </template>
   
