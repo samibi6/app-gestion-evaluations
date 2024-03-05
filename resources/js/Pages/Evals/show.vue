@@ -18,7 +18,7 @@ function is_PdfRenderable(studentId) {
     i++;
     formatDate(props.dateEval[studentId], end.value) === 'Pas évalué' ? '' : n++;
 }
-console.log(props.students);
+//console.log(props.students);
 // Calculate values of i and n
 for (const student of props.students) {
     is_PdfRenderable(student.id);
@@ -37,26 +37,29 @@ function formatDate(dateEval, end) {
         return "Pas évalué";
     } else {
         let start = new Date(dateEval);
-        // let end = new Date();
-        let difference = end - start;
+        let difference = start - end;
 
-        //Arrange the difference of date in days, hours, minutes, and seconds format
-        let days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        let seconds = Math.floor((difference % (1000 * 60)) / 1000);
-        hours = hours - 1;
-        if (days == 0 && hours == 0 && minutes == 0) {
-            return "Evalué il y a: " + seconds + " secondes";
-        } else if (days == 0 && hours == 0) {
-            return "Evalué il y a: " + minutes + " minutes";
-        } else if (days == 0) {
-            return "Evalué il y a: " + hours + " heures";
+        if (difference > 0) {
+            return "Évalué dans le futur par le Doc Brown !";
+        }
+
+        let days = Math.floor(Math.abs(difference) / (1000 * 60 * 60 * 24));
+        let hours = Math.floor((Math.abs(difference) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((Math.abs(difference) % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((Math.abs(difference) % (1000 * 60)) / 1000);
+
+        if (days === 0 && hours === 0 && minutes === 0) {
+            return "Évalué il y a : " + (seconds === 1 ? "1 seconde" : seconds + " secondes");
+        } else if (days === 0 && hours === 0) {
+            return "Évalué il y a : " + (minutes === 1 ? "1 minute" : minutes + " minutes");
+        } else if (days === 0) {
+            return "Évalué il y a : " + (hours === 1 ? "1 heure" : hours + " heures");
         } else {
-            return "Evalué il y a: " + days + " jours";
+            return "Évalué il y a : " + (days === 1 ? "1 jour" : days + " jours");
         }
     }
 }
+
 
 const textColorClass = (studentId) => {
     const elapsedTime = end.value - new Date(props.dateEval[studentId]);
@@ -92,24 +95,26 @@ setInterval(() => {
                 <li v-for="student in  students ">{{ student.first_name + " " + student.last_name + " " }}
 
                     <span
-                        :class="formattedDate(student.id) === 'Pas évalué' ? 'text-red-500' : textColorClass(student.id)">
+                        :class="formattedDate(student.id) === 'Pas évalué' || formattedDate(student.id) === 'Évalué dans le futur par le Doc Brown !' ? 'text-red-500' : textColorClass(student.id)">
                         {{ formattedDate(student.id) }}
                     </span>
 
                     <a class="cursor-pointer font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition h-full inline-block px-4 py-2"
                         :href="route('evals.edit', { courseId: course.id, studentId: student.id, sectionId: section })">Evaluer</a>
 
-                    <a :class="formattedDate(student.id) === 'Pas évalué' ? 'text-zinc-500 cursor-default p-2' : 'text-blue-500 hover:text-white hover:bg-blue-500 transition p-2'"
-                        :href="formattedDate(student.id) === 'Pas évalué' ? '' : route('pdf.success', {
-                    course: course.id, section: section,
-                    student: student.id
-                })">Générer PDF</a>
+                    <a :class="formattedDate(student.id) === 'Pas évalué' || formattedDate(student.id) === 'Évalué dans le futur par le Doc Brown !' ? 'text-zinc-500 cursor-default p-2' : 'text-blue-500 hover:text-white hover:bg-blue-500 transition p-2'"
+                        :href="['Pas évalué', 'Évalué dans le futur par le Doc Brown !'].includes(formattedDate(student.id)) ? '' : route('pdf.generate', {
+                            course: course.id, section: section,
+                            student: student.id
+                        })">Générer PDF</a>
+
+
                 </li>
 
-                <a :class="renderPdf() ? 'text-blue-500 hover:text-white hover:bg-blue-500 transition w-fit mx-auto p-2 mt-4 block' : 'text-zinc-500 cursor-default p-2 w-fit mx-auto mt-4 block'"
-                    :href="renderPdf() ? route('pdf.success', {
-                    course: course.id, section: section
-                }) : ''">Générer les pdf pour toute la classe</a>
+                <a :class="'text-blue-500 hover:text-white hover:bg-blue-500 transition w-fit mx-auto p-2 mt-4 block'"
+                    :href="route('pdf.generate', {
+                        course: course.id, section: section
+                    })">Générer les pdf pour toute la classe</a>
 
             </ul>
 
@@ -118,8 +123,8 @@ setInterval(() => {
                     aptitude.id + ". " + aptitude.description }}
                     <ul class="mb-2">
                         <li class="font-normal ml-11 mt-5" v-for=" criteria  in  aptitude.criterias ">{{
-                    criteria.id + ". " + criteria.description
-                }}
+                            criteria.id + ". " + criteria.description
+                        }}
                         </li>
                     </ul>
                 </li>

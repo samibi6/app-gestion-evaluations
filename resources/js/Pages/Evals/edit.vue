@@ -7,22 +7,54 @@ import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-const props = defineProps(['courseId', 'studentId', 'sectionId', 'next', 'criteriaData', 'criteriaByApt', 'aptitudes', 'acquired', 'proficiencies', 'acquiredProf', 'student', 'course']);
+const props = defineProps(['courseId', 'studentId', 'sectionId', 'criteriaData', 'criteriaByApt', 'aptitudes', 'acquired', 'proficiencies', 'acquiredProf', 'student', 'course', 'courseStudentData']);
+// Function to determine academic year based on current date
+// Function to determine academic year based on current date
+function getCurrentAcademicYear() {
+    const today = new Date();
+    const currentMonth = today.getMonth(); // 0-indexed month
+
+    // Assuming academic year starts in September and ends in August
+    const academicYearStartMonth = 8; // September (0-indexed)
+    const academicYearStartYear = (currentMonth >= academicYearStartMonth) ? today.getFullYear() : today.getFullYear() - 1;
+    const academicYearEndYear = academicYearStartYear + 1;
+
+    return {
+        start: new Date(academicYearStartYear, academicYearStartMonth, 1),
+        end: new Date(academicYearEndYear, academicYearStartMonth, 0)
+    };
+}
+
+const currentAcademicYear = getCurrentAcademicYear();
+
+const courseStudentDataDate = new Date(props.courseStudentData.date_eval);
+
+// Function to check if a date falls within the current academic year
+function isInCurrentAcademicYear(date) {
+    return date >= currentAcademicYear.start && date <= currentAcademicYear.end;
+}
+
+// Check if date_eval is within the current academic year
+const shouldPrefill = isInCurrentAcademicYear(courseStudentDataDate);
+
+// For debugging purposes, log the current academic year and the evaluation date year
+//console.log("Current Academic Year:", currentAcademicYear, "Evaluation Date:", courseStudentDataDate, "Should Prefill:", shouldPrefill);
 
 let initialData = {};
 
-if (props.acquired && props.acquired[props.studentId] !== undefined) {
-    initialData.criteria = Object.entries(props.acquired[props.studentId]).reduce((acc, [criteriaId, value]) => {
-        acc[criteriaId] = value === 1;
-        return acc;
-    }, {});
-}
+// Conditionally prefill the data based on shouldPrefill
+if (shouldPrefill) {
+    if (props.acquired && props.acquired[props.studentId] !== undefined) {
+        initialData.criteria = Object.entries(props.acquired[props.studentId]).reduce((acc, [criteriaId, value]) => {
+            acc[criteriaId] = value === 1;
+            return acc;
+        }, {});
+    }
 
-if (props.acquiredProf && props.acquiredProf[props.studentId] !== undefined) {
-    initialData.proficiency = props.acquiredProf[props.studentId];
+    if (props.acquiredProf && props.acquiredProf[props.studentId] !== undefined) {
+        initialData.proficiency = props.acquiredProf[props.studentId];
+    }
 }
-
-console.log(initialData);
 
 const criteriaForAptitudes = Object.fromEntries(
     Object.entries(props.criteriaByApt).filter(([aptitudeId]) => {
@@ -30,22 +62,27 @@ const criteriaForAptitudes = Object.fromEntries(
     })
 );
 
+const defaultCriteria = Object.fromEntries(
+    Object.keys(criteriaForAptitudes).flatMap(aptitudeId => {
+        return criteriaForAptitudes[aptitudeId].map(criteria => [criteria.id, true]);
+    })
+);
+
+const defaultProficiency = Object.fromEntries(
+    props.proficiencies.map(proficiency => [proficiency.id, 0])
+);
+
+// Conditionally set criteria and proficiency based on shouldPrefill
+const criteria = shouldPrefill ? { ...defaultCriteria, ...initialData.criteria } : defaultCriteria;
+const proficiency = shouldPrefill ? { ...defaultProficiency, ...initialData.proficiency } : defaultProficiency;
+
 const form = usePrecognitionForm("post", route("evals.store", {
     studentId: props.studentId, courseId: props.courseId,
     sectionId: props.sectionId
 }), {
-    criteria: Object.fromEntries(
-        Object.keys(criteriaForAptitudes).flatMap(aptitudeId => {
-            return criteriaForAptitudes[aptitudeId].map(criteria => [criteria.id, true]);
-        })
-    ),
-    proficiency: Object.fromEntries(
-        props.proficiencies.map(proficiency => [proficiency.id, 0])
-    ),
-    ...initialData
+    criteria,
+    proficiency,
 });
-
-console.log(form);
 
 form.setValidationTimeout(300);
 
@@ -63,12 +100,16 @@ const submit = () => {
         for (const key in form.proficiency) {
             form.proficiency[key] = null;
         }
+        // const { courseId, sectionId, studentId } = props;
+        // const failureRoute = route('evals.fail', { courseId, sectionId, studentId });
+        // return window.location.href = failureRoute;
     }
     form.submit({
         preserveScroll: true,
         onSuccess: () => form.reset(),
     });
 };
+
 
 </script>
 
@@ -123,8 +164,7 @@ const submit = () => {
                 </table>
             </div>
 
-            <button type="submit"
-                class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full block mx-auto">
+            <button type="submit" class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full block mx-auto">
                 Sauvegarder l'évaluation
             </button>
 

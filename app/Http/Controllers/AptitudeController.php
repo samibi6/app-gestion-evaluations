@@ -39,6 +39,8 @@ class AptitudeController extends Controller
         ->groupBy('section-id');
         
         $aptitudesByCourses = [];
+        $criteriasByAptitudes = [];
+        $aptitudesByCourses = [];
         
         foreach ($courses as $course) {
             $aptitudesByCourses[$course->id] = $course->aptitudes()->get();
