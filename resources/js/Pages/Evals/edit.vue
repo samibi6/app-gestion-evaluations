@@ -30,6 +30,30 @@ const criteriaForAptitudes = Object.fromEntries(
     })
 );
 
+// ---------- FIX -----------
+
+// const defaultCriteria = Object.fromEntries(
+//     Object.keys(criteriaForAptitudes).flatMap(aptitudeId => {
+//         return criteriaForAptitudes[aptitudeId].map(criteria => [criteria.id, true]);
+//     })
+// );
+
+// const defaultProficiency = Object.fromEntries(
+//     props.proficiencies.map(proficiency => [proficiency.id, 0])
+// );
+
+// // Fusionner les données initiales avec les valeurs par défaut
+// const criteria = { ...defaultCriteria, ...initialData.criteria };
+// const proficiency = { ...defaultProficiency, ...initialData.proficiency };
+
+// const form = usePrecognitionForm("post", route("evals.store", {
+//     studentId: props.studentId, courseId: props.courseId,
+//     sectionId: props.sectionId
+// }), {
+//     criteria,
+//     proficiency,
+// });
+
 const form = usePrecognitionForm("post", route("evals.store", {
     studentId: props.studentId, courseId: props.courseId,
     sectionId: props.sectionId
