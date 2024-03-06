@@ -62,15 +62,16 @@ class EvalController extends Controller
 
     public function edit($courseId, $studentId, $sectionId)
     {
-        $next =
-            CourseStudent::orderBy('course_students.student_id')
-            ->join('students', 'students.id', "=", "course_students.student_id")
-            ->join('section_students', 'section_students.student_id', '=', 'students.id')
-            ->where('course_id', $courseId)
-            ->where('section_id', $sectionId)
-            ->where('course_students.student_id', '>', $studentId)
-            ->select('students.*')
-            ->first();
+        // $next =
+        //     CourseStudent::orderBy('course_students.student_id')
+        //     ->join('students', 'students.id', "=", "course_students.student_id")
+        //     ->join('section_students', 'section_students.student_id', '=', 'students.id')
+        //     ->where('course_id', $courseId)
+        //     ->where('section_id', $sectionId)
+        //     ->where('course_students.student_id', '>', $studentId)
+        //     ->select('students.*')
+        //     ->first();
+        $courseStudentData = CourseStudent::where('course_students.course_id', $courseId)->where('course_students.student_id', $studentId)->first();
 
         $criteriaData = Criteria::pluck('description', 'id')->toArray();
 
@@ -114,7 +115,7 @@ class EvalController extends Controller
             'courseId' => $courseId,
             'studentId' => $studentId,
             'sectionId' => $sectionId,
-            'next' => $next,
+            // 'next' => $next,
             'criteriaData' => $criteriaData,
             'criteriaByApt' => $criteriaByApt,
             'aptitudes' => $aptitudes,
@@ -123,14 +124,34 @@ class EvalController extends Controller
             'acquiredProf' => $acquiredProf,
             'student' => $student,
             'course' => $course,
+            'courseStudentData' => $courseStudentData,
         ]);
     }
 
     public function store(EvalStoreRequest $request, Student $studentId, $courseId, $sectionId)
     {
-        // dd($studentId->id);
-        // $request->criteria;
-        // $request->proficiency;
+
+        // Iterate through criteria to check if all are equal to 1
+        $allCriteriaChecked = true;
+        foreach ($request->criteria as $value) {
+            if ($value != 1) {
+                $allCriteriaChecked = false;
+                break;
+            }
+        }
+
+        // Flag to indicate whether to redirect to failure route at the end
+        $redirectAfterProcessing = !$allCriteriaChecked;
+
+        foreach ($request->criteria as $id => $value) {
+            CriteriaStudent::updateOrCreate(
+                ['criteria_id' => $id, 'student_id' => $studentId->id],
+                ['acquired' => $value]
+            );
+        }
+
+
+
         foreach ($request->criteria as $id => $value) {
             CriteriaStudent::updateOrCreate(
                 ['criteria_id' => $id, 'student_id' => $studentId->id],
@@ -153,8 +174,16 @@ class EvalController extends Controller
             ['course_id' => $courseId, 'student_id' => $studentId->id],
             ['date_eval' => $currentDate]
         );
-        // $criteriaStudent
-        // $proficiencyStudent
+
+        
+        if ($redirectAfterProcessing) {
+            return redirect()->route('evals.fail', [
+                'courseId' => $courseId,
+                'sectionId' => $sectionId,
+                'studentId' => $studentId->id,
+            ]);
+        }
+
         return redirect()->route('evals.show', ['courseId' => $courseId, 'sectionId' => $sectionId])->with('success', 'évalué avec succès');
     }
 

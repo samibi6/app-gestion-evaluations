@@ -125,7 +125,5 @@ Route::middleware('auth', HandlePrecognitiveRequests::class)->group(function () 
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/pdf/success/{course}/{section}/{student?}', [PdfController::class, 'generateSuccessPdf'])->name('pdf.success');
-    Route::get('/pdf/failure/{course}/{section}/{student?}', [PdfController::class, 'generateFailurePdf']);
-    Route::get('/pdf/postponement/{course}/{section}/{student?}', [PdfController::class, 'generatePostponementPdf']);
+    Route::get('/pdf/{course}/{section}/{student?}', [PdfController::class, 'generatePdf'])->name('pdf.generate');
 });
