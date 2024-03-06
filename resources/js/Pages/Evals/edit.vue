@@ -76,6 +76,7 @@ const defaultProficiency = Object.fromEntries(
 const criteria = shouldPrefill ? { ...defaultCriteria, ...initialData.criteria } : defaultCriteria;
 const proficiency = shouldPrefill ? { ...defaultProficiency, ...initialData.proficiency } : defaultProficiency;
 
+
 const form = usePrecognitionForm("post", route("evals.store", {
     studentId: props.studentId, courseId: props.courseId,
     sectionId: props.sectionId

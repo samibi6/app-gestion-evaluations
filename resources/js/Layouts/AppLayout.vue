@@ -55,6 +55,10 @@ const logout = () => {
                                 <NavLink :href="route('students.index')" :active="route().current('students.index')">
                                     Etudiants
                                 </NavLink>
+                                <NavLink :href="route('courseStudents.index')"
+                                    :active="route().current('courseStudents.index')">
+                                    Cours Etudiants
+                                </NavLink>
                                 <NavLink :href="route('courses.index')" :active="route().current('courses.index')">
                                     Cours
                                 </NavLink>
@@ -64,6 +68,9 @@ const logout = () => {
                                 <NavLink :href="route('coursSections.index')"
                                     :active="route().current('coursSections.index')">
                                     Cours Sections
+                                </NavLink>
+                                <NavLink :href="route('aptitudes.index')" :active="route().current('aptitudes.index')">
+                                    AA et critères
                                 </NavLink>
                                 <NavLink :href="route('invites.index')" :active="route().current('invites.index')">
                                     Invites
@@ -102,7 +109,8 @@ const logout = () => {
                                             </div>
 
                                             <!-- Team Settings -->
-                                            <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
+                                            <DropdownLink
+                                                :href="route('teams.show', $page.props.auth.user.current_team)">
                                                 Team Settings
                                             </DropdownLink>
 
@@ -119,7 +127,8 @@ const logout = () => {
                                                     Switch Teams
                                                 </div>
 
-                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
+                                                <template v-for="team in $page.props.auth.user.all_teams"
+                                                    :key="team.id">
                                                     <form @submit.prevent="switchToTeam(team)">
                                                         <DropdownLink as="button">
                                                             <div class="flex items-center">
@@ -146,6 +155,7 @@ const logout = () => {
                             <!-- Settings Dropdown -->
                             <div class="ms-3 relative">
                                 <Dropdown align="right" width="48">
+
                                     <template #trigger>
                                         <button v-if="$page.props.jetstream.managesProfilePhotos"
                                             class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
@@ -227,6 +237,10 @@ const logout = () => {
                         <ResponsiveNavLink :href="route('students.index')" :active="route().current('students.index')">
                             Etudiants
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('courseStudents.index')"
+                            :active="route().current('courseStudents.index')">
+                            Cours Etudiants
+                        </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('courses.index')" :active="route().current('courses.index')">
                             Cours
                         </ResponsiveNavLink>
@@ -236,6 +250,10 @@ const logout = () => {
                         <ResponsiveNavLink :href="route('coursSections.index')"
                             :active="route().current('coursSections.index')">
                             Cours Sections
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('aptitudes.index')"
+                            :active="route().current('aptitudes.index')">
+                            AA et critères
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('invites.index')" :active="route().current('invites.index')">
                             Invites
@@ -268,8 +286,8 @@ const logout = () => {
                                 Profile
                             </ResponsiveNavLink>
 
-                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')"
-                                :active="route().current('api-tokens.index')">
+                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures"
+                                :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
                                 API Tokens
                             </ResponsiveNavLink>
 
@@ -281,6 +299,7 @@ const logout = () => {
                             </form>
 
                             <!-- Team Management -->
+
                             <template v-if="$page.props.jetstream.hasTeamFeatures">
                                 <div class="border-t border-gray-200" />
 
@@ -294,8 +313,8 @@ const logout = () => {
                                     Team Settings
                                 </ResponsiveNavLink>
 
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')"
-                                    :active="route().current('teams.create')">
+                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams"
+                                    :href="route('teams.create')" :active="route().current('teams.create')">
                                     Create New Team
                                 </ResponsiveNavLink>
 
@@ -313,8 +332,8 @@ const logout = () => {
                                                 <div class="flex items-center">
                                                     <svg v-if="team.id == $page.props.auth.user.current_team_id"
                                                         class="me-2 h-5 w-5 text-green-400"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor">
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>

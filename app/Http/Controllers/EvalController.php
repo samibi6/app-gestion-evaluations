@@ -88,7 +88,13 @@ class EvalController extends Controller
         // Formatage des données pour correspondre à la structure souhaitée
         $acquired = [];
         foreach ($criteriaStudents as $criteriaStudent) {
-            $acquired[$criteriaStudent->student_id][$criteriaStudent->criteria_id] = $criteriaStudent->acquired;
+            foreach ($aptitudes as $aptitude) {
+                foreach ($criteriaByApt[$aptitude->id] as  $criteria) {
+                    if ($criteriaStudent->criteria_id === $criteria->id) {
+                        $acquired[$criteriaStudent->student_id][$criteriaStudent->criteria_id] = $criteriaStudent->acquired;
+                    }
+                }
+            }
         }
 
         // MANQUE REQUETES POUR PROFICIENCIES struct= aptitude -> criteria -> acquired
@@ -98,7 +104,11 @@ class EvalController extends Controller
         $proficiencyStudents = ProficiencyStudent::all();
         $acquiredProf = [];
         foreach ($proficiencyStudents as $pS) {
-            $acquiredProf[$pS->student_id][$pS->proficiency_id] = $pS->score;
+            foreach ($proficiencies as $proficiency) {
+                if ($pS->proficiency_id === $proficiency->id) {
+                    $acquiredProf[$pS->student_id][$pS->proficiency_id] = $pS->score;
+                }
+            }
         }
 
         return Inertia::render('Evals/edit', [
