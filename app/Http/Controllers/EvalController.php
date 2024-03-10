@@ -62,15 +62,16 @@ class EvalController extends Controller
 
     public function edit($courseId, $studentId, $sectionId)
     {
-        $next =
-            CourseStudent::orderBy('course_students.student_id')
-            ->join('students', 'students.id', "=", "course_students.student_id")
-            ->join('section_students', 'section_students.student_id', '=', 'students.id')
-            ->where('course_id', $courseId)
-            ->where('section_id', $sectionId)
-            ->where('course_students.student_id', '>', $studentId)
-            ->select('students.*')
-            ->first();
+        // $next =
+        //     CourseStudent::orderBy('course_students.student_id')
+        //     ->join('students', 'students.id', "=", "course_students.student_id")
+        //     ->join('section_students', 'section_students.student_id', '=', 'students.id')
+        //     ->where('course_id', $courseId)
+        //     ->where('section_id', $sectionId)
+        //     ->where('course_students.student_id', '>', $studentId)
+        //     ->select('students.*')
+        //     ->first();
+        $courseStudentData = CourseStudent::where('course_students.course_id', $courseId)->where('course_students.student_id', $studentId)->first();
 
         $criteriaData = Criteria::pluck('description', 'id')->toArray();
 
@@ -87,7 +88,13 @@ class EvalController extends Controller
         // Formatage des données pour correspondre à la structure souhaitée
         $acquired = [];
         foreach ($criteriaStudents as $criteriaStudent) {
-            $acquired[$criteriaStudent->student_id][$criteriaStudent->criteria_id] = $criteriaStudent->acquired;
+            foreach ($aptitudes as $aptitude) {
+                foreach ($criteriaByApt[$aptitude->id] as  $criteria) {
+                    if ($criteriaStudent->criteria_id === $criteria->id) {
+                        $acquired[$criteriaStudent->student_id][$criteriaStudent->criteria_id] = $criteriaStudent->acquired;
+                    }
+                }
+            }
         }
 
         // MANQUE REQUETES POUR PROFICIENCIES struct= aptitude -> criteria -> acquired
@@ -97,14 +104,18 @@ class EvalController extends Controller
         $proficiencyStudents = ProficiencyStudent::all();
         $acquiredProf = [];
         foreach ($proficiencyStudents as $pS) {
-            $acquiredProf[$pS->student_id][$pS->proficiency_id] = $pS->score;
+            foreach ($proficiencies as $proficiency) {
+                if ($pS->proficiency_id === $proficiency->id) {
+                    $acquiredProf[$pS->student_id][$pS->proficiency_id] = $pS->score;
+                }
+            }
         }
 
         return Inertia::render('Evals/edit', [
             'courseId' => $courseId,
             'studentId' => $studentId,
             'sectionId' => $sectionId,
-            'next' => $next,
+            // 'next' => $next,
             'criteriaData' => $criteriaData,
             'criteriaByApt' => $criteriaByApt,
             'aptitudes' => $aptitudes,
@@ -113,14 +124,34 @@ class EvalController extends Controller
             'acquiredProf' => $acquiredProf,
             'student' => $student,
             'course' => $course,
+            'courseStudentData' => $courseStudentData,
         ]);
     }
 
     public function store(EvalStoreRequest $request, Student $studentId, $courseId, $sectionId)
     {
-        // dd($studentId->id);
-        // $request->criteria;
-        // $request->proficiency;
+
+        // Iterate through criteria to check if all are equal to 1
+        $allCriteriaChecked = true;
+        foreach ($request->criteria as $value) {
+            if ($value != 1) {
+                $allCriteriaChecked = false;
+                break;
+            }
+        }
+
+        // Flag to indicate whether to redirect to failure route at the end
+        $redirectAfterProcessing = !$allCriteriaChecked;
+
+        foreach ($request->criteria as $id => $value) {
+            CriteriaStudent::updateOrCreate(
+                ['criteria_id' => $id, 'student_id' => $studentId->id],
+                ['acquired' => $value]
+            );
+        }
+
+
+
         foreach ($request->criteria as $id => $value) {
             CriteriaStudent::updateOrCreate(
                 ['criteria_id' => $id, 'student_id' => $studentId->id],
@@ -143,18 +174,26 @@ class EvalController extends Controller
             ['course_id' => $courseId, 'student_id' => $studentId->id],
             ['date_eval' => $currentDate]
         );
-        // $criteriaStudent
-        // $proficiencyStudent
+
+        
+        if ($redirectAfterProcessing) {
+            return redirect()->route('evals.fail', [
+                'courseId' => $courseId,
+                'sectionId' => $sectionId,
+                'studentId' => $studentId->id,
+            ]);
+        }
+
         return redirect()->route('evals.show', ['courseId' => $courseId, 'sectionId' => $sectionId])->with('success', 'évalué avec succès');
     }
 
     public function fail($courseId, $sectionId, $studentId)
     {
-        
+
         $section = Section::where('id', $sectionId)->first();
         $student = Student::where('id', $studentId)->first();
         $course = Course::where('id', $courseId)->first();
-    
+
         return Inertia::render('Evals/Fail', [
             'student' => $student,
             'section' => $section,
@@ -163,12 +202,12 @@ class EvalController extends Controller
     }
     public function adjournment($courseId, $sectionId, $studentId)
     {
-        
+
         $section = Section::where('id', $sectionId)->first();
         $student = Student::where('id', $studentId)->first();
         $course = Course::where('id', $courseId)->first();
         $courseStudent = CourseStudent::where('course_id', $courseId)->where('student_id', $studentId)->firstOrFail();
-    
+
         return Inertia::render('Evals/Adjournment', [
             'student' => $student,
             'section' => $section,
@@ -178,27 +217,27 @@ class EvalController extends Controller
     }
     public function storeAdjournment(AdjournmentStoreRequest $request, $courseId, $sectionId, $studentId)
     {
-   
-       $courseStudent = CourseStudent::where('student_id', $studentId)->where('course_id', $courseId)->firstOrFail();
 
-       $dateTime = new DateTime();
-       $currentDate = $dateTime->format('Y-m-d H:i:s');
-      
-       $courseStudent->update([
+        $courseStudent = CourseStudent::where('student_id', $studentId)->where('course_id', $courseId)->firstOrFail();
+
+        $dateTime = new DateTime();
+        $currentDate = $dateTime->format('Y-m-d H:i:s');
+
+        $courseStudent->update([
             'date_adjourned' => $currentDate,
             'is_determining' => $request->validated()['is_determining'],
             'is_other' => $request->validated()['is_other'],
-            
+
             'adjournment_exam_date' => $request->validated()['adjournment_exam_date'],
-            
+
             'adjournment_blunder_1' => $request->validated()['adjournment_blunder_1'],
             'adjournment_blunder_1_justification' => $request->validated()['adjournment_blunder_1_justification'],
-            
+
             'adjournment_blunder_2' => $request->validated()['adjournment_blunder_2'],
         ]);
-      
-        
-        
+
+
+
         // return Inertia::render('Evals/Show -> page show du bon cours (pas moyen de mettre la méthode show du controller ici? sinon redéclarer variables nécessaires)', [
         //     'student' => $student,
         //     'section' => $section,
@@ -216,15 +255,14 @@ class EvalController extends Controller
             ->get();
 
         $dateEval = CourseStudent::where('course_id', $courseId)->pluck('date_eval', 'student_id')->toArray();
-        
+
         return Inertia::render('Evals/show', [
             'course' => $course,
             'students' => $students,
             'section' => $sectionId,
             'dateEval' => $dateEval,
-            
+
         ]);
-    
     }
 
     public function denied($courseId, $sectionId, $studentId)
@@ -233,7 +271,7 @@ class EvalController extends Controller
         $student = Student::where('id', $studentId)->first();
         $course = Course::where('id', $courseId)->first();
         $courseStudent = CourseStudent::where('course_id', $courseId)->where('student_id', $studentId)->firstOrFail();
-    
+
         return Inertia::render('Evals/Denied', [
             'student' => $student,
             'section' => $section,
@@ -245,35 +283,33 @@ class EvalController extends Controller
     public function storeDenied(DeniedStoreRequest $request, $courseId, $sectionId, $studentId)
     {
 
-       $courseStudent = CourseStudent::where('student_id', $studentId)->where('course_id', $courseId)->firstOrFail();
+        $courseStudent = CourseStudent::where('student_id', $studentId)->where('course_id', $courseId)->firstOrFail();
 
-       $dateTime = new DateTime();
-       $currentDate = $dateTime->format('Y-m-d H:i:s');
-       $courseStudent->update([
+        $dateTime = new DateTime();
+        $currentDate = $dateTime->format('Y-m-d H:i:s');
+        $courseStudent->update([
             'date_denied' => $currentDate,
-            
+
             'is_determining' => $request->validated()['is_determining'],
             'is_other' => $request->validated()['is_other'],
-            
+
             'denied_exam_date' => $request->validated()['denied_exam_date'],
-            
+
             'denied_blunder_1' => $request->validated()['denied_blunder_1'],
             'denied_blunder_1_justification' => $request->validated()['denied_blunder_1_justification'],
-            
+
             'denied_blunder_2' => $request->validated()['denied_blunder_2'],
             'denied_blunder_2_justification' => $request->validated()['denied_blunder_2_justification'],
 
             'denied_blunder_3' => $request->validated()['denied_blunder_3'],
 
             'denied_blunder_4' => $request->validated()['denied_blunder_4'],
-            
+
             'denied_blunder_5' => $request->validated()['denied_blunder_5'],
 
             'denied_justification_global' => $request->validated()['denied_justification_global'],
         ]);
-      
+
         return redirect()->route('evals.show', ['courseId' => $courseId, 'sectionId' => $sectionId]);
-            
     }
-    
 }

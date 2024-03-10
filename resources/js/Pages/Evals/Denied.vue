@@ -9,71 +9,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 
 const props = defineProps(['course', 'section', 'student', 'courseStudent']);
 
-const form = usePrecognitionForm("post", route("evals.storeDenied", { studentId: props.student, sectionId: props.section, courseId: props.course }), {
-    is_determining: props.courseStudent.is_determining === 1 ? true : false,
-    is_other: props.courseStudent.is_other === 1 ? true : false,
-
-    denied_exam_date: props.courseStudent.denied_exam_date ? props.courseStudent.denied_exam_date : '',
-
-    denied_blunder_1: props.courseStudent.denied_blunder_1 === 1 ? true : false,
-    denied_blunder_1_justification: props.courseStudent.denied_blunder_1_justification ? props.courseStudent.denied_blunder_1_justification : '',
-
-    denied_blunder_2: props.courseStudent.denied_blunder_2 === 1 ? true : false,
-    denied_blunder_2_justification: props.courseStudent.denied_blunder_2_justification ? props.courseStudent.denied_blunder_2_justification : '',
-
-
-    denied_blunder_3: props.courseStudent.denied_blunder_3 === 1 ? true : false,
-
-    denied_blunder_4: props.courseStudent.denied_blunder_4 === 1 ? true : false,
-
-    denied_blunder_5: props.courseStudent.denied_blunder_5 === 1 ? true : false,
-
-    denied_justification_global: props.courseStudent.denied_justification_global ? props.courseStudent.denied_justification_global : '',
-
-
-});
-
-
-form.setValidationTimeout(300);
-
-const submit = () => {
-    /* // Check if the selected date is in the future
-     const selectedDate = new Date(form.adjournment_exam_date);
-     const today = new Date();
-     if (selectedDate > today) {
-         // If the selected date is in the future, reset it to the current date
-         form.adjournment_exam_date = '';
-     }*/
-
-    /* if (form.adjournment_blunder_1 && !form.adjournment_blunder_1_justification.trim()) {
-         console.error('blunder_1 doit être coché pour remplir la justification');
-         // Return to prevent form submission if the checkbox is checked but justification is empty
-         return;
-     }
- 
-     if (!form.adjournment_blunder_1) {
-         // If blunder 1 is not checked, clear the justification
-         form.adjournment_blunder_1_justification = '';
-     }*/
-
-    form.submit({
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-    });
-};
-
+// Function to determine academic year based on current date
 const calculateAcademicYear = () => {
     const today = new Date();
     const currentYear = today.getFullYear();
-    var academicYear = '';
-
-    // Determine academic year based on current date
-    if (today.getMonth() >= 8) { // September (index 8) or later
-        academicYear = `${currentYear}-${currentYear + 1}`;
-    } else { // Before September
-        academicYear = `${currentYear - 1}-${currentYear}`;
-    }
-
+    const academicYearStartMonth = 8; // September (0-indexed)
+    const academicYear = (today.getMonth() >= academicYearStartMonth) ?
+        `${currentYear}-${currentYear + 1}` :
+        `${currentYear - 1}-${currentYear}`;
     return academicYear;
 };
 
@@ -83,14 +26,66 @@ const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     let month = today.getMonth() + 1;
-    if (month < 10) {
-        month = '0' + month; // Add leading zero for single-digit months
-    }
+    if (month < 10) month = '0' + month;
     let day = today.getDate();
-    if (day < 10) {
-        day = '0' + day; // Add leading zero for single-digit days
-    }
+    if (day < 10) day = '0' + day;
     return `${year}-${month}-${day}`;
+};
+
+const isInCurrentAcademicYear = (date_eval) => {
+    const [startYear, endYear] = academicYear.split('-');
+    const startDate = new Date(`${startYear}-09-01`);
+    const endDate = new Date(`${endYear}-08-31`);
+    const evalDate = new Date(date_eval);
+    return evalDate >= startDate && evalDate <= endDate;
+};
+
+const initializeFormData = () => {
+    const { date_eval, ...studentData } = props.courseStudent;
+    if (!date_eval || !isInCurrentAcademicYear(date_eval)) {
+        return {
+            is_determining: false,
+            is_other: false,
+            denied_exam_date: '',
+            denied_blunder_1: false,
+            denied_blunder_1_justification: '',
+            denied_blunder_2: false,
+            denied_blunder_2_justification: '',
+            denied_blunder_3: false,
+            denied_blunder_4: false,
+            denied_blunder_5: false,
+            denied_justification_global: ''
+        };
+    } else {
+        return {
+            is_determining: !!studentData.is_determining,
+            is_other: !!studentData.is_other,
+            denied_exam_date: studentData.denied_exam_date || '',
+            denied_blunder_1: !!studentData.denied_blunder_1,
+            denied_blunder_1_justification: studentData.denied_blunder_1_justification || '',
+            denied_blunder_2: !!studentData.denied_blunder_2,
+            denied_blunder_2_justification: studentData.denied_blunder_2_justification || '',
+            denied_blunder_3: !!studentData.denied_blunder_3,
+            denied_blunder_4: !!studentData.denied_blunder_4,
+            denied_blunder_5: !!studentData.denied_blunder_5,
+            denied_justification_global: studentData.denied_justification_global || ''
+        };
+    }
+};
+
+const form = usePrecognitionForm("post", route("evals.storeDenied", {
+    studentId: props.student,
+    sectionId: props.section,
+    courseId: props.course
+}), initializeFormData());
+
+form.setValidationTimeout(300);
+
+const submit = () => {
+    form.submit({
+        preserveScroll: true,
+        onSuccess: () => form.reset(),
+    });
 };
 
 const checkAndSetDate = (date_eval, academicYear) => {
@@ -113,11 +108,9 @@ const checkAndSetDate = (date_eval, academicYear) => {
     }
 };
 
-// Example usage
 const formattedDate = checkAndSetDate(props.courseStudent.date_eval, academicYear);
 
 </script>
-
 <template>
     <AppLayout>
         <h1>Refus de </h1>
@@ -228,7 +221,6 @@ const formattedDate = checkAndSetDate(props.courseStudent.date_eval, academicYea
             </div>
             <button :disabled="form.processing" type="submit" class="bg-red-500 hover:bg-red-600 p-2">Refuser</button>
         </form>
-        {{ form }}
     </AppLayout>
 </template>
   
