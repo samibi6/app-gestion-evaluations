@@ -103,72 +103,74 @@ const formattedDate = checkAndSetDate(props.courseStudent.date_eval, academicYea
 </script>
 
 <template>
-    <AppLayout>
-        <h1>Ajournement de </h1>
-        <ul class="flex flex-wrap bg-zinc-300 w-fit p-5 m-2">
-            <!-- <li class="bg-zinc-300 w-fit p-5 m-2">{{ section.id + ". " + section.name }}</li> -->
-            <li>{{ student.last_name + ' ' + student.first_name }}
-            <li>UE : {{ course.name }}</li>
-            <li>Code de l'UE : {{ course.code }} </li>
-            <li v-if="course.is_tfe" class="text-red-500 font-bold">
-                Épreuve intégrée
-            </li>
+    <AppLayout title="Évaluations">
+        <div class="p-5 shadow-md mt-12">
+            <h2 class="text-2xl font-bold text-center">Ajournement de</h2>
+            <h1 class="mt-5 mb-4 font-bold text-3xl underline text-center">{{ student.first_name + " " + student.last_name
+            }} -
+                {{
+                    course.name }} - {{ section.name }}
+            </h1>
+        </div>
 
-            </li>
-            <div>
-                <p>Année académique : {{ academicYear }}</p>
-            </div>
-        </ul>
-        <form @submit.prevent="submit">
-            <div>
-
+        <form @submit.prevent="submit" class="max-w-lg mx-auto mt-8 mb-12 border border-gray-400 rounded-lg">
+            <div class="bg-white overflow-hidden shadow-xl  p-6">
                 <ul>
-                    <li>
-                        <label>
-                            <input type="checkbox" v-model="form.is_determining">UE déterminante</label>
+
+                    <li class="mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" v-model="form.is_determining" class="form-checkbox">
+                            <span class="ml-2">UE déterminante</span>
+                        </label>
                     </li>
-                    <br>
-                    <li>
-                        <label>
-                            <input type="checkbox" v-model="form.is_other">Autre</label>
+                    <li class="mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" v-model="form.is_other" class="form-checkbox">
+                            <span class="ml-2">Autre</span>
+                        </label>
                     </li>
-                    <br>
-                    <li>
-                        <label>
+                    <li class="mb-4">
+                        <label class="block text-gray-700">
                             Date de l'épreuve :
-                            <input type="date" v-model="form.adjournment_exam_date" :max="formattedDate">
-                            <div v-if="form.invalid('adjournment_exam_date')">
+                            <input type="date" v-model="form.adjournment_exam_date" :max="formattedDate"
+                                class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full">
+                            <div v-if="form.invalid('adjournment_exam_date')" class="text-sm text-red-600">
                                 {{ form.errors.adjournment_exam_date }}
                             </div>
                         </label>
                     </li>
-                    <br>
-                    <li>
-                        <label>
-                            <input type="checkbox" v-model="form.adjournment_blunder_1">Fraude, plagiat ou non-citation des
-                            sources dans une épreuve certificative</label>
-
-                        <br>
-                        <div v-if="form.adjournment_blunder_1">
-                            <label for="justification">Justification et explication</label>
-                            <br>
+                    <li class="mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" v-model="form.adjournment_blunder_1" class="form-checkbox">
+                            <span class="ml-2">Fraude, plagiat ou non-citation des sources dans une épreuve
+                                certificative</span>
+                        </label>
+                        <div v-if="form.adjournment_blunder_1" class="ml-8 mt-4">
+                            <label class="text-gray-700" for="justification">Justification et explication :</label>
                             <textarea placeholder="Justification" id="justification"
-                                v-model="form.adjournment_blunder_1_justification" rows="4" cols="50"></textarea>
-                        </div>
-                        <div v-if="form.invalid('adjournment_blunder_1_justification')">
-                            {{ form.errors.adjournment_blunder_1_justification }}
+                                v-model="form.adjournment_blunder_1_justification" rows="4" cols="50"
+                                class="bg-gray-200 min-h-36 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
+                            <div v-if="form.invalid('adjournment_blunder_1_justification')" class="text-sm text-red-600">
+                                {{ form.errors.adjournment_blunder_1_justification }}
+                            </div>
                         </div>
                     </li>
-                    <br>
-                    <li>
-                        <label>
-                            <input type="checkbox" v-model="form.adjournment_blunder_2">Absence(s) valablement justifiée(s)
-                            à l' (aux) épreuve(s) permettant de vérifier la maitrise des acquis d'apprentissage</label>
+                    <li class="mb-4">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" v-model="form.adjournment_blunder_2" class="form-checkbox">
+                            <span class="ml-2">Absence(s) valablement justifiée(s) à l' (aux) épreuve(s) permettant de
+                                vérifier
+                                la maitrise des acquis d'apprentissage</span>
+                        </label>
                     </li>
                 </ul>
+                <button :disabled="form.processing" type="submit"
+                    class="mt-6 focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    Ajourner
+                </button>
+                <a class="cursor-pointer  font-bold text-red-500 hover:bg-red-500 hover:text-white transition inline-block px-4 py-1.5 ml-3 border border-red-500 rounded-md"
+                    :href="route('evals.fail', { courseId: course.id, studentId: student.id, sectionId: section })">Retour</a>
             </div>
-            <br>
-            <button :disabled="form.processing" type="submit" class="bg-red-500 hover:bg-red-600 p-2">Ajourner</button>
         </form>
     </AppLayout>
 </template>

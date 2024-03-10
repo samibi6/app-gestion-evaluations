@@ -205,7 +205,7 @@
             @endforeach
             <?php
             if ($critot === $critPass) {
-                $result = ($cote / $n) * 5 + 50;
+                $result = round(($cote / $n) * 5 + 50, 1);
             } else {
                 // $result = ($critPass / $critot) * 50;
                 $result = 'Non évaluable';

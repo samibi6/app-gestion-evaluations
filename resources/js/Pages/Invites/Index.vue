@@ -23,26 +23,38 @@ const submit = () => form.submit({
 
 </script>
 <template>
-    <AppLayout>
-        <div class="bg-white w-fit p-5 mx-auto">
-            <div v-if="message">{{ message }}</div>
-            <form @submit.prevent="submit">
-                <label class="font-bold mr-2" for="email">Adresse mail invitation:</label>
-                <input type="email" name="email" id="email" v-model="form.email" @change="form.validate('email')" />
-                <div v-if="form.invalid('email')">
-                    {{ form.errors.email }}
+    <AppLayout title="Invitations">
+        <div class="max-w-4xl mx-auto mt-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <form @submit.prevent="submit" class=" mx-auto mb-12">
+                    <h2 class="text-2xl text-center mb-4">Créer une invitation</h2>
+                    <div class="mb-5 flex items-center">
+                        <label for="email" class="text-gray-700 font-bold mr-2">Adresse e-mail pour l'invitation:</label>
+                        <input type="email" name="email" id="email" v-model="form.email" @change="form.validate('email')"
+                            class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 flex-grow" />
+                        <div v-if="form.invalid('email')" class="text-sm text-red-600">
+                            {{ form.errors.email }}
+                        </div>
+                        <button :disabled="form.processing" type="submit"
+                            class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-4">
+                            Créer l'invitation
+                        </button>
+                    </div>
+
+
+                </form>
+                <div class="border border-gray-400 p-4 rounded-md w-2/3 mx-auto ">
+
+                    <h2 class="text-lg font-bold mb-4 text-center ">Liste des invitations :</h2>
+                    <div v-for="invite in invites" :key="invite.token" class="flex justify-between  w-full mx-auto mb-2">
+                        <div class="font-bold mr-1 ml-3">E-mail:</div>
+                        <div>{{ invite.email }}</div>
+                        <div class="font-bold mr-1 ml-2">Jeton :</div>
+                        <div>{{ invite.token }}</div>
+                    </div>
                 </div>
-                <button :disabled="form.processing" type="submit"
-                    class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full ml-3">
-                    Créer Invitation
-                </button>
-            </form>
-            <hr class="my-5">
-            <h2 class="font-bold text-lg mb-2">Liste des invitations:</h2>
-            <ul class="flex justify-between border-2 border-zinc-300 mb-2" v-for="invite in invites">
-                <li><span class="font-bold mr-1">Email:</span>{{ invite.email }}</li>
-                <li><span class="font-bold mr-1 ml-2">Token:</span>{{ invite.token }}</li>
-            </ul>
+            </div>
         </div>
     </AppLayout>
 </template>
+

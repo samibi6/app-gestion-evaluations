@@ -30,7 +30,7 @@ class AptitudeController extends Controller
     $courses = Course::get();
     $sections = Section::get();
     $aptitudes = Aptitude::get();
-    $proficiencies = Proficiency::get();
+   // $proficiencies = Proficiency::get();
     
     $coursesBySections = Section::join('course_sections', 'sections.id', '=', 'course_sections.section_id')
         ->join('courses', 'courses.id', '=', 'course_sections.course_id')
@@ -41,6 +41,7 @@ class AptitudeController extends Controller
         $aptitudesByCourses = [];
         $criteriasByAptitudes = [];
         $aptitudesByCourses = [];
+        $proficienciesByCourses = [];
         
         foreach ($courses as $course) {
             $aptitudesByCourses[$course->id] = $course->aptitudes()->get();

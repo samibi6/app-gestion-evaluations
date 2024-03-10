@@ -353,241 +353,366 @@ const findCourseLead = (courses, courseId) => {
 </script>
 
 <template>
-    <div>
-        <label for="section">Section du cours</label>
-        <select id="section" v-model="selectedSection" @change="handleSectionChange">
-            <option :value="null">Toutes les sections</option>
-            <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.name }}</option>
-        </select>
-        <br><br>
+    <AppLayout title="AA-Critères">
 
-        <label for="course">Cours</label>
-        <select name="course" id="course" v-model="aptitudeForm.course">
-            <option v-if="!selectedSection" v-for="course in courses" :key="course.id" :value="course.id">
-                {{ course.name }}
-            </option>
-            <option v-else-if="coursesBySections[selectedSection]" v-for="course in coursesBySections[selectedSection]"
-                :key="course.ids" :value="course.id">
-                {{ course.name }}
-            </option>
-            <option v-else disabled>
-                {{ selectedSection ? 'Aucun cours n\'est lié à cette section' : 'Veuillez d\'abord choisir une section' }}
-            </option>
-        </select>
-        <br><br><br>
+        <template #header>
+            <h1 class="text-center font-bold text-2xl mt-12">
+                Ajouter et modifier des AA, critères de réussite et degrés de maitrise
+            </h1>
+            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez consulter, ajouter, modifier et supprimer des
+                acquis d'apprentissage, des critères de réussite ainsi que des critères de maitrise et leur indicateurs pour
+                une UE donnée</p>
+        </template>
+        <div class="max-w-4xl mx-auto mt-8">
+            <div class="bg-white overflow-hidden border border-gray-400 shadow-2xl rounded-lg p-6 mb-16 w-2/3 mx-auto">
 
+                <div>
+                    <label for="section" class="text-gray-700 block font-medium text-left">Section de l'UE</label>
+                    <select id="section" v-model="selectedSection" @change="handleSectionChange"
+                        class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full mb-4">
+                        <option :value="null">Toutes les sections</option>
+                        <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.name }}
+                        </option>
+                    </select>
+                </div>
 
-        <div v-if="aptitudeForm.course !== ''">
-            <div v-if="!editCourseLead">
-                <p v-if="aptitudeForm.course !== ''">
-                    Chapeau du cours : {{ findCourseLead(courses, aptitudeForm.course) }}
-                </p>
+                <div>
+                    <label for="course" class="text-gray-700 block font-medium">Nom de l'UE</label>
+                    <select name="course" id="course" v-model="aptitudeForm.course"
+                        class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full">
+                        <option v-if="!selectedSection" v-for="course in courses" :key="course.id" :value="course.id">
+                            {{ course.name }}
+                        </option>
+                        <option v-else-if="coursesBySections[selectedSection]"
+                            v-for="course in coursesBySections[selectedSection]" :key="course.ids" :value="course.id">
+                            {{ course.name }}
+                        </option>
+                        <option v-else disabled>
+                            {{ selectedSection ? 'Aucune UE n\'est liée à cette section'
+                                : 'Veuillez d\'abord choisir une section' }}
+                        </option>
+                    </select>
 
-                <button @click="toggleEditCourseLeadMode(courses)" class="bg-orange-500 hover:bg-orange-600">Edit
-                </button>
+                </div>
             </div>
-            <div v-else>
-                <form @submit.prevent="updateCourseLead(courses)">
-                    <label for="course_lead">Modifier le chapeau du cours:</label><br>
-                    <textarea id="course_lead" v-model="updatedCourseLead"></textarea>
-                    <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
-                    <button @click="cancelEditCourseLeadMode" class="bg-yellow-500 hover:bg-yellow-600">Cancel</button>
-                </form>
-            </div>
-        </div>
 
-        <br><br>
-        <div v-if="aptitudeForm.course !== ''">
-            <form @submit.prevent="submitAptitude">
-                <label for="aptitude">Nouvel AA:</label><br>
-                <textarea id="aptitude" v-model="aptitudeForm.aptitude_description"></textarea>
-                <div v-if="aptitudeFormSubmitted && aptitudeForm.aptitude_description.trim() === ''">
-                    L'AA ne peut pas être vide.
-                </div><br>
-                <button type="submit" class="bg-green-500 hover:bg-green-600 p-2">Ajouter l'AA</button>
-            </form>
-        </div>
-
-        <div
-            v-if="aptitudeForm.course && aptitudesByCourses[aptitudeForm.course] && aptitudesByCourses[aptitudeForm.course].length">
-            <h2 class="font-bold">Liste des AA du cours</h2>
-            <ul v-for="( aptitude, index ) in  aptitudesByCourses[aptitudeForm.course] " :key="aptitude.id">
-                <br><br>
-                <li v-if="!aptitude.editMode">
-                    AA {{ index + 1 }}: <br> {{ aptitude.description }}
-
-                    <button @click="toggleEditMode(aptitude)" class="bg-orange-500 hover:bg-orange-600">Edit</button>
-                    <button @click="confirmAptitudeDeletion(aptitude.id)"
-                        class="bg-red-500 hover:bg-red-600">Delete</button>
-                    <br><br>
-                </li>
-                <li v-else>
-                    <form @submit.prevent="updateAptitude(aptitude)">
-                        <label for="aptitude_description-edit">Modifier l'AA:</label><br>
-                        <textarea id="aptitude_description-edit" v-model="aptitude.updatedDescription"></textarea>
-                        <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
-                        <button @click="cancelEditMode(aptitude)" class="bg-yellow-500 hover:bg-yellow-600">Cancel</button>
-                    </form>
-                </li>
-                <form @submit.prevent="submitCriteria(aptitude.id)">
-                    <label for="criteria">Nouveau critère:</label><br>
-                    <textarea id="criteria" v-model="newCriteria[aptitude.id]"></textarea><br>
-                    <div
-                        v-if="criteriaFormSubmitted[aptitude.id] && (!newCriteria[aptitude.id] || !newCriteria[aptitude.id].trim())">
-                        Le critère ne peut pas être vide.
+            <div class="mb-12">
+                <div v-if="aptitudeForm.course !== ''">
+                    <div v-if="!editCourseLead">
+                        <p v-if="aptitudeForm.course !== ''" class="font-medium mb-2">Chapeau de l'UE :
+                        <div class="text-gray-700 mt-4">{{
+                            findCourseLead(courses, aptitudeForm.course) }}</div>
+                        </p>
+                        <button @click="toggleEditCourseLeadMode(courses)"
+                            class="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mt-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>
+                        </button>
                     </div>
+                    <div v-else>
+                        <form @submit.prevent="updateCourseLead(courses)" class="mt-4">
+                            <label for="course_lead" class="font-medium mb-2 block">Modifier le chapeau de l'UE :</label>
+                            <textarea id="course_lead" v-model="updatedCourseLead"
+                                class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-40 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full mb-2"></textarea>
+                            <button type="submit"
+                                class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 mt-2">Enregistrer</button>
+                            <button @click="cancelEditCourseLeadMode"
+                                class="focus:outline-none text-gray-700 bg-gray-300 shover:text-black border border-gray-700 hover:bg-gray-400 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-1.5 ml-2">Annuler</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="border border-gray-400 shadow-2xl rounded-lg p-6 mb-8">
+                <h2 class="font-bold text-xl">Acquis d'apprentissage et critères de réussite de l'UE </h2>
 
-                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 p-2">Ajouter
-                    </button>
-                    <br><br>
+                <div class="mb-8" v-if="aptitudeForm.course !== ''">
+                    <form @submit.prevent="submitAptitude" class="mt-4">
+                        <label for="aptitude" class="text-gray-700 block font-medium">Nouvel AA :</label>
+                        <textarea id="aptitude" v-model="aptitudeForm.aptitude_description"
+                            class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full mb-2"></textarea>
+                        <div v-if="aptitudeFormSubmitted && aptitudeForm.aptitude_description.trim() === ''"
+                            class="text-sm text-red-600">L'AA ne peut pas être vide.</div>
+                        <div>
+                            <button type="submit"
+                                class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mt-2 block">Ajouter
+                                l'AA</button>
+                        </div>
+                    </form>
+                </div>
+
+
+
+                <div v-if="aptitudeForm.course && aptitudesByCourses[aptitudeForm.course] && aptitudesByCourses[aptitudeForm.course].length"
+                    class="mt-4">
+                    <h2 class="text-lg font-semibold">Liste des AA de l'UE</h2>
+                    <ul v-for="( aptitude, index ) in  aptitudesByCourses[aptitudeForm.course] " :key="aptitude.id">
+                        <li class="mt-4 mb-8 border bg-gray-300 border-gray-400 rounded-lg p-6" v-if="!aptitude.editMode">
+                            <p class="font-semibold">AA {{ index + 1 }} :</p>
+                            <p class="text-gray-700">{{ aptitude.description }}</p>
+                            <button @click="toggleEditMode(aptitude)"
+                                class="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mt-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                            </button>
+                            <button type="button" @click="confirmAptitudeDeletion(aptitude.id)"
+                                class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2.5 py-2.5 ml-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </li>
+                        <li v-else class="mt-4 mb-8">
+                            <form @submit.prevent="updateAptitude(aptitude)">
+                                <label for="aptitude_description-edit" class="font-semibold">Modifier
+                                    l'AA :</label><br>
+                                <textarea id="aptitude_description-edit" v-model="aptitude.updatedDescription"
+                                    class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900  min-h-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
+                                <div>
+                                    <button type="submit"
+                                        class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 mt-2">Enregistrer</button>
+                                    <button type="button"
+                                        class="focus:outline-none text-gray-700 bg-gray-300 shover:text-black border border-gray-700 hover:bg-gray-400 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-1.5 ml-2"
+                                        @click="cancelEditMode(aptitude)">Annuler</button>
+                                </div>
+                            </form>
+                        </li>
+
+
+                        <li class="mt-4 mb-8">
+                            <form @submit.prevent="submitCriteria(aptitude.id)">
+                                <label for="criteria" class="text-gray-700 block font-medium">Nouveau critère de réussite
+                                    :</label>
+                                <textarea id="criteria" v-model="newCriteria[aptitude.id]"
+                                    class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
+                                <div v-if="criteriaFormSubmitted[aptitude.id] && (!newCriteria[aptitude.id] || !newCriteria[aptitude.id].trim())"
+                                    class="text-sm text-red-600 mt-2">Le critère ne peut pas être vide.</div>
+                                <button type="submit"
+                                    class="focus:outline-none text-white bg-purple-900 hover:bg-purple-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mt-2 block">Ajouter
+                                    le critère</button>
+                            </form>
+                        </li>
+                        <li class="mt-4">
+
+                            <ul v-if="criteriasByAptitudes[aptitude.id] && criteriasByAptitudes[aptitude.id].length"
+                                class="mt-2">
+                                <p class="font-semibold text-lg">Critères de réussite de l'AA {{ index + 1 }} :</p>
+                                <li v-for="( criteria, index ) in  criteriasByAptitudes[aptitude.id] " :key="criteria.id"
+                                    class="mt-2">
+                                    <div v-if="!criteria.editMode">
+                                        <p class="">Critère {{ index + 1 }} :</p>
+                                        <p class="text-gray-700">{{ criteria.description }}</p>
+                                        <button @click="toggleCriteriaEditMode(criteria)"
+                                            class="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mt-2">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round"
+                                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" @click="confirmCriteriaDeletion(criteria.id)"
+                                            class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2.5 py-2.5 ml-2">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd"
+                                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                    clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div v-else class="mt-2">
+                                        <form @submit.prevent="updateCriteria(criteria)">
+                                            <label for="criteria_description-edit"
+                                                class="text-gray-700 block font-medium">Modifier
+                                                le
+                                                critère de
+                                                réussite:</label><br>
+                                            <textarea id="criteria_description-edit" v-model="criteria.updatedDescription"
+                                                class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
+                                            <button type="submit"
+                                                class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 mt-2">Enregistrer</button>
+                                            <button type="button"
+                                                class="focus:outline-none text-gray-700 bg-gray-300 shover:text-black border border-gray-700 hover:bg-gray-400 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-1.5 ml-2"
+                                                @click="cancelCriteriaEditMode(criteria)">Annuler</button>
+
+                                        </form>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul v-else>Pas encore de critères de réussite pour cet AA</ul>
+                        </li>
+                    </ul>
+                </div>
+                <div v-else-if="aptitudeForm.course == '' && !aptitudesByCourses[aptitudeForm.course]" class="mt-4">
+                    <p>Veuillez choisir une UE</p>
+                </div>
+                <div v-else-if="aptitudeForm.course !== ''" class="mt-4">
+                    <p>Pas encore d'AA pour cette UE</p>
+                </div>
+
+            </div>
+
+
+
+
+
+
+            <div v-if="aptitudeForm.course && proficienciesByCourses[aptitudeForm.course]"
+                class="border border-gray-400 shadow-2xl rounded-lg p-6 mb-12 mt-8">
+                <h2 class="font-bold text-xl mb-8">Critères et indicateurs de maitrise de l'UE</h2>
+                <form @submit.prevent="submitProficiency" v-if="aptitudeForm.course !== ''">
+                    <div class="mb-4">
+                        <label for="criteria_skill" class="text-gray-700 block font-medium">Nouveau critère de
+                            maitrise :</label>
+                        <textarea id="criteria_skill" v-model="proficiencyForm.criteria_skill"
+                            class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 min-h-20 focus:border-blue-500 p-2.5 w-full"></textarea>
+                        <div v-if="proficiencyFormSubmitted && !proficiencyForm.criteria_skill.trim()"
+                            class="text-sm text-red-600 mt-2">Le critère de maitrise est obligatoire</div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="indicator" class="text-gray-700 block font-medium">Nouvel indicateur :</label>
+                        <textarea id="indicator" v-model="proficiencyForm.indicator"
+                            class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 min-h-20 focus:border-blue-500 p-2.5 w-full"></textarea>
+                    </div>
+                    <button type="submit"
+                        class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 me-2 mt-2 block">Ajouter
+                        le critère de maitrise </button>
                 </form>
-                Critères de réussite de l'AA : <br><br>
-                <ul v-if="criteriasByAptitudes[aptitude.id] && criteriasByAptitudes[aptitude.id].length">
-                    <li v-for="( criteria, index ) in  criteriasByAptitudes[aptitude.id] " :key="criteria.id">
-                        <div v-if="!criteria.editMode">
-                            Critère {{ index + 1 }}: {{ criteria.description }}
-                            <button @click="toggleCriteriaEditMode(criteria)"
-                                class="bg-orange-500 hover:bg-orange-600">Edit</button>
-                            <button @click="confirmCriteriaDeletion(criteria.id)"
-                                class="bg-red-500 hover:bg-red-600">Delete</button>
 
-                            <br><br>
+                <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="text-lg font-semibold mt-8">Liste
+                    des
+                    critères de maitrise de l'UE</h2>
+                <h2 v-else class="text-lg font-semibold mt-8">Cette UE ne comporte pas encore de critères de
+                    maitrise
+                </h2>
+
+                <ul v-for="(proficiency, index) in proficienciesByCourses[aptitudeForm.course]" :key="proficiency.id"
+                    class="mt-4">
+                    <li class="mb-4">
+                        <div v-if="!proficiency.editMode">
+                            <p class="font-medium">Critère de maîtrise {{ index + 1 }} :</p>
+                            <p class="text-gray-700">{{ proficiency.criteria_skill }}</p>
                         </div>
                         <div v-else>
-                            <form @submit.prevent="updateCriteria(criteria)">
-                                <label for="criteria_description-edit">Modifier le critère de réussite:</label><br>
-                                <textarea id="criteria_description-edit" v-model="criteria.updatedDescription"></textarea>
-                                <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
-                                <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
-                                    @click="cancelCriteriaEditMode(criteria)">Cancel</button>
-                            </form>
+                            <label for="criteria_skill-edit" class="text-gray-700 block font-medium">Modifier le critère de
+                                maitrise :</label>
+                            <textarea id="criteria_skill-edit" v-model="proficiency.updatedCriteriaSkill"
+                                class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 min-h-20 focus:border-blue-500 p-2.5 w-full"></textarea>
                         </div>
                     </li>
+                    <li class="mb-4">
+                        <div v-if="!proficiency.editMode">
+                            <p class="font-medium">Indicateur de maîtrise {{ index + 1 }} :</p>
+                            <p class="text-gray-700">{{ proficiency.indicator }}</p>
+                            <button @click="toggleProficiencyEditMode(proficiency)"
+                                class="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mt-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
+                            </button>
+                            <button type="button" @click="confirmProficiencyDeletion(proficiency.id)"
+                                class="text-red-600 hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-2.5 py-2.5 ml-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div v-else>
+                            <label for="indicator-edit" class="text-gray-700 block font-medium">Modifier l'indicateur de
+                                maitrise :</label>
+                            <textarea id="indicator-edit" v-model="proficiency.updatedIndicator"
+                                class="bg-gray-200 focus:bg-gray-300 border border-gray-400 min-h-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
+                        </div>
+                    </li>
+
+                    <div v-if="proficiency.editMode">
+                        <form @submit.prevent="updateProficiency(proficiency)">
+                            <button type="submit"
+                                class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 ">Enregistrer</button>
+                            <button type="button"
+                                class="focus:outline-none text-gray-700 bg-gray-300 shover:text-black border border-gray-700 hover:bg-gray-400 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-1.5 ml-2"
+                                @click="cancelProficiencyEditMode(proficiency)">Annuler</button>
+                        </form>
+                    </div>
                 </ul>
-            </ul>
-        </div>
-        <div v-else-if="aptitudeForm.course == '' && !aptitudesByCourses[aptitudeForm.course]">
-            <p>Veuillez choisir un cours</p>
-        </div>
-        <div v-else-if="aptitudeForm.course !== ''">
-            <p>Pas encore d'AA pour ce cours</p>
-        </div>
-    </div>
-
-    <div v-if="aptitudeForm.course && proficienciesByCourses[aptitudeForm.course]">
-
-
-        <form @submit.prevent="submitProficiency" v-if="aptitudeForm.course !== ''">
-            <label for="criteria_skill">Nouveau critère de maitrise:</label><br>
-            <textarea id="criteria_skill" v-model="proficiencyForm.criteria_skill"></textarea>
-            <div v-if="proficiencyFormSubmitted && !proficiencyForm.criteria_skill.trim()">
-                Le critère de maitrise est obligatoire
             </div>
-            <br>
-
-            <label for="indicator">Nouvel indicateur:</label><br>
-            <textarea id="indicator" v-model="proficiencyForm.indicator"></textarea>
-            <br>
-
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 p-2">Ajouter
-            </button>
-        </form>
-        <br><br>
-        <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="font-bold">Liste des critères de degré de
-            maitrise du cours</h2>
-        <h2 v-else class="font-bold">Ce cours ne comporte pas encore de critères de degré de maitrise</h2>
-        <br>
-
-        <ul v-for="( proficiency, index ) in  proficienciesByCourses[aptitudeForm.course] " :key="proficiency.id">
-            <li>
-                <div v-if="!proficiency.editMode">
-                    Critère de maîtrise {{ index + 1 }}: <br> {{ proficiency.criteria_skill }}
-                </div>
-                <div v-else>
-                    <label for="criteria_skill-edit">Modifier le critère de maitrise</label><br>
-                    <textarea id="criteria_skill-edit" v-model="proficiency.updatedCriteriaSkill"></textarea>
-                </div>
-            </li>
-            <li>
-                <div v-if="!proficiency.editMode">
-                    <div> Indicateur de maîtrise {{ index + 1 }}: <br> {{ proficiency.indicator }}</div>
-                    <button @click="toggleProficiencyEditMode(proficiency)"
-                        class="bg-orange-500 hover:bg-orange-600">Edit</button>
-                    <button @click="confirmProficiencyDeletion(proficiency.id)"
-                        class="bg-red-500 hover:bg-red-600">Delete</button>
-                </div>
-                <div v-else>
-                    <label for="indicator-edit">Modifier l'indicateur de maitrise</label><br>
-                    <textarea id="indicator-edit" v-model="proficiency.updatedIndicator"></textarea>
-                </div>
-            </li>
-
-
-            <div v-if="proficiency.editMode">
-                <form @submit.prevent="updateProficiency(proficiency)">
-                    <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
-                    <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
-                        @click="cancelProficiencyEditMode(proficiency)">Cancel</button>
-                </form>
-            </div>
-            <br><br>
-        </ul>
-
-    </div>
-
-    <DialogModal :show="confirmingProficiencyDeletion" @close="closeProficiencyModal">
-        <template #title> Supprimer le critère de maitrise et son indicateur </template>
-        <template #content>
-            Êtes-vous sûr de vouloir supprimer ce critère de maitrise ainsi que son indicateur? Cette action est
-            irréversible.
-        </template>
-        <template #footer>
-            <SecondaryButton @click="closeProficiencyModal"> Annuler </SecondaryButton>
-            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingProficiencyDeletion.processing }"
-                :disabled="confirmingProficiencyDeletion.processing" @click="deleteProficiency">
-                Supprimer
-            </DangerButton>
-        </template>
-    </DialogModal>
+        </div>
 
 
 
-    <DialogModal :show="confirmingAptitudeDeletion" @close="closeAptitudeModal">
-        <template #title> Supprimer l'AA </template>
-
-        <template #content>
-            Êtes-vous sûr de vouloir supprimer cet AA? Cette action est irréversible.
-        </template>
-
-        <template #footer>
-            <SecondaryButton @click="closeAptitudeModal"> Annuler </SecondaryButton>
-
-            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingAptitudeDeletion.processing }"
-                :disabled="confirmingAptitudeDeletion.processing" @click="deleteAptitude">
-                Supprimer
-            </DangerButton>
-        </template>
-    </DialogModal>
-
-    <DialogModal :show="confirmingCriteriaDeletion" @close="closeCriteriaModal">
-        <template #title> Supprimer le critère </template>
-
-        <template #content>
-            Êtes-vous sûr de vouloir supprimer ce critère? Cette action est irréversible.
-        </template>
-
-        <template #footer>
-            <SecondaryButton @click="closeCriteriaModal"> Annuler </SecondaryButton>
-
-            <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCriteriaDeletion.processing }"
-                :disabled="confirmingCriteriaDeletion.processing" @click="deleteCriteria">
-                Supprimer
-            </DangerButton>
-        </template>
-    </DialogModal>
 
 
 
-    <!-- {{ aptitudeForm.errors }}-->
-    <!--{{ criteriaForm }} -->
-</template>
+        <DialogModal :show="confirmingProficiencyDeletion" @close="closeProficiencyModal">
+            <template #title> Supprimer le critère de maitrise et son indicateur </template>
+            <template #content>
+                Êtes-vous sûr de vouloir supprimer ce critère de maitrise ainsi que son indicateur ? Cette action est
+                irréversible.
+            </template>
+            <template #footer>
+                <SecondaryButton @click="closeProficiencyModal"> Annuler </SecondaryButton>
+                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingProficiencyDeletion.processing }"
+                    :disabled="confirmingProficiencyDeletion.processing" @click="deleteProficiency">
+                    Supprimer
+                </DangerButton>
+            </template>
+        </DialogModal>
+
+
+
+        <DialogModal :show="confirmingAptitudeDeletion" @close="closeAptitudeModal">
+            <template #title> Supprimer l'AA </template>
+
+            <template #content>
+                Êtes-vous sûr de vouloir supprimer cet AA ? Cette action est irréversible.
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="closeAptitudeModal"> Annuler </SecondaryButton>
+
+                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingAptitudeDeletion.processing }"
+                    :disabled="confirmingAptitudeDeletion.processing" @click="deleteAptitude">
+                    Supprimer
+                </DangerButton>
+            </template>
+        </DialogModal>
+
+        <DialogModal :show="confirmingCriteriaDeletion" @close="closeCriteriaModal">
+            <template #title> Supprimer le critère </template>
+
+            <template #content>
+                Êtes-vous sûr de vouloir supprimer ce critère ? Cette action est irréversible.
+            </template>
+
+            <template #footer>
+                <SecondaryButton @click="closeCriteriaModal"> Annuler </SecondaryButton>
+
+                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCriteriaDeletion.processing }"
+                    :disabled="confirmingCriteriaDeletion.processing" @click="deleteCriteria">
+                    Supprimer
+                </DangerButton>
+            </template>
+        </DialogModal>
+
+
+
+        <!-- {{ aptitudeForm.errors }}-->
+        <!--{{ criteriaForm }} -->
+    </AppLayout></template>

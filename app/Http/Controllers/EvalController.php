@@ -52,11 +52,14 @@ class EvalController extends Controller
 
         $dateEval = CourseStudent::where('course_id', $courseId)->pluck('date_eval', 'student_id')->toArray();
 
+        $sectionData = Section::where('id', $sectionId)->first();
+
         return Inertia::render('Evals/show', [
             'course' => $course,
             'students' => $students,
             'section' => $sectionId,
             'dateEval' => $dateEval,
+            'sectionData' => $sectionData,
         ]);
     }
 
@@ -89,14 +92,20 @@ class EvalController extends Controller
         $acquired = [];
         foreach ($criteriaStudents as $criteriaStudent) {
             foreach ($aptitudes as $aptitude) {
-                foreach ($criteriaByApt[$aptitude->id] as  $criteria) {
-                    if ($criteriaStudent->criteria_id === $criteria->id) {
-                        $acquired[$criteriaStudent->student_id][$criteriaStudent->criteria_id] = $criteriaStudent->acquired;
+                if (isset($criteriaByApt[$aptitude->id])) {
+                    foreach ($criteriaByApt[$aptitude->id] as $criteria) {
+                        if (isset($criteriaStudent->criteria_id, $criteria->id)) {
+                            if ($criteriaStudent->criteria_id === $criteria->id) {
+                                if (isset($criteriaStudent->acquired)) {
+                                    $acquired[$criteriaStudent->student_id][$criteriaStudent->criteria_id] = $criteriaStudent->acquired;
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
+        
         // MANQUE REQUETES POUR PROFICIENCIES struct= aptitude -> criteria -> acquired
 
         $proficiencies = Proficiency::where('course_id', $courseId)->get();
@@ -110,7 +119,8 @@ class EvalController extends Controller
                 }
             }
         }
-
+        $sectionData = Section::where('id', $sectionId)->first();
+        
         return Inertia::render('Evals/edit', [
             'courseId' => $courseId,
             'studentId' => $studentId,
@@ -125,6 +135,7 @@ class EvalController extends Controller
             'student' => $student,
             'course' => $course,
             'courseStudentData' => $courseStudentData,
+            'sectionData' => $sectionData,
         ]);
     }
 
@@ -244,25 +255,7 @@ class EvalController extends Controller
         //     'course' => $course,
         // ]);
 
-        // Récupérer le cours donné avec ses aptitudes, critères et proficiencies
-        $course = Course::with('aptitudes.criterias', 'proficiencies')
-            ->findOrFail($courseId);
-
-        // Récupérer les étudiants inscrits à ce cours
-        $students = CourseStudent::join('students', 'students.id', "=", "course_students.student_id")
-            ->join('section_students', 'section_students.student_id', '=', 'students.id')
-            ->where('course_students.course_id', $courseId)->where('section_students.section_id', $sectionId)->select('students.*')->orderBy('students.id')
-            ->get();
-
-        $dateEval = CourseStudent::where('course_id', $courseId)->pluck('date_eval', 'student_id')->toArray();
-
-        return Inertia::render('Evals/show', [
-            'course' => $course,
-            'students' => $students,
-            'section' => $sectionId,
-            'dateEval' => $dateEval,
-
-        ]);
+        return redirect()->route('evals.show', ['courseId' => $courseId, 'sectionId' => $sectionId]);
     }
 
     public function denied($courseId, $sectionId, $studentId)
