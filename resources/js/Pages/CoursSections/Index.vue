@@ -7,7 +7,6 @@ import { useForm } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 const props = defineProps(['sections', 'courses', 'coursesBySection', 'courseSectionDB', 'errors', 'message']);
 let coursList = props.courses;
@@ -73,7 +72,6 @@ let add = ref(false);
 </script>
 
 <template>
-
     <AppLayout title="Cours-Section">
         <template #header>
             <h1 class="text-center font-bold text-2xl mt-12">
@@ -133,54 +131,35 @@ let add = ref(false);
                                     courseSection.name
                                 }}<a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2 rounded-md"
                                     @click="confirmingEntryDeletion(courseSection, sectionCourse)">Supprimer</a>
-
                             </li>
                             <li v-if="!coursesBySection[sectionCourse.id]" class="mt-4 text-base font-normal">Cette
                                 section ne possède
                                 pas encore
                                 d'UE</li>
                         </ul>
-                    </form>
-                </div>
-                <hr class="border-2 border-black my-2">
-                <div v-if="message">{{ message }}</div>
-                <div>
-                    <ul class="grid grid-cols-4 gap-2">
-                        <li class="text-md font-bold ml-5 bg-gray-300 mb-5 px-4 py-1 pr-8 rounded-lg"
-                            v-for="sectionCourse in sections" :key="sectionCourse.id">{{
-                        sectionCourse.id + ". " + sectionCourse.name }}
-                            <ul class="">
-                                <li class="rounded-full flex justify-between items-center w-full text-sm font-normal ml-5 pl-2 bg-white my-4"
-                                    v-for="courseSection in coursesBySection[sectionCourse.id]">{{
-                        courseSection.id + ". " + courseSection.name
-                    }}<a class="rounded-r-full cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
-                                        @click="confirmingEntryDeletion(courseSection, sectionCourse)">Delete</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                    <DialogModal :show="confirmEntryDelete" @close="closeModal">
-                        <template #title>
-                            Retirer le cours de la section
-                        </template>
+                    </li>
+                </ul>
+                <DialogModal :show="confirmEntryDelete" @close="closeModal">
+                    <template #title>
+                        Retirer le cours de la section
+                    </template>
 
-                        <template #content>
-                            Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
-                        sectionDelete }} ?
-                        </template>
+                    <template #content>
+                        Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
+                            sectionDelete }} ?
+                    </template>
 
-                        <template #footer>
-                            <SecondaryButton @click="closeModal">
-                                Annuler
-                            </SecondaryButton>
+                    <template #footer>
+                        <SecondaryButton @click="closeModal">
+                            Annuler
+                        </SecondaryButton>
 
-                            <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
-                                :disabled="deleteForm.processing" @click="deleteEntry">
-                                Supprimer cours de section
-                            </DangerButton>
-                        </template>
-                    </DialogModal>
-                </div>
+                        <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
+                            :disabled="deleteForm.processing" @click="deleteEntry">
+                            Supprimer cours de section
+                        </DangerButton>
+                    </template>
+                </DialogModal>
             </div>
         </div>
     </AppLayout>
