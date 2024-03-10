@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
+import { Head } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -52,6 +53,11 @@ const deleteSection = () => {
 </script>
 <template>
     <AppLayout>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Sections
+            </h2>
+        </template>
         <div class="bg-white w-fit mx-auto p-5">
             <form @submit.prevent="submit">
                 <label class="mr-2" for="name">Nom de la section: </label>
@@ -67,8 +73,8 @@ const deleteSection = () => {
             <div v-if="message">{{ message }}</div>
             <ul>
                 <li class="bg-zinc-200 my-3 flex justify-center items-center pl-4" v-for="section in sections">{{
-                    section.id + ". " + section.name
-                }}<a class="ml-auto cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
+                section.id + ". " + section.name
+            }}<a class="ml-auto cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
                         @click="confirmingSectionDeletion(section)">Delete</a><a
                         class="cursor-pointer font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition h-full inline-block px-4 py-2"
                         :href="route('sections.edit', section)">Modifier</a></li>
@@ -87,8 +93,8 @@ const deleteSection = () => {
                         Annuler
                     </SecondaryButton>
 
-                    <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }" :disabled="deleteForm.processing"
-                        @click="deleteSection">
+                    <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
+                        :disabled="deleteForm.processing" @click="deleteSection">
                         Supprimer la section
                     </DangerButton>
                 </template>

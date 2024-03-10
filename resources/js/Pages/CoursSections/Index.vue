@@ -1,4 +1,3 @@
-
 <!-- JUSTE CHECK SI COURS DEJA DANS SECTION, SI OUI NE PAS L'AFFICHER (c'est un formulaire d'ajout de cours a une section)
 ajouter formulaire de suppression dans lequel on voit tous les cours associés à la section et possibilité de modifier l'annee du cours dans la section -->
 
@@ -8,6 +7,7 @@ import { useForm } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 const props = defineProps(['sections', 'courses', 'coursesBySection', 'courseSectionDB', 'errors', 'message']);
 let coursList = props.courses;
@@ -74,74 +74,84 @@ let add = ref(false);
 
 <template>
     <AppLayout title="CoursSection">
+
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Cours Sections
+            </h2>
+        </template>
         <!-- AJUSTER WIDTH EN FONCTION DE L'APP LAYOUT (VOIR STYLE APP LAYOUT) -->
-        <div class="w-[1200px] mx-auto bg-white">
-            <button class="bg-blue-500 text-white font-bold p-3 rounded-full hover:bg-blue-800 m-2" @click="add = !add">
-                {{ add ? 'Annuler' : 'Ajouter des cours à une section' }}</button>
-            <div v-if="add">
-                <form @submit.prevent="submitForm" method="POST">
-                    <div class="bg-gray-300 flex">
-                        <select name="section" id="section" v-model="form.section"
-                            @change="updateCourses(), form.course = []">
-                            <option v-for="section in sections" :value="section.id">{{ section.name }}</option>
-                        </select>
-                        <div v-if="errors.section" class="font-bold text-red-500">{{ errors.section }}</div>
-                        <button type="submit" class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full">
-                            Ajouter les cours à la section
-                        </button>
-                    </div>
-                    <div v-if="errors.course" class="font-bold text-red-500">{{ errors.course }}</div>
-                    <ul class="w-full">
-                        <li class="flex justify-start items-center px-[30%] border-2" v-for="course in coursList"
-                            :key="course.id">
+        <div class="py-12">
+            <div class="py-5 mx-auto bg-white rounded-lg max-w-7xl sm:px-6 lg:px-8">
+                <button class="bg-blue-500 text-white font-bold p-3 rounded-full hover:bg-blue-800 m-2"
+                    @click="add = !add">
+                    {{ add ? 'Annuler' : 'Ajouter des cours à une section' }}</button>
+                <div v-if="add">
+                    <form @submit.prevent="submitForm" method="POST">
+                        <div class="bg-gray-300 flex">
+                            <select name="section" id="section" v-model="form.section"
+                                @change="updateCourses(), form.course = []">
+                                <option v-for="section in sections" :value="section.id">{{ section.name }}</option>
+                            </select>
+                            <div v-if="errors.section" class="font-bold text-red-500">{{ errors.section }}</div>
+                            <button type="submit"
+                                class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full">
+                                Ajouter les cours à la section
+                            </button>
+                        </div>
+                        <div v-if="errors.course" class="font-bold text-red-500">{{ errors.course }}</div>
+                        <ul class="w-full">
+                            <li class="flex justify-start items-center px-[30%] border-2" v-for="course in coursList"
+                                :key="course.id">
 
-                            <input class="mr-4 cursor-pointer" type="checkbox" name="course" :id="course.id"
-                                :value="course.id" v-model="form.course[course.id]" />
+                                <input class="mr-4 cursor-pointer" type="checkbox" name="course" :id="course.id"
+                                    :value="course.id" v-model="form.course[course.id]" />
 
-                            <label class="cursor-pointer" :for="course.id">{{ course.name }}</label>
+                                <label class="cursor-pointer" :for="course.id">{{ course.name }}</label>
 
-                        </li>
-                    </ul>
-                </form>
-            </div>
-            <hr class="border-2 border-black my-2">
-            <div v-if="message">{{ message }}</div>
-            <div>
-                <ul class="flex flex-wrap">
-                    <li class="text-md font-bold ml-5 bg-gray-300 mb-5 w-fit px-4 py-1" v-for="sectionCourse in sections"
-                        :key="sectionCourse.id">{{
-                            sectionCourse.id + ". " + sectionCourse.name }}
-                        <ul class="">
-                            <li class="flex justify-between items-center w-[200px] text-sm font-normal ml-4 pl-1 bg-white my-4"
-                                v-for="courseSection in coursesBySection[sectionCourse.id]">{{
-                                    courseSection.id + ". " + courseSection.name
-                                }}<a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
-                                    @click="confirmingEntryDeletion(courseSection, sectionCourse)">Delete</a>
                             </li>
                         </ul>
-                    </li>
-                </ul>
-                <DialogModal :show="confirmEntryDelete" @close="closeModal">
-                    <template #title>
-                        Retirer le cours de la section
-                    </template>
+                    </form>
+                </div>
+                <hr class="border-2 border-black my-2">
+                <div v-if="message">{{ message }}</div>
+                <div>
+                    <ul class="grid grid-cols-4 gap-2">
+                        <li class="text-md font-bold ml-5 bg-gray-300 mb-5 px-4 py-1 pr-8 rounded-lg"
+                            v-for="sectionCourse in sections" :key="sectionCourse.id">{{
+                        sectionCourse.id + ". " + sectionCourse.name }}
+                            <ul class="">
+                                <li class="rounded-full flex justify-between items-center w-full text-sm font-normal ml-5 pl-2 bg-white my-4"
+                                    v-for="courseSection in coursesBySection[sectionCourse.id]">{{
+                        courseSection.id + ". " + courseSection.name
+                    }}<a class="rounded-r-full cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
+                                        @click="confirmingEntryDeletion(courseSection, sectionCourse)">Delete</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <DialogModal :show="confirmEntryDelete" @close="closeModal">
+                        <template #title>
+                            Retirer le cours de la section
+                        </template>
 
-                    <template #content>
-                        Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
-                            sectionDelete }} ?
-                    </template>
+                        <template #content>
+                            Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
+                        sectionDelete }} ?
+                        </template>
 
-                    <template #footer>
-                        <SecondaryButton @click="closeModal">
-                            Annuler
-                        </SecondaryButton>
+                        <template #footer>
+                            <SecondaryButton @click="closeModal">
+                                Annuler
+                            </SecondaryButton>
 
-                        <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
-                            :disabled="deleteForm.processing" @click="deleteEntry">
-                            Supprimer cours de section
-                        </DangerButton>
-                    </template>
-                </DialogModal>
+                            <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
+                                :disabled="deleteForm.processing" @click="deleteEntry">
+                                Supprimer cours de section
+                            </DangerButton>
+                        </template>
+                    </DialogModal>
+                </div>
             </div>
         </div>
     </AppLayout>

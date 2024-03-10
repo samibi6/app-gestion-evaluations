@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useForm } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -82,6 +83,11 @@ watch(() => form.course, (newValue) => {
 
 <template>
     <AppLayout title="CoursSection">
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Cours Etudiants
+            </h2>
+        </template>
         <!-- AJUSTER WIDTH EN FONCTION DE L'APP LAYOUT (VOIR STYLE APP LAYOUT) -->
         <div class="w-[1200px] mx-auto bg-white">
             <button class="bg-blue-500 text-white font-bold p-3 rounded-full hover:bg-blue-800 m-2" @click="add = !add">
@@ -95,8 +101,9 @@ watch(() => form.course, (newValue) => {
                         </select>
                         <div v-if="errors.course" class="font-bold text-red-500">{{ errors.course }}</div>
                         <select name="section" id="section" v-model="form.section">
-                            <option v-for="section in sectionsByCourses[form.course]" :value="section.id">{{ section.name
-                            }}
+                            <option v-for="section in sectionsByCourses[form.course]" :value="section.id">{{
+                section.name
+            }}
                             </option>
 
                         </select>
@@ -113,8 +120,9 @@ watch(() => form.course, (newValue) => {
                             <input class="mr-4 cursor-pointer" type="checkbox" name="student" :id="student.id"
                                 :value="student.id" v-model="form.student[student.id]" />
 
-                            <label class="cursor-pointer" :for="student.id">{{ student.last_name + ' ' + student.first_name
-                            }}</label>
+                            <label class="cursor-pointer" :for="student.id">{{ student.last_name + ' ' +
+                student.first_name
+                                }}</label>
 
                         </li>
                     </ul>
@@ -126,12 +134,12 @@ watch(() => form.course, (newValue) => {
                 <ul class="flex flex-wrap">
                     <li class="text-md font-bold ml-5 bg-gray-300 mb-5 w-fit px-4 py-1" v-for="courseStudent in courses"
                         :key="courseStudent.id">{{
-                            courseStudent.id + ". " + courseStudent.name }}
+                courseStudent.id + ". " + courseStudent.name }}
                         <ul class="">
                             <li class="flex justify-between items-center w-[200px] text-sm font-normal ml-4 pl-1 bg-white my-4"
                                 v-for="studentCourse in studentsByCourses[courseStudent.id]">{{
-                                    studentCourse.id + ". " + studentCourse.last_name + " " + studentCourse.first_name
-                                }}<a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
+                studentCourse.id + ". " + studentCourse.last_name + " " + studentCourse.first_name
+            }}<a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2"
                                     @click="confirmingEntryDeletion(studentCourse, courseStudent)">Delete</a>
                             </li>
                         </ul>
@@ -144,7 +152,7 @@ watch(() => form.course, (newValue) => {
 
                     <template #content>
                         Êtes-vous sûr de vouloir retirer l'étudiant': {{ studentDelete }} du cours: {{
-                            courseDelete }} ?
+                courseDelete }} ?
                     </template>
 
                     <template #footer>
