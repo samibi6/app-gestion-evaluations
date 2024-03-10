@@ -42,10 +42,12 @@ const logout = () => {
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
+
                             <div class="mt-2">
                                 <a :href="route('dashboard')" :active="route().current('dashboard')"
                                     class="flex justify-center items-center mb-5">
                                     <AcademicCapIcon class="h-16 w-auto text-blue-600" />
+
 
                                 </a>
                             </div>

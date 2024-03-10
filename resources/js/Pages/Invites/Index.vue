@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
+import { Head } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -23,6 +24,7 @@ const submit = () => form.submit({
 
 </script>
 <template>
+
     <AppLayout title="Invitations">
         <div class="max-w-4xl mx-auto mt-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
@@ -52,6 +54,7 @@ const submit = () => form.submit({
                         <div class="font-bold mr-1 ml-2">Jeton :</div>
                         <div>{{ invite.token }}</div>
                     </div>
+
                 </div>
             </div>
         </div>

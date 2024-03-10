@@ -136,6 +136,7 @@ const isPdfGeneratable = (studentId) => {
 </script>
 
 <template>
+
     <AppLayout title="Évaluations">
         <div class="bg-gray-300 border border-gray-400 mx-auto w-1/2 p-5 rounded-md shadow-xl mt-12">
             <a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition inline-block px-4 py-2 mb-5 border border-red-500 rounded-md"
@@ -194,3 +195,4 @@ const isPdfGeneratable = (studentId) => {
             <ul class="border border-slate-950 p-5 m-5 w-fit h-fit">
                 <li v-for=" proficiency  in  course.proficiencies ">{{ proficiency.criteria_skill }}</li>
             </ul>-->
+

@@ -11,6 +11,7 @@ const props = defineProps(['courses', 'sections', 'AllCourses']);
 </script>
 
 <template>
+
     <AppLayout title="Évaluations">
         <template #header>
             <h1 class="text-center font-bold text-2xl mt-12">
@@ -36,6 +37,7 @@ const props = defineProps(['courses', 'sections', 'AllCourses']);
                         </li>
                         <li v-else>
                             <p>Cette section ne possède pas encore d'UE</p>
+
                         </li>
                     </ul>
                 </div>

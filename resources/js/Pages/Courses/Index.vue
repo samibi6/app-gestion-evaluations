@@ -1,4 +1,5 @@
 <script setup>
+import { Head } from '@inertiajs/vue3';
 import ActionMessage from "@/Components/ActionMessage.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import DialogModal from "@/Components/DialogModal.vue";
@@ -62,6 +63,7 @@ var closeModal = () => {
 </script>
 
 <template>
+
     <AppLayout title="Cours">
 
         <template #header>
@@ -190,6 +192,7 @@ var closeModal = () => {
 
             <template #footer>
                 <SecondaryButton @click="closeModal"> Annuler </SecondaryButton>
+
 
                 <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCourseDeletion.processing }"
                     :disabled="confirmingCourseDeletion.processing" @click="deleteCourse">

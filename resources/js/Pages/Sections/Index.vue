@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
+import { Head } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -51,6 +52,7 @@ const deleteSection = () => {
 
 </script>
 <template>
+
     <AppLayout title="Sections">
 
         <h1 class="text-center font-bold text-2xl mt-12">
@@ -105,6 +107,7 @@ const deleteSection = () => {
                     </li>
                 </ul>
             </div>
+
         </div>
 
         <DialogModal :show="confirmSectionDelete" @close="closeModal">

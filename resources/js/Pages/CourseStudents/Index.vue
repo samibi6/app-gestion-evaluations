@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useForm } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import DangerButton from '@/Components/DangerButton.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -81,6 +82,7 @@ watch(() => form.course, (newValue) => {
 </script>
 
 <template>
+
     <AppLayout title="Cours-Étudiants">
         <template #header>
             <h1 class="text-center font-bold text-2xl mt-12">
@@ -97,6 +99,7 @@ watch(() => form.course, (newValue) => {
                 {{ add ? 'Annuler' : 'Ajouter des étudiants à un cours' }}
             </button>
             <div v-if="add" class="bg-white overflow-hidden shadow-xl  sm:rounded-lg p-6 max-w-lg mx-auto">
+
                 <form @submit.prevent="submitForm" method="POST">
                     <div class="flex flex-col items-center border border-gray-400 rounded-md  shadow-xl p-4 mb-4">
                         <select name="course" id="course" v-model="form.course"
@@ -105,9 +108,11 @@ watch(() => form.course, (newValue) => {
                             <option v-for="course in courses" :value="course.id">{{ course.name }}</option>
                         </select>
                         <div v-if="errors.course" class="font-bold text-red-500">{{ errors.course }}</div>
+
                         <select name="section" id="section" v-model="form.section"
                             class="mb-4 bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 rounded-lg focus:ring-blue-500 w-full focus:border-blue-500 p-2.5">
                             <option v-for="section in sectionsByCourses[form.course]" :value="section.id">{{ section.name }}
+
                             </option>
                         </select>
                         <div v-if="errors.section" class="font-bold text-red-500">{{ errors.section }}</div>
@@ -123,8 +128,10 @@ watch(() => form.course, (newValue) => {
                             :key="student.id">
                             <input class="mr-4 cursor-pointer" type="checkbox" name="student" :id="student.id"
                                 :value="student.id" v-model="form.student[student.id]" />
+
                             <label class="cursor-pointer" :for="student.id">{{ student.last_name + ' ' + student.first_name
                             }}</label>
+
                         </li>
 
                     </ul>
@@ -133,6 +140,7 @@ watch(() => form.course, (newValue) => {
             <hr class="border-2 border-black my-2">
             <div v-if="message">{{ message }}</div>
             <div>
+
                 <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
                     <li class="text-xl font-semibold ml-5 bg-gray-300 mb-5 w-fit w-full border border-gray-400 shadow-xl rounded-md p-4"
                         v-for="courseStudent in courses" :key="courseStudent.id">
@@ -143,6 +151,7 @@ watch(() => form.course, (newValue) => {
                                 {{ studentCourse.last_name + " " + studentCourse.first_name }}
                                 <a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2 rounded-md"
                                     @click="confirmingEntryDeletion(studentCourse, courseStudent)">Supprimer</a>
+
                             </li>
                             <li v-if="!studentsByCourses[courseStudent.id]" class="mt-4 text-base font-normal">Cette UE n'a
                                 pas encore d'étudiants inscrits.</li>
@@ -154,7 +163,9 @@ watch(() => form.course, (newValue) => {
                         Retirer l'étudiant de l'UE
                     </template>
                     <template #content>
+
                         Êtes-vous sûr de vouloir retirer l'étudiant {{ studentDelete }} de l'UE {{ courseDelete }} ?
+
                     </template>
                     <template #footer>
                         <SecondaryButton @click="closeModal">

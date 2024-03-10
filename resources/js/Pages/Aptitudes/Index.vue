@@ -10,6 +10,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SectionTitle from "@/Components/SectionTitle.vue";
 import TextInput from "@/Components/TextInput.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import { Head } from '@inertiajs/vue3';
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
 import { useForm } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
@@ -353,6 +354,7 @@ const findCourseLead = (courses, courseId) => {
 </script>
 
 <template>
+
     <AppLayout title="AA-Critères">
 
         <template #header>
@@ -657,6 +659,9 @@ const findCourseLead = (courses, courseId) => {
 
 
 
+        <div v-if="aptitudeForm.course && proficienciesByCourses[aptitudeForm.course]">
+
+
 
 
 
@@ -675,6 +680,33 @@ const findCourseLead = (courses, courseId) => {
             </template>
         </DialogModal>
 
+
+                <div v-if="proficiency.editMode">
+                    <form @submit.prevent="updateProficiency(proficiency)">
+                        <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
+                        <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
+                            @click="cancelProficiencyEditMode(proficiency)">Cancel</button>
+                    </form>
+                </div>
+                <br><br>
+            </ul>
+
+        </div>
+
+        <DialogModal :show="confirmingProficiencyDeletion" @close="closeProficiencyModal">
+            <template #title> Supprimer le critère de maitrise et son indicateur </template>
+            <template #content>
+                Êtes-vous sûr de vouloir supprimer ce critère de maitrise ainsi que son indicateur? Cette action est
+                irréversible.
+            </template>
+            <template #footer>
+                <SecondaryButton @click="closeProficiencyModal"> Annuler </SecondaryButton>
+                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingProficiencyDeletion.processing }"
+                    :disabled="confirmingProficiencyDeletion.processing" @click="deleteProficiency">
+                    Supprimer
+                </DangerButton>
+            </template>
+        </DialogModal>
 
 
         <DialogModal :show="confirmingAptitudeDeletion" @close="closeAptitudeModal">
@@ -711,6 +743,15 @@ const findCourseLead = (courses, courseId) => {
             </template>
         </DialogModal>
 
+
+                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCriteriaDeletion.processing }"
+                    :disabled="confirmingCriteriaDeletion.processing" @click="deleteCriteria">
+                    Supprimer
+                </DangerButton>
+            </template>
+        </DialogModal>
+
+    </AppLayout>
 
 
         <!-- {{ aptitudeForm.errors }}-->
