@@ -159,5 +159,6 @@ public function edit(Course $course){
           return redirect()->route('courses.index');
     }
 
+
 }
 

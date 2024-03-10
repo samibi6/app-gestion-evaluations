@@ -14,7 +14,7 @@ class StudentController extends Controller
 {
     public function index()
     {
-        $students = Student::paginate(8)->withQueryString();
+        $students = Student::paginate(24)->withQueryString();
         $sections = Section::get();
 
         $sectionsByStudents =

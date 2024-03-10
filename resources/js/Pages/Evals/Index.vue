@@ -11,25 +11,38 @@ const props = defineProps(['courses', 'sections', 'AllCourses']);
 </script>
 
 <template>
-    <AppLayout>
+
+    <AppLayout title="Évaluations">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Évaluations
-            </h2>
+            <h1 class="text-center font-bold text-2xl mt-12">
+                Évaluer des étudiants dans une UE
+            </h1>
+            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez choisir l'UE d'une section et évaluer les
+                étudiant qui y sont inscrits, ainsi que générer les PDF des fiches d'évaluations</p>
         </template>
-        <div class="py-12">
-            <ul class="grid grid-cols-3 gap-5 py-8 bg-white max-w-7xl mx-auto sm:px-6 lg:px-8 rounded-lg shadow-lg">
-                <li class="bg-zinc-300 p-5 m-2 h-full " v-for="section in sections">{{ section.id + ". " +
-                    section.name }}
+        <div class="w-3/4 mx-auto mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-gray-300 border border-gray-400 shadow-xl rounded-lg p-4" v-for="section in sections"
+                    :key="section.id">
+                    <h2 class="text-xl font-semibold mb-4">{{ section.id }}. {{ section.name }}</h2>
                     <ul>
-                        <li class="ml-5 bg-white m-2 pl-2 flex justify-between items-center rounded-full"
-                            v-for="course in courses[section.id]">{{ course.id + ". " + course.name }}<a
-                                class="rounded-r-full cursor-pointer font-bold text-blue-500 hover:bg-blue-500 hover:text-white transition h-full inline-block px-4 py-2 ml-2"
-                                :href="route('evals.show', { courseId: course.id, sectionId: section.id })">Sélectionner</a>
+                        <li v-if="courses[section.id]" v-for="course in courses[section.id]" :key="course.id" class="">
+
+                            <div class="my-4 text-center ">
+                                <a :href="route('evals.show', { courseId: course.id, sectionId: section.id })"
+                                    class="text-white font-bold  bg-blue-500 hover:bg-blue-600 transition block w-full px-4 py-2 rounded-lg">{{
+                                        course.name }}</a>
+                            </div>
+
+                        </li>
+                        <li v-else>
+                            <p>Cette section ne possède pas encore d'UE</p>
+
                         </li>
                     </ul>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </AppLayout>
 </template>
+  

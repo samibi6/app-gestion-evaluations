@@ -75,7 +75,7 @@ class PdfController extends Controller
 
         $courseSectionName = str_replace(' ', '-', "{$course->name}-{$section->name}");
 
-        function successOrAdjournmentOrDenied($date_adjourned, $date_eval, $date_denied, $courseStudentData)
+        function successOrAdjournmentOrDenied($date_adjourned, $date_eval, $date_denied/*, $courseStudentData*/)
         {
 
             $date_adjourned = $date_adjourned ? strtotime($date_adjourned) : 0;
@@ -109,19 +109,27 @@ class PdfController extends Controller
             ];
         }
 
-
+        $caca = [];
         if ($student === null) {
-            foreach ($students as $index => $studnt) {
+            foreach ($students as $studnt) {
+                // bon l'ancien système d'indexation des étudiants ne fonctionne plus du jour au lendemain sans AUCUNE raison, donc tant pis, voilà une query pour chaque étudiant individuellement, Optimus Prime serait fier de cette incroyable optimisation
+                $studentData = $courseStudentData->where('student_id', $studnt->id)->first();
                 
-                if ($courseStudentData[$index]->date_eval !== null) {
+                if ($studentData && $studentData->date_eval !== null) {
                     $fullName = str_replace(' ', '-', "{$studnt->last_name}-{$studnt->first_name}");
-                    if(isset($acquiredProf[$studnt->id])){
-                        $profAcquired = $acquiredProf[$studnt->id];}else{
-                            $profAcquired = null;
-                        }
-                     
-                    $failState = successOrAdjournmentOrDenied($courseStudentData[$index]->date_adjourned, $courseStudentData[$index]->date_eval, $courseStudentData[$index]->date_denied, $courseStudentData[$index]);
-                 
+                    if (isset($acquiredProf[$studnt->id])) {
+                        $profAcquired = $acquiredProf[$studnt->id];
+                    } else {
+                        $profAcquired = null;
+                    }
+        
+                    $failState = successOrAdjournmentOrDenied($studentData->date_adjourned, $studentData->date_eval, $studentData->date_denied);
+        
+                    // $caca[] = [
+                    //     'student_id' => $studnt->id,
+                    //     'fail_state' => $failState
+                    // ];
+        
                     $data = [
                         'student' => $studnt,
                         'section' => $section,
@@ -134,17 +142,22 @@ class PdfController extends Controller
                         'acquired' => $acquired[$studnt->id],
                         'proficiencies' => $proficiencies,
                         'acquiredProf' => $profAcquired,
-                        'courseStudentData' => $courseStudentData[$index],
+                        'courseStudentData' => $studentData, 
                     ];
-
-
+        
                     $currentAcademicYear = getCurrentAcademicYear();
                     $startYear = $currentAcademicYear['start_year'];
                     $endYear = $currentAcademicYear['end_year'];
-
-                    $date_evalComparison = strtotime($courseStudentData[$index]->date_eval);
+        
+                    $date_evalComparison = strtotime($studentData->date_eval);
                     $year = date('Y', $date_evalComparison);
-                        if ($year >= $startYear && $year <= $endYear) {
+                    if ($year >= $startYear && $year <= $endYear) {
+                        
+                    
+                
+            
+        
+        
                         
                     if ($failState === 'success') {
                         $passedPdf = PDF::loadView('pdf.success.view', $data);
@@ -180,7 +193,7 @@ class PdfController extends Controller
                    
                 }
             }}
-            
+         // return $caca;
             $pdfs = array_merge($passedPdfs, $adjournedPdfs, $deniedPdfs);
 
             $zipFileName =  $courseSectionName  . '.zip';
@@ -215,7 +228,7 @@ class PdfController extends Controller
         }else {
            // dd($acquiredProf);
             if ($courseStudentData->date_eval !== null) {
-    $failState = successOrAdjournmentOrDenied($courseStudentData->date_adjourned, $courseStudentData->date_eval, $courseStudentData->date_denied, $courseStudentData);
+            $failState = successOrAdjournmentOrDenied($courseStudentData->date_adjourned, $courseStudentData->date_eval, $courseStudentData->date_denied/*,$courseStudentData*/);
     if(isset($acquiredProf[$student->id])){
         $profAcquired = $acquiredProf[$student->id];}else{
             $profAcquired = null;

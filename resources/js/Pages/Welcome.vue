@@ -13,10 +13,11 @@ defineProps({
 
 <template>
 
-    <Head title="Welcome" />
+    <Head title="Bienvenue" />
 
     <div
-        class="relative sm:flex flex-col sm:justify-center h-full flex sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
+        class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
+
         <div v-if="canLogin" class="sm:fixed sm:top-0 sm:end-0 p-6 text-end z-10">
             <Link v-if="$page.props.auth.user" :href="route('dashboard')"
                 class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
@@ -25,41 +26,40 @@ defineProps({
             <template v-else>
                 <Link :href="route('login')"
                     class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                Log in</Link>
+
+                Connexion</Link>
 
                 <Link v-if="canRegister" :href="route('register')"
                     class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                Register</Link>
+                Inscription</Link>
             </template>
         </div>
 
-        <div class="max-w-7xl mx-auto p-6 lg:p-8 my-auto">
+        <div class="max-w-7xl mx-auto p-6 lg:p-8 my-auto flex flex-col items-center">
             <div class="flex justify-center flex-col items-center">
-                <AcademicCapIcon class="h-28 text-indigo-500 drop-shadow-xl" />
-                <h1 class="text-3xl font-thin drop-shadow-xl "><span class="font-black">App</span> Gestion Evaluations
-                </h1>
+                <AcademicCapIcon class="h-28 text-blue-500 drop-shadow-xl" />
+                <h1 class="text-3xl font-thin drop-shadow-xl text-gray-300 "><span class="font-black text-white">App</span>
+                    Gestion Evaluations</h1>
+            </div>
+            <div class="flex justify-center mb-6 mt-12">
+                <div>
+                    <Link v-if="$page.props.auth.user" :href="route('dashboard')"
+                        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                    Dashboard</Link>
+                    <template v-else>
+                        <Link :href="route('login')"
+                            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                        Connexion</Link>
+                        <Link v-if="canRegister" :href="route('register')"
+                            class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                        Inscription</Link>
+                    </template>
+                </div>
             </div>
         </div>
 
-        <div v-if="canLogin" class="mb-auto mt-0">
-            <Link v-if="$page.props.auth.user" :href="route('dashboard')"
-                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-            Dashboard</Link>
 
-            <template v-else>
-                <Link :href="route('login')"
-                    class="text-lg bg-blue-500 font-semibold text-white px-6 py-3 hover:shadow-xl transition rounded-full hover:bg-blue-800 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                Log in</Link>
 
-                <Link v-if="canRegister" :href="route('register')"
-                    class="text-lg bg-gray-500 ms-4 font-semibold text-white px-6 py-3 hover:shadow-xl transition rounded-full hover:bg-gray-800 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                Register</Link>
-            </template>
-        </div>
-
-        <div class="ms-4 text-center text-sm text-gray-500 dark:text-gray-400 sm:text-end sm:ms-0 p-10 mt-auto">
-            Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
-        </div>
     </div>
 </template>
 

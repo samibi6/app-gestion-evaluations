@@ -18,7 +18,7 @@ const props = defineProps({
                     class="mb-1 mr-1 px-4 py-3 text-gray-400 text-sm leading-4 border rounded" v-html="link.label" />
                 <Link v-else :key="`link-${key}`"
                     class="mb-1 mr-1 px-4 py-3   text-sm leading-4 hover:bg-blue-200 hover:border-blue-400 border focus:border-blue-500 rounded focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700"
-                    :class="{ 'bg-blue-200': link.active/* , 'border-indigo-900': link.active */ }" :href="link.url"
+                    :class="{ 'bg-blue-300': link.active/* , 'border-indigo-900': link.active */ }" :href="link.url"
                     v-html="link.label" />
             </template>
         </div>

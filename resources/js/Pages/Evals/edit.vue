@@ -7,7 +7,7 @@ import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
-const props = defineProps(['courseId', 'studentId', 'sectionId', 'criteriaData', 'criteriaByApt', 'aptitudes', 'acquired', 'proficiencies', 'acquiredProf', 'student', 'course', 'courseStudentData']);
+const props = defineProps(['courseId', 'studentId', 'sectionId', 'criteriaData', 'criteriaByApt', 'aptitudes', 'acquired', 'proficiencies', 'acquiredProf', 'student', 'course', 'courseStudentData', 'sectionData']);
 // Function to determine academic year based on current date
 // Function to determine academic year based on current date
 function getCurrentAcademicYear() {
@@ -115,60 +115,70 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="p-10">
-        <a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition h-full inline-block px-4 py-2 mb-5 border border-zinc-300"
-            :href="route('evals.show', { courseId: courseId, sectionId: sectionId })">Retour</a>
+    <AppLayout title="Évaluations">
+        <div class="p-10">
+            <h2 class="text-2xl font-bold text-center mt-8">Évaluation de</h2>
+            <h1 class="my-5 mb-20 font-bold text-3xl underline text-center">{{ student.first_name + " " + student.last_name
+            }} -
+                {{
+                    course.name }} - {{ sectionData.name }}
+            </h1>
 
-        <h1 class="my-5 font-bold text-3xl underline text-center">{{ student.first_name + " " + student.last_name }}
-        </h1>
 
-
-        <form @submit.prevent="submit">
-            <div class="text-red-500 font-bold" v-if="form.invalid('criteria')">
-                {{ form.errors.criteria }}
-            </div>
-            <table class="border m-auto">
-                <tr class="border">
-                    <th class="border">AA</th>
-                    <th class="border w-[500px]">Critère</th>
-                    <th class="border">Acquis</th>
-                </tr>
-                <tr v-for="aptitude in aptitudes" class="border">
-                    <td class="border p-5">{{ aptitude.description }}</td>
-                    <td class="border" colspan="2">
-                        <table>
-                            <tr class="border" v-for="criteria in criteriaByApt[aptitude.id]">
-                                <td class="p-5 w-[500px]">{{ criteria.description }}</td>
-                                <td class="border p-5"><input type="checkbox" :name="'criteria_' + criteria.id"
-                                        :id="criteria.id" v-model="form.criteria[criteria.id]"></td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            <div v-if="areAllCriteriaChecked()">
-                <div class="text-red-500 font-bold" v-if="form.invalid('proficiency')">
-                    {{ form.errors.proficiency }}
+            <form @submit.prevent="submit" class="p-10 border border-gray-400 bg-gray-300 rounded-md shadow-xl">
+                <div class="text-red-500 font-bold" v-if="form.invalid('criteria')">
+                    {{ form.errors.criteria }}
                 </div>
-                <table class="border m-auto w-[1000px]">
-                    <tr class="border">
-                        <th class="border">Critère</th>
-                        <th class="border w-[500px]">Indicateur</th>
-                        <th class="border">Niveau de maitrise: 0 - 10</th>
+                <a class="cursor-pointer font-bold text-red-500 hover:bg-red-500 hover:text-white transition inline-block px-4 py-2 mb-5 border border-red-500 rounded-md"
+                    :href="route('evals.show', { courseId: courseId, sectionId: sectionId })">Retour</a>
+
+                <h2 class="text-center mb-8 text-xl font-bold">AA et critères de réussite</h2>
+                <table class="mb-8 m-auto bg-indigo-200">
+                    <tr class="bg-blue-200">
+                        <th class="border border-black">AA</th>
+                        <th class="border w-[500px] border-black">Critère</th>
+                        <th class="border border-black">Acquis</th>
                     </tr>
-                    <tr v-for="proficiency in proficiencies" class="border">
-                        <td class="border p-5">{{ proficiency.criteria_skill }}</td>
-                        <td class="border p-5">{{ proficiency.indicator }}</td>
-                        <td><input type="number" max="10" min="0" :name="'proficiency_' + proficiency.id"
-                                :id="proficiency.id" v-model="form.proficiency[proficiency.id]"></td>
+                    <tr v-for="aptitude in aptitudes" class="">
+                        <td class="border p-5 border-black">{{ aptitude.description }}</td>
+                        <td class="border border-black" colspan="2">
+                            <table>
+                                <tr class="" v-for="criteria in criteriaByApt[aptitude.id]">
+                                    <td class="p-5 w-[500px]">{{ criteria.description }}</td>
+                                    <td class=" p-5"><input type="checkbox" :name="'criteria_' + criteria.id"
+                                            :id="criteria.id" v-model="form.criteria[criteria.id]"></td>
+                                </tr>
+                            </table>
+                        </td>
                     </tr>
                 </table>
-            </div>
+                <div v-if="areAllCriteriaChecked()">
+                    <div class="text-red-500 font-bold" v-if="form.invalid('proficiency')">
+                        {{ form.errors.proficiency }}
+                    </div>
+                    <h2 class="text-center mb-8 text-xl font-bold">Critères, indicateurs et niveaux de maitrise</h2>
+                    <table class=" m-auto max-w-[1000px] mb-12 bg-indigo-200">
+                        <tr class="bg-blue-200">
+                            <th class="border border-black">Critère</th>
+                            <th class="border border-black w-[500px]">Indicateur</th>
+                            <th class="border border-black">Niveau de maitrise: 0 - 10</th>
+                        </tr>
+                        <tr v-for="proficiency in proficiencies" class="">
+                            <td class="border border-black p-5">{{ proficiency.criteria_skill }}</td>
+                            <td class="border border-black p-5">{{ proficiency.indicator }}</td>
+                            <td class="text-center border border-black"><input type="number" max="10" min="0"
+                                    :name="'proficiency_' + proficiency.id" :id="proficiency.id"
+                                    v-model="form.proficiency[proficiency.id]"></td>
+                        </tr>
+                    </table>
+                </div>
 
-            <button type="submit" class="font-bold bg-white p-3 hover:bg-green-500 shadow-lg rounded-full block mx-auto">
-                Sauvegarder l'évaluation
-            </button>
+                <button type="submit"
+                    class="text-center block mx-auto focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-lg px-6 py-3">
+                    Enregistrer
+                </button>
 
-        </form>
-    </div>
+            </form>
+        </div>
+    </AppLayout>
 </template>
