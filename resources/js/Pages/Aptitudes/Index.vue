@@ -10,7 +10,6 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import SectionTitle from "@/Components/SectionTitle.vue";
 import TextInput from "@/Components/TextInput.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { Head } from '@inertiajs/vue3';
 import { useForm as usePrecognitionForm } from "laravel-precognition-vue-inertia";
 import { useForm } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
@@ -354,15 +353,16 @@ const findCourseLead = (courses, courseId) => {
 </script>
 
 <template>
-
     <AppLayout title="AA-Critères">
 
         <template #header>
             <h1 class="text-center font-bold text-2xl mt-12">
                 Ajouter et modifier des AA, critères de réussite et degrés de maitrise
             </h1>
-            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez consulter, ajouter, modifier et supprimer des
-                acquis d'apprentissage, des critères de réussite ainsi que des critères de maitrise et leur indicateurs pour
+            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez consulter, ajouter, modifier et supprimer
+                des
+                acquis d'apprentissage, des critères de réussite ainsi que des critères de maitrise et leur indicateurs
+                pour
                 une UE donnée</p>
         </template>
         <div class="max-w-4xl mx-auto mt-8">
@@ -391,7 +391,7 @@ const findCourseLead = (courses, courseId) => {
                         </option>
                         <option v-else disabled>
                             {{ selectedSection ? 'Aucune UE n\'est liée à cette section'
-                                : 'Veuillez d\'abord choisir une section' }}
+                        : 'Veuillez d\'abord choisir une section' }}
                         </option>
                     </select>
 
@@ -403,7 +403,7 @@ const findCourseLead = (courses, courseId) => {
                     <div v-if="!editCourseLead">
                         <p v-if="aptitudeForm.course !== ''" class="font-medium mb-2">Chapeau de l'UE :
                         <div class="text-gray-700 mt-4">{{
-                            findCourseLead(courses, aptitudeForm.course) }}</div>
+                        findCourseLead(courses, aptitudeForm.course) }}</div>
                         </p>
                         <button @click="toggleEditCourseLeadMode(courses)"
                             class="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mt-2">
@@ -417,7 +417,8 @@ const findCourseLead = (courses, courseId) => {
                     </div>
                     <div v-else>
                         <form @submit.prevent="updateCourseLead(courses)" class="mt-4">
-                            <label for="course_lead" class="font-medium mb-2 block">Modifier le chapeau de l'UE :</label>
+                            <label for="course_lead" class="font-medium mb-2 block">Modifier le chapeau de l'UE
+                                :</label>
                             <textarea id="course_lead" v-model="updatedCourseLead"
                                 class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-40 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full mb-2"></textarea>
                             <button type="submit"
@@ -452,7 +453,8 @@ const findCourseLead = (courses, courseId) => {
                     class="mt-4">
                     <h2 class="text-lg font-semibold">Liste des AA de l'UE</h2>
                     <ul v-for="( aptitude, index ) in  aptitudesByCourses[aptitudeForm.course] " :key="aptitude.id">
-                        <li class="mt-4 mb-8 border bg-gray-300 border-gray-400 rounded-lg p-6" v-if="!aptitude.editMode">
+                        <li class="mt-4 mb-8 border bg-gray-300 border-gray-400 rounded-lg p-6"
+                            v-if="!aptitude.editMode">
                             <p class="font-semibold">AA {{ index + 1 }} :</p>
                             <p class="text-gray-700">{{ aptitude.description }}</p>
                             <button @click="toggleEditMode(aptitude)"
@@ -493,7 +495,8 @@ const findCourseLead = (courses, courseId) => {
 
                         <li class="mt-4 mb-8">
                             <form @submit.prevent="submitCriteria(aptitude.id)">
-                                <label for="criteria" class="text-gray-700 block font-medium">Nouveau critère de réussite
+                                <label for="criteria" class="text-gray-700 block font-medium">Nouveau critère de
+                                    réussite
                                     :</label>
                                 <textarea id="criteria" v-model="newCriteria[aptitude.id]"
                                     class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
@@ -509,16 +512,16 @@ const findCourseLead = (courses, courseId) => {
                             <ul v-if="criteriasByAptitudes[aptitude.id] && criteriasByAptitudes[aptitude.id].length"
                                 class="mt-2">
                                 <p class="font-semibold text-lg">Critères de réussite de l'AA {{ index + 1 }} :</p>
-                                <li v-for="( criteria, index ) in  criteriasByAptitudes[aptitude.id] " :key="criteria.id"
-                                    class="mt-2">
+                                <li v-for="( criteria, index ) in  criteriasByAptitudes[aptitude.id] "
+                                    :key="criteria.id" class="mt-2">
                                     <div v-if="!criteria.editMode">
                                         <p class="">Critère {{ index + 1 }} :</p>
                                         <p class="text-gray-700">{{ criteria.description }}</p>
                                         <button @click="toggleCriteriaEditMode(criteria)"
                                             class="text-blue-600 hover:text-white border border-blue-600 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2.5 py-2.5 mt-2">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round"
-                                                stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                             </svg>
@@ -540,7 +543,8 @@ const findCourseLead = (courses, courseId) => {
                                                 le
                                                 critère de
                                                 réussite:</label><br>
-                                            <textarea id="criteria_description-edit" v-model="criteria.updatedDescription"
+                                            <textarea id="criteria_description-edit"
+                                                v-model="criteria.updatedDescription"
                                                 class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
                                             <button type="submit"
                                                 class="focus:outline-none text-white bg-blue-900 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  font-medium rounded-lg text-sm px-5 py-2.5 mt-2">Enregistrer</button>
@@ -592,7 +596,8 @@ const findCourseLead = (courses, courseId) => {
                         le critère de maitrise </button>
                 </form>
 
-                <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="text-lg font-semibold mt-8">Liste
+                <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="text-lg font-semibold mt-8">
+                    Liste
                     des
                     critères de maitrise de l'UE</h2>
                 <h2 v-else class="text-lg font-semibold mt-8">Cette UE ne comporte pas encore de critères de
@@ -607,7 +612,8 @@ const findCourseLead = (courses, courseId) => {
                             <p class="text-gray-700">{{ proficiency.criteria_skill }}</p>
                         </div>
                         <div v-else>
-                            <label for="criteria_skill-edit" class="text-gray-700 block font-medium">Modifier le critère de
+                            <label for="criteria_skill-edit" class="text-gray-700 block font-medium">Modifier le critère
+                                de
                                 maitrise :</label>
                             <textarea id="criteria_skill-edit" v-model="proficiency.updatedCriteriaSkill"
                                 class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 min-h-20 focus:border-blue-500 p-2.5 w-full"></textarea>
@@ -659,9 +665,6 @@ const findCourseLead = (courses, courseId) => {
 
 
 
-        <div v-if="aptitudeForm.course && proficienciesByCourses[aptitudeForm.course]">
-
-
 
 
 
@@ -680,33 +683,6 @@ const findCourseLead = (courses, courseId) => {
             </template>
         </DialogModal>
 
-
-                <div v-if="proficiency.editMode">
-                    <form @submit.prevent="updateProficiency(proficiency)">
-                        <button type="submit" class="bg-green-500 hover:bg-green-600">Save</button>
-                        <button type="button" class="bg-yellow-500 hover:bg-yellow-600"
-                            @click="cancelProficiencyEditMode(proficiency)">Cancel</button>
-                    </form>
-                </div>
-                <br><br>
-            </ul>
-
-        </div>
-
-        <DialogModal :show="confirmingProficiencyDeletion" @close="closeProficiencyModal">
-            <template #title> Supprimer le critère de maitrise et son indicateur </template>
-            <template #content>
-                Êtes-vous sûr de vouloir supprimer ce critère de maitrise ainsi que son indicateur? Cette action est
-                irréversible.
-            </template>
-            <template #footer>
-                <SecondaryButton @click="closeProficiencyModal"> Annuler </SecondaryButton>
-                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingProficiencyDeletion.processing }"
-                    :disabled="confirmingProficiencyDeletion.processing" @click="deleteProficiency">
-                    Supprimer
-                </DangerButton>
-            </template>
-        </DialogModal>
 
 
         <DialogModal :show="confirmingAptitudeDeletion" @close="closeAptitudeModal">
@@ -744,16 +720,8 @@ const findCourseLead = (courses, courseId) => {
         </DialogModal>
 
 
-                <DangerButton class="ms-3" :class="{ 'opacity-25': confirmingCriteriaDeletion.processing }"
-                    :disabled="confirmingCriteriaDeletion.processing" @click="deleteCriteria">
-                    Supprimer
-                </DangerButton>
-            </template>
-        </DialogModal>
-
-    </AppLayout>
-
 
         <!-- {{ aptitudeForm.errors }}-->
         <!--{{ criteriaForm }} -->
-    </AppLayout></template>
+    </AppLayout>
+</template>
