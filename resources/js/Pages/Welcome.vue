@@ -38,7 +38,8 @@ defineProps({
         <div class="max-w-7xl mx-auto p-6 lg:p-8 my-auto flex flex-col items-center">
             <div class="flex justify-center flex-col items-center">
                 <AcademicCapIcon class="h-28 text-blue-500 drop-shadow-xl" />
-                <h1 class="text-3xl font-thin drop-shadow-xl text-gray-300 "><span class="font-black text-white">App</span>
+                <h1 class="text-3xl font-thin drop-shadow-xl text-gray-500 dark:text-gray-300 "><span
+                        class="text-black font-black dark:text-white">App</span>
                     Gestion Evaluations</h1>
             </div>
             <div class="flex justify-center mb-6 mt-12">

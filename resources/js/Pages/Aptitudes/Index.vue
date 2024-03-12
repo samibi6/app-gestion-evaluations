@@ -359,8 +359,10 @@ const findCourseLead = (courses, courseId) => {
             <h1 class="text-center font-bold text-2xl mt-12">
                 Ajouter et modifier des AA, critères de réussite et degrés de maitrise
             </h1>
-            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez consulter, ajouter, modifier et supprimer des
-                acquis d'apprentissage, des critères de réussite ainsi que des critères de maitrise et leur indicateurs pour
+            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez consulter, ajouter, modifier et supprimer
+                des
+                acquis d'apprentissage, des critères de réussite ainsi que des critères de maitrise et leur indicateurs
+                pour
                 une UE donnée</p>
         </template>
         <div class="max-w-4xl mx-auto mt-8">
@@ -415,7 +417,8 @@ const findCourseLead = (courses, courseId) => {
                     </div>
                     <div v-else>
                         <form @submit.prevent="updateCourseLead(courses)" class="mt-4">
-                            <label for="course_lead" class="font-medium mb-2 block">Modifier le chapeau de l'UE :</label>
+                            <label for="course_lead" class="font-medium mb-2 block">Modifier le chapeau de l'UE
+                                :</label>
                             <textarea id="course_lead" v-model="updatedCourseLead"
                                 class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-40 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full mb-2"></textarea>
                             <button type="submit"
@@ -491,7 +494,8 @@ const findCourseLead = (courses, courseId) => {
 
                         <li class="mt-4 mb-8">
                             <form @submit.prevent="submitCriteria(aptitude.id)">
-                                <label for="criteria" class="text-gray-700 block font-medium">Nouveau critère de réussite
+                                <label for="criteria" class="text-gray-700 block font-medium">Nouveau critère de
+                                    réussite
                                     :</label>
                                 <textarea id="criteria" v-model="newCriteria[aptitude.id]"
                                     class="bg-gray-200 focus:bg-gray-300 border border-gray-400 text-gray-900 min-h-20 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-full"></textarea>
@@ -590,7 +594,8 @@ const findCourseLead = (courses, courseId) => {
                         le critère de maitrise </button>
                 </form>
 
-                <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="text-lg font-semibold mt-8">Liste
+                <h2 v-if="proficienciesByCourses[aptitudeForm.course].length > 0" class="text-lg font-semibold mt-8">
+                    Liste
                     des
                     critères de maitrise de l'UE</h2>
                 <h2 v-else class="text-lg font-semibold mt-8">Cette UE ne comporte pas encore de critères de
@@ -605,7 +610,8 @@ const findCourseLead = (courses, courseId) => {
                             <p class="text-gray-700">{{ proficiency.criteria_skill }}</p>
                         </div>
                         <div v-else>
-                            <label for="criteria_skill-edit" class="text-gray-700 block font-medium">Modifier le critère de
+                            <label for="criteria_skill-edit" class="text-gray-700 block font-medium">Modifier le critère
+                                de
                                 maitrise :</label>
                             <textarea id="criteria_skill-edit" v-model="proficiency.updatedCriteriaSkill"
                                 class="bg-gray-200 focus:bg-gray-300 border border-gray-400 rounded-lg focus:ring-blue-500 min-h-20 focus:border-blue-500 p-2.5 w-full"></textarea>
@@ -715,5 +721,8 @@ const findCourseLead = (courses, courseId) => {
 
         <!-- {{ aptitudeForm.errors }}-->
         <!--{{ criteriaForm }} -->
+    </AppLayout>
+</template>
+
     </AppLayout>
 </template>

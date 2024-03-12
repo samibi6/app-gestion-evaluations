@@ -43,10 +43,10 @@ const logout = () => {
                         <div class="flex">
                             <!-- Logo -->
 
-                            <div class="mt-2">
+                            <div class="flex items-center shrink-0 justify-center">
                                 <a :href="route('dashboard')" :active="route().current('dashboard')"
-                                    class="flex justify-center items-center mb-5">
-                                    <AcademicCapIcon class="h-16 w-auto text-blue-600" />
+                                    class="flex justify-center items-center h-full ">
+                                    <AcademicCapIcon class="h-12 w-auto text-blue-600" />
 
 
                                 </a>
@@ -111,7 +111,8 @@ const logout = () => {
                                             </div>
 
                                             <!-- Team Settings -->
-                                            <DropdownLink :href="route('teams.show', $page.props.auth.user.current_team)">
+                                            <DropdownLink
+                                                :href="route('teams.show', $page.props.auth.user.current_team)">
                                                 Team Settings
                                             </DropdownLink>
 
@@ -128,7 +129,8 @@ const logout = () => {
                                                     Switch Teams
                                                 </div>
 
-                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
+                                                <template v-for="team in $page.props.auth.user.all_teams"
+                                                    :key="team.id">
                                                     <form @submit.prevent="switchToTeam(team)">
                                                         <DropdownLink as="button">
                                                             <div class="flex items-center">
@@ -251,7 +253,8 @@ const logout = () => {
                             :active="route().current('coursSections.index')">
                             Cours Sections
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('aptitudes.index')" :active="route().current('aptitudes.index')">
+                        <ResponsiveNavLink :href="route('aptitudes.index')"
+                            :active="route().current('aptitudes.index')">
                             AA et critères
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('invites.index')" :active="route().current('invites.index')">
@@ -285,8 +288,8 @@ const logout = () => {
                                 Profile
                             </ResponsiveNavLink>
 
-                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures" :href="route('api-tokens.index')"
-                                :active="route().current('api-tokens.index')">
+                            <ResponsiveNavLink v-if="$page.props.jetstream.hasApiFeatures"
+                                :href="route('api-tokens.index')" :active="route().current('api-tokens.index')">
                                 API Tokens
                             </ResponsiveNavLink>
 
@@ -312,8 +315,8 @@ const logout = () => {
                                     Team Settings
                                 </ResponsiveNavLink>
 
-                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')"
-                                    :active="route().current('teams.create')">
+                                <ResponsiveNavLink v-if="$page.props.jetstream.canCreateTeams"
+                                    :href="route('teams.create')" :active="route().current('teams.create')">
                                     Create New Team
                                 </ResponsiveNavLink>
 
@@ -331,8 +334,8 @@ const logout = () => {
                                                 <div class="flex items-center">
                                                     <svg v-if="team.id == $page.props.auth.user.current_team_id"
                                                         class="me-2 h-5 w-5 text-green-400"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                                        stroke-width="1.5" stroke="currentColor">
+                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>

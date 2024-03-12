@@ -77,7 +77,8 @@ let add = ref(false);
             <h1 class="text-center font-bold text-2xl mt-12">
                 Lier et délier des UE d'une section
             </h1>
-            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez sélectionner une section pour y ajouter des
+            <p class="text-center text-gray-700 text-lg mt-4">Ici vous pouvez sélectionner une section pour y ajouter
+                des
                 UE,
                 ou délier des UE d'une section</p>
         </template>
@@ -122,7 +123,7 @@ let add = ref(false);
             <div class="">
 
                 <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-                    <li class="text-xl font-semibold  ml-5 bg-gray-300 mb-5 w-fit w-full  border border-gray-400 shadow-xl rounded-md p-4"
+                    <li class="text-xl font-semibold  ml-5 bg-gray-300 mb-5 w-full  border border-gray-400 shadow-xl rounded-md p-4"
                         v-for="sectionCourse in sections" :key="sectionCourse.id">{{
                             sectionCourse.id + ". " + sectionCourse.name }}
                         <ul class="">
@@ -143,24 +144,33 @@ let add = ref(false);
                     <template #title>
                         Retirer le cours de la section
                     </template>
+                    </li>
+                    </ul>
+                    <DialogModal :show="confirmEntryDelete" @close="closeModal">
+                        <template #title>
+                            Retirer le cours de la section
+                        </template>
 
-                    <template #content>
-                        Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
-                            sectionDelete }} ?
-                    </template>
+                        <template #content>
+                            Êtes-vous sûr de vouloir retirer le cours: {{ courseDelete }} de la section: {{
 
-                    <template #footer>
-                        <SecondaryButton @click="closeModal">
-                            Annuler
-                        </SecondaryButton>
+                                sectionDelete }} ?
 
-                        <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
-                            :disabled="deleteForm.processing" @click="deleteEntry">
-                            Supprimer cours de section
-                        </DangerButton>
-                    </template>
-                </DialogModal>
+                        </template>
+
+                        <template #footer>
+                            <SecondaryButton @click="closeModal">
+                                Annuler
+                            </SecondaryButton>
+
+                            <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }"
+                                :disabled="deleteForm.processing" @click="deleteEntry">
+                                Supprimer cours de section
+                            </DangerButton>
+                        </template>
+                    </DialogModal>
             </div>
+        </div>
         </div>
     </AppLayout>
 </template>
