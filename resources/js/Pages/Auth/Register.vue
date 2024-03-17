@@ -28,12 +28,13 @@ const submit = () => {
 </script>
 
 <template>
+
     <Head title="Register" />
 
     <AuthenticationCard>
-        <div class="flex justify-center flex-col items-center">
+        <div class="flex justify-center flex-col items-center mb-12">
             <AcademicCapIcon class="h-28 text-blue-600 drop-shadow-xl" />
-            <h1 class="text-3xl font-thin drop-shadow-xl text-gray-300 "><span class="font-black text-white">App</span>
+            <h1 class="text-3xl font-thin drop-shadow-xl text-gray-500"><span class="font-black text-black">App</span>
                 Gestion Evaluations</h1>
         </div>
 
